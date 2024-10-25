@@ -273,12 +273,9 @@ public class PlayerController : MonoBehaviour
             if (_targetPosition != Vector3.zero)
             {
                 Vector3 targetDirection = _targetPosition - transform.position;
+                targetDirection.y -= 1.0f;
                 throwDirection = targetDirection.normalized;
-                throwDirection.y = 0.0f;
                 transform.rotation = Quaternion.LookRotation(throwDirection);
-                // targetDirection.y -= 1.0f;
-
-
             }
             else
             {
