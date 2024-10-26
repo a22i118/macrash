@@ -6,7 +6,6 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private LayerMask _groundLayers;
     [SerializeField] private LayerMask _hutonLayer;
-    [SerializeField] private GameObject _makuraPrefab;
     private Rigidbody _rb;
     private Animator _animator;
     private CapsuleCollider _col;
@@ -16,13 +15,15 @@ public class PlayerController : MonoBehaviour
     private float _pickUpDistance = 1.0f;
     private float _playerSerchDistance = 5.0f;
     private GameObject _currentMakura;
+    private GameObject _incomingMakura;
     private bool _isSleep = false;
     private bool _isHitStop = false;
     private bool _isJumping = false;
     private bool _chargeTime = false;
+    private bool _canCatch = false;
+    private bool _invincibilityTime = false;
     private Vector3 _beforeSleepPosition;
     private Vector3 _targetPosition;
-    private Vector3 _jumpVelocity;
     private Quaternion _beforeSleepRotation;
     private Quaternion _lastDirection;
     private HutonController _currentHuton;
@@ -55,6 +56,10 @@ public class PlayerController : MonoBehaviour
         else
         {
             _speed = 4.0f;
+        }
+        if (_currentMakura == null && _incomingMakura != null && _canCatch && Input.GetAxis("L_R_Trigger") < -0.5f)
+        {
+            CatchMakura();
         }
         if (_isSleep)
         {
@@ -143,30 +148,20 @@ public class PlayerController : MonoBehaviour
     {
         float inputHorizontal = Input.GetAxis("Horizontal");
         float inputVertical = Input.GetAxis("Vertical");
-        if (OnGround())
+        Vector3 movement = new Vector3(inputHorizontal, 0.0f, inputVertical);
+
+        _rb.velocity = new Vector3(movement.x * _speed, _rb.velocity.y, movement.z * _speed);
+
+        if (movement.magnitude > 0.01f)
         {
-            Vector3 movement = new Vector3(inputHorizontal, 0.0f, inputVertical);
-
-            _rb.velocity = new Vector3(movement.x * _speed, _rb.velocity.y, movement.z * _speed);
-
-            if (movement.magnitude > 0.01f)
-            {
-                _animator.SetBool("Walk", true);
-                transform.rotation = Quaternion.LookRotation(movement);
-                _lastDirection = transform.rotation;
-            }
-            else
-            {
-                _animator.SetBool("Walk", false);
-                transform.rotation = _lastDirection;
-            }
-            // ジャンプのために速度を記録
-            _jumpVelocity = new Vector3(_rb.velocity.x, 0.0f, _rb.velocity.z);
+            _animator.SetBool("Walk", true);
+            transform.rotation = Quaternion.LookRotation(movement);
+            _lastDirection = transform.rotation;
         }
         else
         {
-            transform.rotation = _lastDirection; // 空中にいる場合、入力を制限する。ジャンプ開始時の水平方向の速度、向きを維持
-            _rb.velocity = new Vector3(_jumpVelocity.x, _rb.velocity.y, _jumpVelocity.z);
+            _animator.SetBool("Walk", false);
+            transform.rotation = _lastDirection;
         }
     }
 
@@ -247,7 +242,7 @@ public class PlayerController : MonoBehaviour
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, _pickUpDistance);
         foreach (var collider in hitColliders)
         {
-            if (collider.CompareTag("Makura"))
+            if (collider.CompareTag("Makura") && !collider.GetComponent<MakuraController>().IsThrow)
             {
                 _currentMakura = collider.gameObject;
 
@@ -266,7 +261,10 @@ public class PlayerController : MonoBehaviour
         {
             Rigidbody rb = _currentMakura.GetComponent<Rigidbody>();
             _makuraController = _currentMakura.GetComponent<MakuraController>();
-
+            if (rb.velocity != Vector3.zero)
+            {
+                rb.velocity = Vector3.zero;
+            }
             rb.isKinematic = false;
 
             Vector3 throwDirection;
@@ -307,6 +305,7 @@ public class PlayerController : MonoBehaviour
             _currentMakura.transform.position = throwPosition;
             _currentMakura.SetActive(true);
             _makuraController.IsThrow = true;
+            _makuraController.Thrower = gameObject;
 
             rb.AddForce(throwDirection * forwardForce + Vector3.up * upwardForce);
             rb.AddTorque(Vector3.up * 10000.0f);
@@ -314,6 +313,45 @@ public class PlayerController : MonoBehaviour
             _currentMakura = null;
         }
     }
+    private void CatchMakura()
+    {
+        if (_incomingMakura != null)
+        {
+            _currentMakura = _incomingMakura;
+            _incomingMakura.SetActive(false);
+            _incomingMakura = null;
+            _canCatch = false;
+            _invincibilityTime = true;
+            StartCoroutine(JustChachMakuraInvincibilityTime());
+            Debug.Log("枕をキャッチした！");
+        }
+    }
+    private IEnumerator JustChachMakuraInvincibilityTime()
+    {
+        yield return new WaitForSeconds(0.3f);
+        _invincibilityTime = false;
+    }
+    private void OnTriggerEnter(Collider collider)
+    {
+        MakuraController makuraController = collider.GetComponent<MakuraController>();
+        if (collider.CompareTag("Makura") && makuraController.IsThrow && makuraController.Thrower != gameObject)
+        {
+            _canCatch = true;
+            _incomingMakura = collider.gameObject;
+            Debug.Log("情報を記憶");
+        }
+    }
+
+    private void OnTriggerExit(Collider collider)
+    {
+        if (collider.CompareTag("Makura"))
+        {
+            _canCatch = false;
+            _incomingMakura = null;
+        }
+    }
+
+
     /// <summary>
     /// 布団の上で寝る
     /// </summary>
@@ -412,11 +450,12 @@ public class PlayerController : MonoBehaviour
             _currentHuton = collision.gameObject.GetComponent<HutonController>();
             Debug.Log("現在の布団はこれだ：" + _currentHuton);
         }
-        if (collision.gameObject.CompareTag("Makura"))
+        MakuraController makuraController = collision.gameObject.GetComponent<MakuraController>();
+        if (collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject)
         {
-            MakuraController makuraController = collision.gameObject.GetComponent<MakuraController>();
-            if (makuraController.IsThrow)
+            if (makuraController.IsThrow && !_invincibilityTime)
             {
+                _canCatch = false;
                 _animator.SetBool("Walk", false);
                 Debug.Log("う、動けない！");
                 HitMotion();
@@ -428,6 +467,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void HitMotion()
     {
+        _rb.velocity = Vector3.zero;
         _isHitStop = true;
         _playerStatus.SpUp();
 

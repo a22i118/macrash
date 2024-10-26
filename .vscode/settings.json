@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "MAKURA.sln"
+    "dotnet.defaultSolution": "macrash.sln"
 }
