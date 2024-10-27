@@ -13,6 +13,7 @@ public class MakuraController : MonoBehaviour
     public MeshCollider Col { get => _col; set => _col = value; }
     public GameObject Thrower { get; set; }
 
+
     void Start()
     {
         _rb = GetComponent<Rigidbody>();

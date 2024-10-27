@@ -9,28 +9,28 @@ public class PlayerController : MonoBehaviour
     private Rigidbody _rb;
     private Animator _animator;
     private CapsuleCollider _col;
-    private float _speed = 5.0f;
-    private float _jumpForce = 40.0f;
-    private float _groundCheckRadius = 0.15f;
-    private float _pickUpDistance = 1.0f;
-    private float _playerSerchDistance = 5.0f;
-    private GameObject _currentMakura;
-    private GameObject _incomingMakura;
-    private bool _isSleep = false;
-    private bool _isHitStop = false;
-    private bool _isJumping = false;
-    private bool _chargeTime = false;
-    private bool _canCatch = false;
-    private bool _invincibilityTime = false;
-    private Vector3 _beforeSleepPosition;
-    private Vector3 _targetPosition;
-    private Quaternion _beforeSleepRotation;
-    private Quaternion _lastDirection;
-    private HutonController _currentHuton;
-    private MakuraController _makuraController;
-    private PlayerStatus _playerStatus;
-    private float _keyHoldTime;
-    private float _keyLongPressTime = 0.5f;
+    private float _speed = 5.0f;//プレイヤーの移動速度
+    private float _jumpForce = 40.0f;//ジャンプの強さ
+    private float _groundCheckRadius = 0.15f;//足元が地面か判定する球の半径
+    private float _pickUpDistance = 1.0f;//まくらを拾うことができる距離
+    private float _playerSerchDistance = 5.0f;//敵プレイヤーの捜索範囲
+    private GameObject _currentMakura;//手持ちのまくら
+    private GameObject _incomingMakura;//投げられたまくら
+    private bool _isSleep = false;//寝ているか
+    private bool _isHitStop = false;//止まっているか
+    private bool _isJumping = false;//ジャンプ中か
+    private bool _chargeTime = false;//ため攻撃中か
+    private bool _canCatch = false;//ジャストキャッチ可能か
+    private bool _invincibilityTime = false;//無敵中か
+    private Vector3 _beforeSleepPosition;//布団で寝る前の位置
+    private Vector3 _targetPosition;//敵プレイヤーの位置
+    private Quaternion _beforeSleepRotation;//布団で寝る前の向き
+    private Quaternion _lastDirection;//移動入力の最後に向いている向き
+    private HutonController _currentHuton;//布団のスクリプト
+    private MakuraController _makuraController;//まくらのスクリプト
+    private PlayerStatus _playerStatus;//プレイヤーのスクリプト
+    private float _keyHoldTime;//長押ししている時間
+    private float _keyLongPressTime = 0.5f;//ため攻撃にかかる時間
 
     public enum ThrowType
     {
@@ -82,6 +82,7 @@ public class PlayerController : MonoBehaviour
                 if (_currentMakura == null && CheckMakura() && (Input.GetKeyDown(KeyCode.Space) || Input.GetAxis("L_R_Trigger") < -0.5f))
                 {
                     PickUpMakura();
+
                 }
                 else if (_currentMakura != null)
                 {
@@ -313,6 +314,9 @@ public class PlayerController : MonoBehaviour
             _currentMakura = null;
         }
     }
+    /// <summary>
+    /// まくらをジャストキャッチする
+    /// </summary>
     private void CatchMakura()
     {
         if (_incomingMakura != null)
@@ -326,6 +330,10 @@ public class PlayerController : MonoBehaviour
             Debug.Log("枕をキャッチした！");
         }
     }
+    /// <summary>
+    /// ジャストキャッチ後0.3秒無敵
+    /// </summary>
+    /// <returns>0.3秒後解除</returns>
     private IEnumerator JustChachMakuraInvincibilityTime()
     {
         yield return new WaitForSeconds(0.3f);
@@ -375,6 +383,9 @@ public class PlayerController : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(-81.0f, transform.rotation.eulerAngles.y, 0.0f);
     }
+    /// <summary>
+    /// 布団から起きる
+    /// </summary>
     private void WakeUp()
     {
         _rb.isKinematic = true;
