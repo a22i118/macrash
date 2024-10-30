@@ -29,7 +29,11 @@ public class ThrowMakuraDemo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        PickUpMakura();
+
+        if (_currentMakura == null)
+        {
+            PickUpMakura();
+        }
         if (_currentMakura != null)
         {
             StartCoroutine(ThrowMakuraNomal());

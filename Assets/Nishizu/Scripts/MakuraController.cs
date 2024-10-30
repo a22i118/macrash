@@ -27,7 +27,6 @@ public class MakuraController : MonoBehaviour
             _isThrow = false;
             _rb.velocity = Vector3.zero;
             _rb.isKinematic = true;
-            // Col.enabled = true;
         }
         if (collision.gameObject.CompareTag("Player") && _isThrow && !_hitCoolTime)
         {
@@ -36,6 +35,10 @@ public class MakuraController : MonoBehaviour
 
             Debug.Log("敵に当たったぜ");
             StartCoroutine(HitCoolTime());
+        }
+        if (collision.gameObject.CompareTag("Makura") && _isThrow)
+        {
+            _rb.velocity = Vector3.zero;
         }
     }
     private IEnumerator HitCoolTime()

@@ -3,36 +3,66 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-
-public class PlayerStatus : MonoBehaviour
+namespace Player
 {
-    [SerializeField] private Slider spBar;
-    [SerializeField] private int maxSP = 100000;
-    [SerializeField] private int currentSP = 0;
-    private void Start()
+    public class PlayerStatus : MonoBehaviour
     {
-        maxSP = 100000;
-        currentSP = 0;
-        spBar.maxValue = maxSP;
-        spBar.value = currentSP;
-    }
+        [SerializeField] private Slider _spBar;
+        private Image _fillImage;
+        private Color _normalColor;
+        private Color _maxColor = Color.red;
+        private const int _maxSP = 100000;
+        private int _currentSP = 0;
+        private bool _chargeMax = false;
 
-    private void Update()
-    {
-        if (currentSP < maxSP)
+        public int CurrentSP { get => _currentSP; set => _currentSP = value; }
+        public bool ChargeMax { get => _chargeMax; set => _chargeMax = value; }
+
+        private void Start()
         {
-            currentSP += 20;
-            currentSP = Mathf.Min(currentSP, maxSP);
-            spBar.value = currentSP;
+            _currentSP = 0;
+            _spBar.maxValue = _maxSP;
+            _spBar.value = _currentSP;
+
+            _fillImage = _spBar.fillRect.GetComponent<Image>();
+            _normalColor = _fillImage.color;
         }
-    }
-    public void SpUp()
-    {
-        if (currentSP < maxSP)
+
+        private void Update()
         {
-            currentSP += 10000;
-            currentSP = Mathf.Min(currentSP, maxSP);
-            spBar.value = currentSP;
+            if (_currentSP < _maxSP)
+            {
+                _chargeMax = false;
+                _currentSP += 20;
+                _currentSP = Mathf.Min(_currentSP, _maxSP);
+                _spBar.value = _currentSP;
+
+                ChangeSPBarColor();
+            }
+            else
+            {
+                _chargeMax = true;
+            }
+        }
+
+        public void SpUp()
+        {
+            if (_currentSP < _maxSP)
+            {
+                _currentSP += 10000;
+                _currentSP = Mathf.Min(_currentSP, _maxSP);
+                _spBar.value = _currentSP;
+
+                ChangeSPBarColor();
+            }
+        }
+
+        private void ChangeSPBarColor()
+        {
+            if (_fillImage != null)
+            {
+                _fillImage.color = _currentSP >= _maxSP ? _maxColor : _normalColor;
+            }
         }
     }
 
