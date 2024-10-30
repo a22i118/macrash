@@ -1429,9 +1429,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ae0be113488e86478427b03a8a3a4cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spBar: {fileID: 1865565280}
-  maxSP: 0
-  currentSP: 0
+  _spBar: {fileID: 1865565280}
 --- !u!65 &706210775
 BoxCollider:
   m_ObjectHideFlags: 0
