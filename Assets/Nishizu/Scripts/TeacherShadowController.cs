@@ -2,28 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TeacherController : MonoBehaviour
+public class TeacherShadowController : MonoBehaviour
 {
-    private float _moveDistance = 0.1f; // 上下移動の距離
-    private float _moveSpeed = 5.0f; // 移動速度
-    private float _rotatedSpeed = 10.0f;
-    private Vector3 _startPosition;
+    private bool _canRotated = false;
+    private bool _isMove = false;
+    private bool _executeOnce = false;//一回だけ実行する
+    private bool _rotationDirection = true;
+    private bool _duringEvent = false;
     private float _time;
     private float _targetAngle = 360.0f - 108.0f;//-108だとMathf.Approximatelyが動かない！！
+    private float _startAngle = 360.0f - 180.0f;
+    private float _moveDistance = 0.1f;//上下移動の距離
+    private float _moveSpeed = 5.0f;//移動速度
+    private float _rotatedSpeed = 10.0f;
     private float _startAlpha;
-    private bool _canRotated = false;
-    private Renderer _teacherRenderer;
-    private bool _isMove = false;
-    private bool _executeOnce = false;//一回だけ実行するフラグ
     private float _SecondsToDoor = 6.0f;
     private float _teacherEventTime = 5.0f;
-    private bool _start = true;
+    private Vector3 _startPosition;
+    private Renderer _teacherRenderer;
+    [SerializeField] private DoorController _doorController;
 
     // Start is called before the first frame update
     private void Start()
     {
         _startPosition = transform.position;
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, -180.0f); // 初期回転を-180度に設定
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, _startAngle);
         _teacherRenderer = GetComponent<Renderer>();
         _startAlpha = _teacherRenderer.material.color.a;
     }
@@ -31,16 +34,24 @@ public class TeacherController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Init();
+        }
+        if (Mathf.Approximately(transform.eulerAngles.z, _startAngle) && !_rotationDirection)
+        {
+            transform.position = _startPosition;
+            _canRotated = false;
+            _duringEvent = false;
+        }
         if (Mathf.Approximately(transform.eulerAngles.z, _targetAngle))
         {
             if (!_executeOnce)//一回だけ実行
             {
+                _executeOnce = true;
                 _isMove = true;
-
                 StartCoroutine(MovePauseCoroutine(_SecondsToDoor));//ドアの前で止め、先生イベントを呼び出す
                 StartCoroutine(FadeUpdateCoroutine());//透明にして元に戻す
-                _executeOnce = true;
             }
         }
         if (_isMove)
@@ -48,14 +59,22 @@ public class TeacherController : MonoBehaviour
             Move();
             MoveUpDown();
         }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            _canRotated = true;
-        }
         if (_canRotated)
         {
-            // _canRotated = false;
-            Rotate(_start);
+            Rotate(_rotationDirection);
+        }
+    }
+    public void Init()
+    {
+        if (!_duringEvent)
+        {
+            _duringEvent = true;
+            _time = 0.0f;
+            _canRotated = true;
+            _executeOnce = false;
+            _isMove = false;
+            _rotationDirection = true;
+            transform.position = _startPosition;
         }
     }
 
@@ -67,18 +86,19 @@ public class TeacherController : MonoBehaviour
         transform.position = new Vector3(transform.position.x, _startPosition.y + newY, transform.position.z);
     }
 
-    private void Rotate(bool start)
+    private void Rotate(bool rotationDirection)
     {
-        if (start)
+        if (rotationDirection)//出現
         {
             Quaternion targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, _targetAngle);
 
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotatedSpeed * Time.deltaTime);
-
         }
-        else
+        else//消失
         {
+            Quaternion targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, _startAngle);
 
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotatedSpeed * Time.deltaTime);
         }
     }
     private void Move()
@@ -103,11 +123,14 @@ public class TeacherController : MonoBehaviour
     {
         yield return new WaitForSeconds(second);
         _isMove = false;
+        _doorController.IsOpen = true;
         TeacherEvent();
         yield return new WaitForSeconds(_teacherEventTime);//先生イベントの時間
+        _doorController.IsOpen = false;
         _isMove = true;
         yield return new WaitForSeconds(6.0f);
         _isMove = false;
+        _rotationDirection = false;
     }
     private IEnumerator FadeOutCoroutine()
     {

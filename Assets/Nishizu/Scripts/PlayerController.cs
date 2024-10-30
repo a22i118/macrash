@@ -6,6 +6,9 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private LayerMask _groundLayers;
     [SerializeField] private LayerMask _hutonLayer;
+    [SerializeField] private LayerMask _wallLayer;
+    [SerializeField] private GameObject _showMakura;
+    private GameObject _currentMakuraDisplay;
     private Rigidbody _rb;
     private Animator _animator;
     private CapsuleCollider _col;
@@ -32,6 +35,9 @@ public class PlayerController : MonoBehaviour
     private float _keyHoldTime;//長押ししている時間
     private float _keyLongPressTime = 0.5f;//ため攻撃にかかる時間
 
+    private float _rotationSpeed = 200.0f;//持っているまくらの回転速度
+    private float _showRadius = 0.6f;//プレイヤーからのまくらの距離
+    private float _rotationAngle;
     public enum ThrowType
     {
         Nomal,
@@ -43,12 +49,27 @@ public class PlayerController : MonoBehaviour
         _animator = GetComponent<Animator>();
         _col = GetComponent<CapsuleCollider>();
         _playerStatus = GetComponent<PlayerStatus>();
+        if (_showMakura != null)
+        {
+            _currentMakuraDisplay = Instantiate(_showMakura);
+            _currentMakuraDisplay.SetActive(false);
+        }
     }
 
     void Update()
     {
         JumpForce(Jump());
         CheckPlayer();
+        if (_currentMakura != null && !_isSleep)
+        {
+            _currentMakuraDisplay.SetActive(true);
+            // ShowMakura();
+            RotateShowMakura();
+        }
+        else
+        {
+            _currentMakuraDisplay.SetActive(false);
+        }
         if (OnHuton() || _chargeTime)
         {
             _speed = 3.0f;
@@ -216,7 +237,29 @@ public class PlayerController : MonoBehaviour
             _isJumping = false;
         }
     }
+    private void ShowMakura()
+    {
+        if (_currentMakuraDisplay != null)
+        {
+            Vector3 shoulderPosition = transform.position + transform.right * 0.5f + transform.up * 0.6f;
+            _currentMakuraDisplay.transform.position = shoulderPosition;
 
+            _currentMakuraDisplay.transform.rotation = Quaternion.LookRotation(transform.forward);
+        }
+    }
+    private void RotateShowMakura()
+    {
+        if (_currentMakuraDisplay != null)
+        {
+            _rotationAngle += _rotationSpeed * Time.deltaTime;
+
+            Vector3 offset = new Vector3(Mathf.Cos(_rotationAngle * Mathf.Deg2Rad) * _showRadius, 1.0f, Mathf.Sin(_rotationAngle * Mathf.Deg2Rad) * _showRadius);
+            _currentMakuraDisplay.transform.position = transform.position + offset;
+            Debug.Log(_currentMakuraDisplay.transform.position);
+
+            _currentMakuraDisplay.transform.LookAt(transform.position);
+        }
+    }
     /// <summary>
     /// 近くに枕があることを返す
     /// </summary>
@@ -260,6 +303,11 @@ public class PlayerController : MonoBehaviour
     {
         if (_currentMakura != null)
         {
+            if (WallThrowCheck())
+            {
+                Debug.Log("壁が近いから投げられないぜ！");
+                return;
+            }
             Rigidbody rb = _currentMakura.GetComponent<Rigidbody>();
             _makuraController = _currentMakura.GetComponent<MakuraController>();
             if (rb.velocity != Vector3.zero)
@@ -313,6 +361,13 @@ public class PlayerController : MonoBehaviour
 
             _currentMakura = null;
         }
+    }
+    private bool WallThrowCheck()
+    {
+        Vector3 throwDirection = transform.forward;
+        float throwDistance = 1.5f;
+
+        return Physics.Raycast(transform.position, throwDirection, throwDistance, _wallLayer);
     }
     /// <summary>
     /// まくらをジャストキャッチする
