@@ -41,6 +41,7 @@ namespace Player
         private float _rotationSpeed = 200.0f;//持っているまくらの回転速度
         private float _showRadius = 0.6f;//プレイヤーからのまくらの距離
         private float _rotationAngle;
+        ShowMakuraController _showMakuraController;
         public enum ThrowType
         {
             Nomal,
@@ -52,8 +53,10 @@ namespace Player
             _animator = GetComponent<Animator>();
             _col = GetComponent<CapsuleCollider>();
             _playerStatus = GetComponent<PlayerStatus>();
+            _showMakuraController = _showMakura.GetComponent<ShowMakuraController>();
             if (_showMakura != null)
             {
+                // _currentMakuraDisplay = transform.GetChild(0).gameObject;
                 _currentMakuraDisplay = Instantiate(_showMakura);
                 _currentMakuraDisplay.SetActive(false);
             }
@@ -63,18 +66,32 @@ namespace Player
         {
             JumpForce(Jump());
             CheckPlayer();
-            if (_playerStatus.ChargeMax && Input.GetButtonDown("Jump"))
+            // if (_currentMakura != null && !_isSleep && _playerStatus.ChargeMax && Input.GetButtonDown("Jump"))
+            // {
+            //     _makuraController = _currentMakura.GetComponent<MakuraController>();
+            //     _makuraController.CurrentType = MakuraController.ScaleType.Second;
+            //     _showMakuraController.CurrentType = MakuraController.ScaleType.First;
+            //     _playerStatus.CurrentSP = 0;
+            // }
+            if (_currentMakura != null && !_isSleep && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.B)))//デバッグ用のif文。本来は一つ上のif文
             {
+                _makuraController = _currentMakura.GetComponent<MakuraController>();
+                _makuraController.CurrentType = MakuraController.ScaleType.Second;
+                _showMakuraController.CurrentType = ShowMakuraController.ScaleType.First;
                 _playerStatus.CurrentSP = 0;
+                //_makuraController.CurrentColor=MakuraController.ColorType.Blue;
             }
             if (_currentMakura != null && !_isSleep)
             {
-                _currentMakuraDisplay.SetActive(true);
+
                 // ShowMakura();
+
                 RotateShowMakura();
+                _currentMakuraDisplay.SetActive(true);
             }
             else
             {
+                _showMakuraController.CurrentType = ShowMakuraController.ScaleType.Nomal;
                 _currentMakuraDisplay.SetActive(false);
             }
             if (OnHuton() || _chargeTime)
@@ -258,6 +275,15 @@ namespace Player
         {
             if (_currentMakuraDisplay != null)
             {
+
+                if (_showMakuraController.CurrentType == ShowMakuraController.ScaleType.First || _showMakuraController.CurrentType == ShowMakuraController.ScaleType.Second)
+                {
+                    _showRadius = 1.0f;
+                }
+                else
+                {
+                    _showRadius = 0.6f;
+                }
                 _rotationAngle += _rotationSpeed * Time.deltaTime;
 
                 Vector3 offset = new Vector3(Mathf.Cos(_rotationAngle * Mathf.Deg2Rad) * _showRadius, 1.0f, Mathf.Sin(_rotationAngle * Mathf.Deg2Rad) * _showRadius);
@@ -268,7 +294,7 @@ namespace Player
         }
         private void SpecialAttack()
         {
-
+            //Q
         }
         /// <summary>
         /// 近くに枕があることを返す
@@ -338,6 +364,7 @@ namespace Player
                 {
                     throwDirection = transform.forward;
                 }
+
                 float forwardForce = 0.0f;
                 float upwardForce = 0.0f;
                 float throwDistance = 0.0f;
@@ -359,7 +386,12 @@ namespace Player
                         Debug.Log("くらえ！爆発まくら");
                         break;
                 }
+                if (_makuraController.CurrentType == MakuraController.ScaleType.Second || _makuraController.CurrentType == MakuraController.ScaleType.First)
+                {
+                    throwDistance += 1.5f;
+                }
                 Vector3 throwPosition = transform.position + throwDirection * throwDistance + Vector3.up * throwHeight;
+
 
                 _currentMakura.transform.position = throwPosition;
                 _currentMakura.SetActive(true);
@@ -375,7 +407,9 @@ namespace Player
         private bool WallThrowCheck()
         {
             Vector3 throwDirection = transform.forward;
-            float throwDistance = 1.5f;
+            _makuraController = _currentMakura.GetComponent<MakuraController>();
+
+            float throwDistance = _makuraController.CurrentType == MakuraController.ScaleType.Second ? 5.0f : 1.5f;
 
             return Physics.Raycast(transform.position, throwDirection, throwDistance, _wallLayer);
         }
@@ -408,7 +442,7 @@ namespace Player
         private void OnTriggerEnter(Collider collider)
         {
             MakuraController makuraController = collider.GetComponent<MakuraController>();
-            if (collider.CompareTag("Makura") && makuraController.IsThrow && makuraController.Thrower != gameObject)
+            if (collider.CompareTag("Makura") && makuraController.IsThrow && makuraController.Thrower != gameObject && makuraController.CurrentType == MakuraController.ScaleType.Nomal)
             {
                 _canCatch = true;
                 _thrownMakura = collider.gameObject;
