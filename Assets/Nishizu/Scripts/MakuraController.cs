@@ -45,14 +45,14 @@ public class MakuraController : MonoBehaviour
     {
         ScaleChange(_currentType);
         ColorChange(_currentColor);
-         if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.B))
         {
-            //_currentType = ScaleType.First;
+            _currentType = ScaleType.First;
             //_currentColor= ColorType.Blue;
         }
         if (Input.GetKeyDown(KeyCode.N))
         {
-            //_currentType = ScaleType.Nomal;
+            _currentType = ScaleType.Nomal;
         }
     }
     private void ScaleChange(ScaleType type)
