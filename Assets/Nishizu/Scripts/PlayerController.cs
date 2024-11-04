@@ -54,19 +54,18 @@ namespace Player
             _animator = GetComponent<Animator>();
             _col = GetComponent<CapsuleCollider>();
             _playerStatus = GetComponent<PlayerStatus>();
-            _showMakuraController = _showMakura.GetComponent<ShowMakuraController>();
             if (_showMakura != null)
             {
                 _currentMakuraDisplay = Instantiate(_showMakura);
-                _currentMakuraDisplay.SetActive(false);
             }
-
+            _showMakuraController = _currentMakuraDisplay.GetComponent<ShowMakuraController>();
         }
 
         void Update()
         {
             JumpForce(Jump());
             CheckPlayer();
+            MakuraDisplayColorChange();
             // if (_currentMakura != null && !_isSleep && _playerStatus.ChargeMax && Input.GetButtonDown("Jump"))
             // {
             //     _makuraController = _currentMakura.GetComponent<MakuraController>();
@@ -76,14 +75,14 @@ namespace Player
             // }
             if (_currentMakura != null && !_isSleep && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.B)))//デバッグ用のif文。本来は一つ上のif文
             {
-                _makuraController = _currentMakura.GetComponent<MakuraController>();
+
                 // _makuraController.CurrentType = MakuraController.ScaleType.Second;
                 _playerStatus.CurrentSP = 0;
-                //_makuraController.CurrentColor=MakuraController.ColorType.Blue;
             }
             if (_currentMakura != null && !_isSleep)
             {
                 RotateShowMakura();
+
                 _currentMakuraDisplay.SetActive(true);
             }
             else
@@ -286,6 +285,29 @@ namespace Player
                 _currentMakuraDisplay.transform.position = transform.position + offset;
 
                 _currentMakuraDisplay.transform.LookAt(transform.position);
+            }
+        }
+        private void MakuraDisplayColorChange()
+        {
+            if (_currentMakura != null)
+            {
+                _makuraController = _currentMakura.GetComponent<MakuraController>();
+                if (_makuraController.CurrentColorType == ColorChanger.ColorType.Nomal)
+                {
+                    _showMakuraController.CurrentColorType = ColorChanger.ColorType.Nomal;
+                }
+                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Red)
+                {
+                    _showMakuraController.CurrentColorType = ColorChanger.ColorType.Red;
+                }
+                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Blue)
+                {
+                    _showMakuraController.CurrentColorType = ColorChanger.ColorType.Blue;
+                }
+                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Green)
+                {
+                    _showMakuraController.CurrentColorType = ColorChanger.ColorType.Green;
+                }
             }
         }
         private void SpecialAttack()

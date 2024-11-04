@@ -8,7 +8,7 @@ public class ShowMakuraController : ColorChanger
     // Start is called before the first frame update
     void Start()
     {
-
+        ColorChange(_currentColorType);
     }
 
     // Update is called once per frame
