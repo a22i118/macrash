@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Makura
   - Huton
+  - Wall
   layers:
   - Default
   - TransparentFX

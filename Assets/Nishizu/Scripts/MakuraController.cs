@@ -3,57 +3,75 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MakuraController : MonoBehaviour
+public class MakuraController : ColorChanger
 {
     [SerializeField] private LayerMask _groundLayer;
     private Rigidbody _rb;
-    private MeshCollider _col;
-    private ScaleType _currentType;
+    private ScaleType _currentScaleType = ScaleType.Nomal;
     private bool _isThrow = false;
     private bool _hitCoolTime = false;
-    private Renderer _renderer;
-    private ColorType _currentColor;
+    // private Renderer _renderer;
+    // private ColorType _currentColorType = ColorType.Nomal;
+    private bool _alterEgo = false;
+    private Quaternion _initialRotation;
 
     public bool IsThrow { get => _isThrow; set => _isThrow = value; }
-    public MeshCollider Col { get => _col; set => _col = value; }
     public GameObject Thrower { get; set; }
-    public ScaleType CurrentType { get => _currentType; set => _currentType = value; }
-    public ColorType CurrentColor { get => _currentColor; set => _currentColor = value; }
-
+    public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
+    // public ColorType CurrentColorType { get => _currentColorType; set => _currentColorType = value; }
+    public bool AlterEgo { get => _alterEgo; set => _alterEgo = value; }
     public enum ScaleType
     {
         Nomal,
         First,
         Second
     }
-    public enum ColorType
-    {
-        Nomal,
-        Red,
-        Blue,
-        Green,
-    }
+    // public enum ColorType
+    // {
+    //     Nomal,
+    //     Red,//等速直線
+    //     Blue,//分身
+    //     Green,//
+    // }
+
     void Start()
     {
+        // base.Start();
         _rb = GetComponent<Rigidbody>();
-        _col = GetComponent<MeshCollider>();
-        _renderer = GetComponent<Renderer>();
-        _currentType = ScaleType.Nomal;
-        _currentColor = ColorType.Nomal;
+        // _renderer = GetComponent<Renderer>();
+        _initialRotation = transform.rotation;
     }
     void Update()
     {
-        ScaleChange(_currentType);
-        ColorChange(_currentColor);
+        ScaleChange(_currentScaleType);
+        ColorChange(_currentColorType);
+        if (_isThrow)
+        {
+            StartCoroutine(AutoUseGrabity());
+        }
+        if (transform.position.y >= 15.0f)
+        {
+            _rb.useGravity = true;
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            _currentColorType = ColorType.Red;
+        }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            _currentColorType = ColorType.Green;
+        }
         if (Input.GetKeyDown(KeyCode.B))
         {
-            _currentType = ScaleType.First;
-            //_currentColor= ColorType.Blue;
+            _currentColorType = ColorType.Blue;
         }
         if (Input.GetKeyDown(KeyCode.N))
         {
-            _currentType = ScaleType.Nomal;
+            _currentColorType = ColorType.Nomal;
         }
+
     }
     private void ScaleChange(ScaleType type)
     {
@@ -65,46 +83,31 @@ public class MakuraController : MonoBehaviour
         {
             transform.localScale = new Vector3(2.5f, 2.5f, 2.5f);
             StartCoroutine(ScaleChangeCoolTime());
-
         }
         else if (type == ScaleType.Nomal)
         {
             transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
         }
     }
-    private void ColorChange(ColorType type)
-    {
-        if (type == ColorType.Nomal)
-        {
-            _renderer.material.color = Color.white;
-        }
-        else if (type == ColorType.Red)
-        {
-            _renderer.material.color = Color.red;
-        }
-        else if (type == ColorType.Green)
-        {
-            _renderer.material.color = Color.green;
-        }
-        else if (type == ColorType.Blue)
-        {
-            _renderer.material.color = Color.blue;
-        }
-    }
+
     private void OnCollisionEnter(Collision collision)
     {
+        if (!_rb.useGravity && _rb.velocity != Vector3.zero)
+        {
+            _rb.useGravity = true;
+            _rb.velocity = Vector3.zero;
+        }
         if ((_groundLayer & (1 << collision.gameObject.layer)) == _groundLayer)
         {
             _isThrow = false;
-            _rb.velocity = Vector3.zero;
-            _currentType = ScaleType.Nomal;
+            _currentScaleType = ScaleType.Nomal;
+            transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
             _rb.isKinematic = true;
         }
         if (collision.gameObject.CompareTag("Player") && _isThrow && !_hitCoolTime)
         {
             _isThrow = false;
-            _rb.velocity = Vector3.zero;
-            _currentType = ScaleType.Nomal;
+            _currentScaleType = ScaleType.Nomal;
             Debug.Log("敵に当たったぜ");
             StartCoroutine(HitCoolTime());
         }
@@ -114,8 +117,19 @@ public class MakuraController : MonoBehaviour
             // {
             //     //TODO
             // }
-            _rb.velocity = Vector3.zero;
         }
+        if (_alterEgo)
+        {
+            Destroy(gameObject);
+        }
+        // if (collision.gameObject.CompareTag("Wall") && _isThrow && _currentColorType == ColorType.Red)
+        // {
+        //     Vector3 normal = collision.contacts[0].normal;
+
+        //     Vector3 reflectDirection = Vector3.Reflect(_rb.velocity, normal);
+
+        //     _rb.velocity = reflectDirection.normalized * _rb.velocity.magnitude;
+        // }
     }
     private IEnumerator HitCoolTime()
     {
@@ -127,6 +141,11 @@ public class MakuraController : MonoBehaviour
     private IEnumerator ScaleChangeCoolTime()
     {
         yield return new WaitForSeconds(1.2f);
-        _currentType = ScaleType.Second;
+        _currentScaleType = ScaleType.Second;
+    }
+    private IEnumerator AutoUseGrabity()
+    {
+        yield return new WaitForSeconds(10.0f);
+        _rb.useGravity = true;
     }
 }

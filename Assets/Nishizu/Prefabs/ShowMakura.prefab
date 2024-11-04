@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6943326214646247826}
   - component: {fileID: 4041736748776285337}
   - component: {fileID: 5949640911762520044}
+  - component: {fileID: 7962708888117385693}
   m_Layer: 0
   m_Name: ShowMakura
   m_TagString: Makura
@@ -96,4 +97,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db50cf59add6328439a5ec069bb87e48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentType: 0
+--- !u!114 &7962708888117385693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4078454099847178617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 083d8151c6da8d84c8ac26ad52bab760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
