@@ -41,11 +41,12 @@ namespace Player
         private float _rotationSpeed = 200.0f;//持っているまくらの回転速度
         private float _showRadius = 0.6f;//プレイヤーからのまくらの距離
         private float _rotationAngle;
+        [SerializeField] private GameObject _blueMakura;
         ShowMakuraController _showMakuraController;
         public enum ThrowType
         {
             Nomal,
-            Explosion
+            Chage
         }
         void Start()
         {
@@ -53,19 +54,18 @@ namespace Player
             _animator = GetComponent<Animator>();
             _col = GetComponent<CapsuleCollider>();
             _playerStatus = GetComponent<PlayerStatus>();
-            _showMakuraController = _showMakura.GetComponent<ShowMakuraController>();
             if (_showMakura != null)
             {
-                // _currentMakuraDisplay = transform.GetChild(0).gameObject;
                 _currentMakuraDisplay = Instantiate(_showMakura);
-                _currentMakuraDisplay.SetActive(false);
             }
+            _showMakuraController = _currentMakuraDisplay.GetComponent<ShowMakuraController>();
         }
 
         void Update()
         {
             JumpForce(Jump());
             CheckPlayer();
+            MakuraDisplayColorChange();
             // if (_currentMakura != null && !_isSleep && _playerStatus.ChargeMax && Input.GetButtonDown("Jump"))
             // {
             //     _makuraController = _currentMakura.GetComponent<MakuraController>();
@@ -75,23 +75,18 @@ namespace Player
             // }
             if (_currentMakura != null && !_isSleep && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.B)))//デバッグ用のif文。本来は一つ上のif文
             {
-                _makuraController = _currentMakura.GetComponent<MakuraController>();
+
                 // _makuraController.CurrentType = MakuraController.ScaleType.Second;
-                // _showMakuraController.CurrentType = ShowMakuraController.ScaleType.First;
                 _playerStatus.CurrentSP = 0;
-                //_makuraController.CurrentColor=MakuraController.ColorType.Blue;
             }
             if (_currentMakura != null && !_isSleep)
             {
-
-                // ShowMakura();
-
                 RotateShowMakura();
+
                 _currentMakuraDisplay.SetActive(true);
             }
             else
             {
-                _showMakuraController.CurrentType = ShowMakuraController.ScaleType.Nomal;
                 _currentMakuraDisplay.SetActive(false);
             }
             if (OnHuton() || _chargeTime)
@@ -156,7 +151,7 @@ namespace Player
                 }
                 else
                 {
-                    ThrowMakura(ThrowType.Explosion);
+                    ThrowMakura(ThrowType.Chage);
                 }
             }
             if (Input.GetAxis("L_R_Trigger") > 0.5f)
@@ -177,7 +172,7 @@ namespace Player
                 }
                 else
                 {
-                    ThrowMakura(ThrowType.Explosion);
+                    ThrowMakura(ThrowType.Chage);
                 }
             }
 
@@ -276,20 +271,43 @@ namespace Player
             if (_currentMakuraDisplay != null)
             {
 
-                if (_showMakuraController.CurrentType == ShowMakuraController.ScaleType.First || _showMakuraController.CurrentType == ShowMakuraController.ScaleType.Second)
-                {
-                    _showRadius = 1.0f;
-                }
-                else
-                {
-                    _showRadius = 0.6f;
-                }
+                // if (_showMakuraController.CurrentType == ShowMakuraController.ScaleType.First || _showMakuraController.CurrentType == ShowMakuraController.ScaleType.Second)
+                // {
+                //     _showRadius = 1.0f;
+                // }
+                // else
+                // {
+                //     _showRadius = 0.6f;
+                // }
                 _rotationAngle += _rotationSpeed * Time.deltaTime;
 
                 Vector3 offset = new Vector3(Mathf.Cos(_rotationAngle * Mathf.Deg2Rad) * _showRadius, 1.0f, Mathf.Sin(_rotationAngle * Mathf.Deg2Rad) * _showRadius);
                 _currentMakuraDisplay.transform.position = transform.position + offset;
 
                 _currentMakuraDisplay.transform.LookAt(transform.position);
+            }
+        }
+        private void MakuraDisplayColorChange()
+        {
+            if (_currentMakura != null)
+            {
+                _makuraController = _currentMakura.GetComponent<MakuraController>();
+                if (_makuraController.CurrentColorType == ColorChanger.ColorType.Nomal)
+                {
+                    _showMakuraController.CurrentColorType = ColorChanger.ColorType.Nomal;
+                }
+                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Red)
+                {
+                    _showMakuraController.CurrentColorType = ColorChanger.ColorType.Red;
+                }
+                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Blue)
+                {
+                    _showMakuraController.CurrentColorType = ColorChanger.ColorType.Blue;
+                }
+                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Green)
+                {
+                    _showMakuraController.CurrentColorType = ColorChanger.ColorType.Green;
+                }
             }
         }
         private void SpecialAttack()
@@ -364,29 +382,83 @@ namespace Player
                 {
                     throwDirection = transform.forward;
                 }
-
                 float forwardForce = 0.0f;
                 float upwardForce = 0.0f;
                 float throwDistance = 0.0f;
                 float throwHeight = 0.0f;
-                switch (throwType)
+                if (_makuraController.CurrentColorType == MakuraController.ColorType.Nomal)
                 {
-                    case ThrowType.Nomal:
-                        forwardForce = 900.0f;
-                        upwardForce = 200.0f;
-                        throwDistance = 1.3f;
-                        throwHeight = 1.0f;
-                        Debug.Log("通常");
-                        break;
-                    case ThrowType.Explosion:
-                        forwardForce = 300.0f;
-                        upwardForce = 700.0f;
-                        throwDistance = 0.5f;
-                        throwHeight = 2.0f;
-                        Debug.Log("くらえ！爆発まくら");
-                        break;
+                    switch (throwType)
+                    {
+                        case ThrowType.Nomal:
+                            forwardForce = 900.0f;
+                            upwardForce = 200.0f;
+                            throwDistance = 1.3f;
+                            throwHeight = 1.0f;
+                            Debug.Log("通常");
+                            break;
+                        case ThrowType.Chage:
+                            forwardForce = 300.0f;
+                            upwardForce = 700.0f;
+                            throwDistance = 0.5f;
+                            throwHeight = 2.0f;
+                            Debug.Log("くらえ！爆発まくら");
+                            break;
+                    }
                 }
-                if (_makuraController.CurrentType == MakuraController.ScaleType.Second || _makuraController.CurrentType == MakuraController.ScaleType.First)
+                else if (_makuraController.CurrentColorType == MakuraController.ColorType.Red)
+                {
+                    rb.useGravity = false;
+                    forwardForce = 500.0f;
+                    throwDistance = 1.3f;
+                    throwHeight = 1.0f;
+                }
+                else if (_makuraController.CurrentColorType == MakuraController.ColorType.Blue)
+                {
+                    rb.useGravity = false;
+                    forwardForce = 300.0f;
+                    throwDistance = 1.3f;
+                    throwHeight = 1.0f;
+                    if (_blueMakura != null)
+                    {
+                        _blueMakura.GetComponent<MakuraController>().CurrentColorType = MakuraController.ColorType.Blue;
+                    }
+
+                    Vector3 cloneDirection_R = Quaternion.Euler(0, 45, 0) * transform.forward;
+                    Vector3 cloneDirection_L = Quaternion.Euler(0, -45, 0) * transform.forward;
+
+                    Vector3 throwPosition_R = transform.position + cloneDirection_R.normalized * 1.7f + Vector3.up * throwHeight;
+                    Vector3 throwPosition_L = transform.position + cloneDirection_L.normalized * 1.7f + Vector3.up * throwHeight;
+
+                    GameObject clone_R = Instantiate(_blueMakura, throwPosition_R, Quaternion.identity);
+                    GameObject clone_L = Instantiate(_blueMakura, throwPosition_L, Quaternion.identity);
+
+                    MakuraController cloneMC_R = clone_R.GetComponent<MakuraController>();
+                    MakuraController cloneMC_L = clone_L.GetComponent<MakuraController>();
+
+                    cloneMC_R.CurrentColorType = MakuraController.ColorType.Blue;
+                    cloneMC_L.CurrentColorType = MakuraController.ColorType.Blue;
+
+                    Rigidbody clone_R_rb = clone_R.GetComponent<Rigidbody>();
+                    Rigidbody clone_L_rb = clone_L.GetComponent<Rigidbody>();
+
+                    cloneMC_R.AlterEgo = true;
+                    cloneMC_L.AlterEgo = true;
+
+                    clone_R_rb.useGravity = false;
+                    clone_L_rb.useGravity = false;
+
+                    clone_R_rb.AddForce(cloneDirection_R.normalized * forwardForce);
+                    clone_L_rb.AddForce(cloneDirection_L.normalized * forwardForce);
+
+                    clone_R_rb.maxAngularVelocity = 100;
+                    clone_R_rb.AddTorque(Vector3.up * 120.0f);
+
+                    clone_L_rb.maxAngularVelocity = 100;
+                    clone_L_rb.AddTorque(Vector3.up * 120.0f);
+                }
+
+                if (_makuraController.CurrentScaleType == MakuraController.ScaleType.Second || _makuraController.CurrentScaleType == MakuraController.ScaleType.First)
                 {
                     throwDistance += 1.5f;
                 }
@@ -399,7 +471,8 @@ namespace Player
                 _makuraController.Thrower = gameObject;
 
                 rb.AddForce(throwDirection * forwardForce + Vector3.up * upwardForce);
-                rb.AddTorque(Vector3.up * 10000.0f);
+                rb.maxAngularVelocity = 100;
+                rb.AddTorque(Vector3.up * 120.0f);
 
                 _currentMakura = null;
             }
@@ -409,7 +482,7 @@ namespace Player
             Vector3 throwDirection = transform.forward;
             _makuraController = _currentMakura.GetComponent<MakuraController>();
 
-            float throwDistance = _makuraController.CurrentType == MakuraController.ScaleType.Second ? 5.0f : 1.5f;
+            float throwDistance = _makuraController.CurrentScaleType == MakuraController.ScaleType.Second ? 5.0f : 1.5f;
 
             return Physics.Raycast(transform.position, throwDirection, throwDistance, _wallLayer);
         }
@@ -442,7 +515,7 @@ namespace Player
         private void OnTriggerEnter(Collider collider)
         {
             MakuraController makuraController = collider.GetComponent<MakuraController>();
-            if (collider.CompareTag("Makura") && makuraController.IsThrow && makuraController.Thrower != gameObject && makuraController.CurrentType == MakuraController.ScaleType.Nomal)
+            if (collider.CompareTag("Makura") && makuraController.IsThrow && makuraController.Thrower != gameObject && makuraController.CurrentScaleType == MakuraController.ScaleType.Nomal)
             {
                 _canCatch = true;
                 _thrownMakura = collider.gameObject;
