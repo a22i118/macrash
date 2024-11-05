@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Player;
+using System;
 
 namespace Player
 {
@@ -213,7 +214,7 @@ namespace Player
         private bool OnGround()
         {
             Vector3 groundCheckPosition = new Vector3(_col.bounds.center.x, _col.bounds.min.y, _col.bounds.center.z);
-            return Physics.CheckSphere(groundCheckPosition, _groundCheckRadius, _groundLayers);
+            return Physics.CheckSphere(groundCheckPosition, _groundCheckRadius, _groundLayers, QueryTriggerInteraction.Collide);
         }
         /// <summary>
         /// 足元がHutonかどうか
@@ -386,7 +387,7 @@ namespace Player
                 float upwardForce = 0.0f;
                 float throwDistance = 0.0f;
                 float throwHeight = 0.0f;
-                if (_makuraController.CurrentColorType == MakuraController.ColorType.Nomal)
+                if (_makuraController.CurrentColorType == ColorChanger.ColorType.Nomal)
                 {
                     switch (throwType)
                     {
@@ -406,14 +407,14 @@ namespace Player
                             break;
                     }
                 }
-                else if (_makuraController.CurrentColorType == MakuraController.ColorType.Red)
+                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Red)
                 {
                     rb.useGravity = false;
                     forwardForce = 500.0f;
                     throwDistance = 1.3f;
                     throwHeight = 1.0f;
                 }
-                else if (_makuraController.CurrentColorType == MakuraController.ColorType.Blue)
+                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Blue)
                 {
                     rb.useGravity = false;
                     forwardForce = 300.0f;
@@ -421,7 +422,7 @@ namespace Player
                     throwHeight = 1.0f;
                     if (_blueMakura != null)
                     {
-                        _blueMakura.GetComponent<MakuraController>().CurrentColorType = MakuraController.ColorType.Blue;
+                        _blueMakura.GetComponent<MakuraController>().CurrentColorType = ColorChanger.ColorType.Blue;
                     }
 
                     Vector3 cloneDirection_R = Quaternion.Euler(0, 45, 0) * transform.forward;
@@ -436,14 +437,17 @@ namespace Player
                     MakuraController cloneMC_R = clone_R.GetComponent<MakuraController>();
                     MakuraController cloneMC_L = clone_L.GetComponent<MakuraController>();
 
-                    cloneMC_R.CurrentColorType = MakuraController.ColorType.Blue;
-                    cloneMC_L.CurrentColorType = MakuraController.ColorType.Blue;
+                    cloneMC_R.CurrentColorType = ColorChanger.ColorType.Blue;
+                    cloneMC_L.CurrentColorType = ColorChanger.ColorType.Blue;
 
                     Rigidbody clone_R_rb = clone_R.GetComponent<Rigidbody>();
                     Rigidbody clone_L_rb = clone_L.GetComponent<Rigidbody>();
 
                     cloneMC_R.AlterEgo = true;
                     cloneMC_L.AlterEgo = true;
+
+                    cloneMC_R.IsThrow = true;
+                    cloneMC_L.IsThrow = true;
 
                     clone_R_rb.useGravity = false;
                     clone_L_rb.useGravity = false;
@@ -456,6 +460,19 @@ namespace Player
 
                     clone_L_rb.maxAngularVelocity = 100;
                     clone_L_rb.AddTorque(Vector3.up * 120.0f);
+                }
+                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Green)
+                {
+
+                }
+                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Black)
+                {
+                    Collider col = _currentMakura.GetComponent<Collider>();
+                    col.isTrigger = true;
+                    rb.useGravity = false;
+                    forwardForce = 500.0f;
+                    throwDistance = 1.3f;
+                    throwHeight = 1.0f;
                 }
 
                 if (_makuraController.CurrentScaleType == MakuraController.ScaleType.Second || _makuraController.CurrentScaleType == MakuraController.ScaleType.First)

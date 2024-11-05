@@ -42,6 +42,14 @@ public class ColorChanger : MonoBehaviour
             {
                 _renderer.material.color = Color.blue;
             }
+            else if (type == ColorType.Black)
+            {
+                _renderer.material.color = Color.black;
+                // _renderer.material.color.a = 0.5f;これできない！！
+                // Color color = _renderer.material.color;
+                // color.a = 0f;//透明度
+                // _renderer.material.color = color;
+            }
         }
     }
     public enum ColorType
@@ -50,5 +58,6 @@ public class ColorChanger : MonoBehaviour
         Red,
         Blue,
         Green,
+        Black
     }
 }
