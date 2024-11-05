@@ -7,16 +7,17 @@ public class MakuraController : ColorChanger
 {
     [SerializeField] private LayerMask _groundLayer;
     private Rigidbody _rb;
-    private ScaleType _currentScaleType = ScaleType.Nomal;
-    private bool _isThrow = false;
-    private bool _hitCoolTime = false;
+    private ScaleType _currentScaleType = ScaleType.Nomal;//今の大きさ
+    private bool _isThrow = false;//投げられているかどうか
+    private bool _hitCoolTime = false;//当たった時のクールタイム
     // private Renderer _renderer;
     // private ColorType _currentColorType = ColorType.Nomal;
-    private bool _alterEgo = false;
-    private Quaternion _initialRotation;
+    private bool _alterEgo = false;//分身
+    private Quaternion _initialRotation;//最初の向き
+    private GameObject _thrower;//投げたプレイヤー
 
     public bool IsThrow { get => _isThrow; set => _isThrow = value; }
-    public GameObject Thrower { get; set; }
+    public GameObject Thrower { get => _thrower; set => _thrower = value; }
     public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
     // public ColorType CurrentColorType { get => _currentColorType; set => _currentColorType = value; }
     public bool AlterEgo { get => _alterEgo; set => _alterEgo = value; }
@@ -49,7 +50,7 @@ public class MakuraController : ColorChanger
         {
             StartCoroutine(AutoUseGrabity());
         }
-        if (transform.position.y >= 15.0f)
+        if (transform.position.y >= 6.5f)
         {
             _rb.useGravity = true;
         }
@@ -66,6 +67,10 @@ public class MakuraController : ColorChanger
         if (Input.GetKeyDown(KeyCode.B))
         {
             _currentColorType = ColorType.Blue;
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            _currentColorType = ColorType.Black;
         }
         if (Input.GetKeyDown(KeyCode.N))
         {
@@ -92,22 +97,25 @@ public class MakuraController : ColorChanger
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!_rb.useGravity && _rb.velocity != Vector3.zero)
+        if (CurrentColorType != ColorType.Red && !_rb.useGravity && _rb.velocity != Vector3.zero)
         {
+
             _rb.useGravity = true;
             _rb.velocity = Vector3.zero;
         }
-        if ((_groundLayer & (1 << collision.gameObject.layer)) == _groundLayer)
+        if (((_groundLayer & (1 << collision.gameObject.layer)) == _groundLayer) || collision.gameObject.CompareTag("Huton"))
         {
             _isThrow = false;
             _currentScaleType = ScaleType.Nomal;
             transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
             _rb.isKinematic = true;
         }
-        if (collision.gameObject.CompareTag("Player") && _isThrow && !_hitCoolTime)
+        if (collision.gameObject.CompareTag("Player") && _isThrow && !_hitCoolTime && collision.gameObject != _thrower)
         {
             _isThrow = false;
             _currentScaleType = ScaleType.Nomal;
+            _rb.useGravity = true;
+            _rb.velocity = Vector3.zero;
             Debug.Log("敵に当たったぜ");
             StartCoroutine(HitCoolTime());
         }
