@@ -7,6 +7,7 @@ public class MakuraController : ColorChanger
 {
     [SerializeField] private LayerMask _groundLayer;
     private Rigidbody _rb;
+    private Collider _col;
     private ScaleType _currentScaleType = ScaleType.Nomal;//今の大きさ
     private bool _isThrow = false;//投げられているかどうか
     private bool _hitCoolTime = false;//当たった時のクールタイム
@@ -39,6 +40,7 @@ public class MakuraController : ColorChanger
     {
         // base.Start();
         _rb = GetComponent<Rigidbody>();
+        _col = GetComponent<Collider>();
         // _renderer = GetComponent<Renderer>();
         _initialRotation = transform.rotation;
     }
@@ -99,7 +101,6 @@ public class MakuraController : ColorChanger
     {
         if (CurrentColorType != ColorType.Red && !_rb.useGravity && _rb.velocity != Vector3.zero)
         {
-
             _rb.useGravity = true;
             _rb.velocity = Vector3.zero;
         }
@@ -112,6 +113,7 @@ public class MakuraController : ColorChanger
         }
         if (collision.gameObject.CompareTag("Player") && _isThrow && !_hitCoolTime && collision.gameObject != _thrower)
         {
+            _col.isTrigger = false;
             _isThrow = false;
             _currentScaleType = ScaleType.Nomal;
             _rb.useGravity = true;
@@ -119,8 +121,15 @@ public class MakuraController : ColorChanger
             Debug.Log("敵に当たったぜ");
             StartCoroutine(HitCoolTime());
         }
-        if (collision.gameObject.CompareTag("Makura") && _isThrow)
+        if (collision.gameObject.CompareTag("Makura"))
         {
+            _isThrow = false;
+            _currentScaleType = ScaleType.Nomal;
+            transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
+            if (_isThrow)
+            {
+
+            }
             // if (_currentType == ScaleType.Nomal)
             // {
             //     //TODO
@@ -139,6 +148,7 @@ public class MakuraController : ColorChanger
         //     _rb.velocity = reflectDirection.normalized * _rb.velocity.magnitude;
         // }
     }
+
     private IEnumerator HitCoolTime()
     {
         _hitCoolTime = true;
