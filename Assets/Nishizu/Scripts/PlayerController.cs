@@ -47,7 +47,7 @@ namespace Player
         public enum ThrowType
         {
             Nomal,
-            Chage
+            Charge
         }
         void Start()
         {
@@ -152,7 +152,7 @@ namespace Player
                 }
                 else
                 {
-                    ThrowMakura(ThrowType.Chage);
+                    ThrowMakura(ThrowType.Charge);
                 }
             }
             if (Input.GetAxis("L_R_Trigger") > 0.5f)
@@ -173,7 +173,7 @@ namespace Player
                 }
                 else
                 {
-                    ThrowMakura(ThrowType.Chage);
+                    ThrowMakura(ThrowType.Charge);
                 }
             }
 
@@ -309,6 +309,10 @@ namespace Player
                 {
                     _showMakuraController.CurrentColorType = ColorChanger.ColorType.Green;
                 }
+                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Black)
+                {
+                    _showMakuraController.CurrentColorType = ColorChanger.ColorType.Black;
+                }
             }
         }
         private void SpecialAttack()
@@ -398,7 +402,7 @@ namespace Player
                             throwHeight = 1.0f;
                             Debug.Log("通常");
                             break;
-                        case ThrowType.Chage:
+                        case ThrowType.Charge:
                             forwardForce = 300.0f;
                             upwardForce = 700.0f;
                             throwDistance = 0.5f;
@@ -638,6 +642,20 @@ namespace Player
             }
 
             return false;
+        }
+        private Vector3 TargetPosition()
+        {
+            Vector3 playerPosition = transform.position;
+            Collider[] hitColliders = Physics.OverlapSphere(playerPosition, _playerSerchDistance);
+
+            foreach (var collider in hitColliders)
+            {
+                if (collider.CompareTag("Player") && collider.gameObject != gameObject)
+                {
+                    return collider.gameObject.transform.position;
+                }
+            }
+            return Vector3.zero;
         }
         /// <summary>
         /// 接触したオブジェクトの情報をもとに操作
