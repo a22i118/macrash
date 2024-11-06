@@ -6,16 +6,19 @@ public class MeteorManager : MonoBehaviour
 {
     [SerializeField] private Vector3 _center; // ステージの中心位置
     [SerializeField] private float _interval; // 発射の間隔
-    [SerializeField] private float _accumulate; //経過時間
+    private float _accumulate; //経過時間
     private bool _isFall = false;
     private bool _isCoroutineRunning = false; // コルーチン実行中かどうかをチェックするフラグ
-    [SerializeField] private MeteorPool _meteorPool; 
-    [SerializeField] private MeteorMarkerPool _markerPool;
+    private MeteorPool _meteorPool; 
+    private MeteorMarkerPool _markerPool;
 
     void Start()
     {
         _meteorPool = FindObjectOfType<MeteorPool>();
         _markerPool = FindObjectOfType<MeteorMarkerPool>();
+        // 確認用のコード
+        //_isFall = true;
+        //StartCoroutine(FallCoroutine());
     }
 
     //このイベント開始時に呼び出される関数

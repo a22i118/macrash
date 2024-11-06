@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
+// 参考にしたサイト
+// see https://huchat-gamedev.net/explanation-object-pool/
 public class MeteorPool : MonoBehaviour
 {
     [SerializeField] private MakuraMeteor _meteorPrefab;
