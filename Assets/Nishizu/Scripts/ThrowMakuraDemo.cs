@@ -17,7 +17,7 @@ public class ThrowMakuraDemo : MonoBehaviour
     public enum ThrowType
     {
         Nomal,
-        Explosion
+        Charge
     }
 
     // Start is called before the first frame update
@@ -81,22 +81,32 @@ public class ThrowMakuraDemo : MonoBehaviour
             float upwardForce = 0.0f;
             float throwDistance = 0.0f;
             float throwHeight = 0.0f;
-            switch (throwType)
+            if (_makuraController.CurrentColorType == ColorChanger.ColorType.Nomal)
             {
-                case ThrowType.Nomal:
-                    forwardForce = 900.0f;
-                    upwardForce = 200.0f;
-                    throwDistance = 1.3f;
-                    throwHeight = 1.0f;
-                    Debug.Log("通常");
-                    break;
-                case ThrowType.Explosion:
-                    forwardForce = 200.0f;
-                    upwardForce = 700.0f;
-                    throwDistance = 0.5f;
-                    throwHeight = 2.0f;
-                    Debug.Log("くらえ！爆発まくら");
-                    break;
+                switch (throwType)
+                {
+                    case ThrowType.Nomal:
+                        forwardForce = 900.0f;
+                        upwardForce = 200.0f;
+                        throwDistance = 1.3f;
+                        throwHeight = 1.0f;
+                        Debug.Log("通常");
+                        break;
+                    case ThrowType.Charge:
+                        forwardForce = 300.0f;
+                        upwardForce = 700.0f;
+                        throwDistance = 0.5f;
+                        throwHeight = 2.0f;
+                        Debug.Log("くらえ！爆発まくら");
+                        break;
+                }
+            }
+            else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Red)
+            {
+                rb.useGravity = false;
+                forwardForce = 500.0f;
+                throwDistance = 1.3f;
+                throwHeight = 1.0f;
             }
             Vector3 throwPosition = transform.position + throwDirection * throwDistance + Vector3.up * throwHeight;
 
@@ -105,8 +115,9 @@ public class ThrowMakuraDemo : MonoBehaviour
             _makuraController.IsThrow = true;
             _makuraController.Thrower = gameObject;
 
-            rb.AddForce(throwDirection * forwardForce + Vector3.up * upwardForce);
-            rb.AddTorque(Vector3.up * 10000.0f);
+            rb.AddForce(throwDirection * forwardForce * 0.5f + Vector3.up * upwardForce);
+            rb.maxAngularVelocity = 100;
+            rb.AddTorque(Vector3.up * 120.0f);
 
             _currentMakura = null;
         }
