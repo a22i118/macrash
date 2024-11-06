@@ -6,7 +6,7 @@ public class ThrowMakuraDemo : MonoBehaviour
 {
     [SerializeField] private GameObject _makuraPrefab;
 
-    private float _pickUpDistance = 4.0f;
+    private float _pickUpDistance = 3.0f;
     private GameObject _currentMakura;
 
     private Vector3 _targetPosition;
