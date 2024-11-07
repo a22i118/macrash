@@ -12,6 +12,7 @@ public class ThrowMakuraDemo : MonoBehaviour
     private Vector3 _targetPosition;
 
     private MakuraController _makuraController;
+    [SerializeField] private GameObject _alterEgoMakura;
 
 
     public enum ThrowType
@@ -65,6 +66,7 @@ public class ThrowMakuraDemo : MonoBehaviour
             }
             rb.isKinematic = false;
 
+
             Vector3 throwDirection;
             if (_targetPosition != Vector3.zero)
             {
@@ -114,11 +116,72 @@ public class ThrowMakuraDemo : MonoBehaviour
                 forwardForce = 300.0f;
                 throwDistance = 1.3f;
                 throwHeight = 1.0f;
+                if (_alterEgoMakura != null)
+                {
+                    _alterEgoMakura.GetComponent<MakuraController>().CurrentColorType = ColorChanger.ColorType.Blue;
+                }
+                Vector3[] throwAngles = new Vector3[]
+                {
+                        Quaternion.Euler(0, 45, 0) * transform.forward,
+                        Quaternion.Euler(0, -45, 0) * transform.forward
+                };
+                foreach (var angle in throwAngles)
+                {
+                    Vector3 throwPositionBlue = transform.position + angle.normalized * 1.7f + Vector3.up * throwHeight;
 
+                    GameObject clone = Instantiate(_alterEgoMakura, throwPositionBlue, Quaternion.identity);
+
+                    MakuraController cloneMC = clone.GetComponent<MakuraController>();
+                    Rigidbody cloneRb = clone.GetComponent<Rigidbody>();
+
+                    cloneMC.CurrentColorType = ColorChanger.ColorType.Blue;
+                    cloneMC.IsAlterEgo = true;
+                    cloneMC.IsThrow = true;
+                    cloneMC.Thrower = gameObject;
+                    cloneRb.useGravity = false;
+
+                    cloneRb.AddForce(angle.normalized * forwardForce);
+                    cloneRb.maxAngularVelocity = 100;
+                    cloneRb.AddTorque(Vector3.up * 120.0f);
+                }
             }
             else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Green)
             {
+                rb.useGravity = false;
+                forwardForce = 300.0f;
+                throwDistance = 1.3f;
+                throwHeight = 1.0f;
+                if (_alterEgoMakura != null)
+                {
+                    _alterEgoMakura.GetComponent<MakuraController>().CurrentColorType = ColorChanger.ColorType.Blue;
+                }
+                Vector3 upDirection = transform.up;
 
+                Vector3[] throwAngles = new Vector3[]
+                {
+                        Quaternion.AngleAxis(60, transform.right) * upDirection,
+                        Quaternion.AngleAxis(75, transform.right) * upDirection
+                };
+
+                foreach (var angle in throwAngles)
+                {
+                    Vector3 throwPositionGreen = transform.position + angle.normalized * throwDistance + Vector3.up * throwHeight;
+
+                    GameObject clone = Instantiate(_alterEgoMakura, throwPositionGreen, Quaternion.identity);
+
+                    MakuraController cloneMC = clone.GetComponent<MakuraController>();
+                    Rigidbody cloneRb = clone.GetComponent<Rigidbody>();
+
+                    cloneMC.CurrentColorType = ColorChanger.ColorType.Green;
+                    cloneMC.IsAlterEgo = true;
+                    cloneMC.IsThrow = true;
+                    cloneMC.Thrower = gameObject;
+                    cloneRb.useGravity = false;
+
+                    cloneRb.AddForce(angle.normalized * forwardForce);
+                    cloneRb.maxAngularVelocity = 100;
+                    cloneRb.AddTorque(Vector3.up * 120.0f);
+                }
             }
             else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Black)
             {

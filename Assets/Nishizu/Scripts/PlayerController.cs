@@ -12,6 +12,8 @@ namespace Player
         [SerializeField] private LayerMask _hutonLayer;
         [SerializeField] private LayerMask _wallLayer;
         [SerializeField] private GameObject _showMakura;
+        [SerializeField] private GameObject _alterEgoMakura;
+
         private GameObject _currentMakuraDisplay;
         private Rigidbody _rb;
         private Animator _animator;
@@ -42,8 +44,12 @@ namespace Player
         private float _rotationSpeed = 200.0f;//持っているまくらの回転速度
         private float _showRadius = 0.6f;//プレイヤーからのまくらの距離
         private float _rotationAngle;
-        [SerializeField] private GameObject _blueMakura;
         ShowMakuraController _showMakuraController;
+        private float vibrationStrength = 0.1f;  // 振動の強さ
+        private float vibrationDuration = 0.5f;
+        private bool isVibrating = false;
+        private bool _isHitCoolTime = false;
+
         public enum ThrowType
         {
             Nomal,
@@ -414,49 +420,10 @@ namespace Player
                     forwardForce = 300.0f;
                     throwDistance = 1.3f;
                     throwHeight = 1.0f;
-                    if (_blueMakura != null)
+                    if (_alterEgoMakura != null)
                     {
-                        _blueMakura.GetComponent<MakuraController>().CurrentColorType = ColorChanger.ColorType.Blue;
+                        _alterEgoMakura.GetComponent<MakuraController>().CurrentColorType = ColorChanger.ColorType.Blue;
                     }
-
-                    // Vector3 cloneDirection_R = Quaternion.Euler(0, 45, 0) * transform.forward;
-                    // Vector3 cloneDirection_L = Quaternion.Euler(0, -45, 0) * transform.forward;
-
-                    // Vector3 throwPosition_R = transform.position + cloneDirection_R.normalized * 1.7f + Vector3.up * throwHeight;
-                    // Vector3 throwPosition_L = transform.position + cloneDirection_L.normalized * 1.7f + Vector3.up * throwHeight;
-
-                    // GameObject clone_R = Instantiate(_blueMakura, throwPosition_R, Quaternion.identity);
-                    // GameObject clone_L = Instantiate(_blueMakura, throwPosition_L, Quaternion.identity);
-
-                    // MakuraController cloneMC_R = clone_R.GetComponent<MakuraController>();
-                    // MakuraController cloneMC_L = clone_L.GetComponent<MakuraController>();
-
-                    // cloneMC_R.CurrentColorType = ColorChanger.ColorType.Blue;
-                    // cloneMC_L.CurrentColorType = ColorChanger.ColorType.Blue;
-
-                    // Rigidbody clone_R_rb = clone_R.GetComponent<Rigidbody>();
-                    // Rigidbody clone_L_rb = clone_L.GetComponent<Rigidbody>();
-
-                    // cloneMC_R.IsAlterEgo = true;
-                    // cloneMC_L.IsAlterEgo = true;
-
-                    // cloneMC_R.IsThrow = true;
-                    // cloneMC_L.IsThrow = true;
-
-                    // cloneMC_R.Thrower = gameObject;
-                    // cloneMC_L.Thrower = gameObject;
-
-                    // clone_R_rb.useGravity = false;
-                    // clone_L_rb.useGravity = false;
-
-                    // clone_R_rb.AddForce(cloneDirection_R.normalized * forwardForce);
-                    // clone_L_rb.AddForce(cloneDirection_L.normalized * forwardForce);
-
-                    // clone_R_rb.maxAngularVelocity = 100;
-                    // clone_R_rb.AddTorque(Vector3.up * 120.0f);
-
-                    // clone_L_rb.maxAngularVelocity = 100;
-                    // clone_L_rb.AddTorque(Vector3.up * 120.0f);
                     Vector3[] throwAngles = new Vector3[]
                     {
                         Quaternion.Euler(0, 45, 0) * transform.forward,
@@ -466,7 +433,7 @@ namespace Player
                     {
                         Vector3 throwPositionBlue = transform.position + angle.normalized * 1.7f + Vector3.up * throwHeight;
 
-                        GameObject clone = Instantiate(_blueMakura, throwPositionBlue, Quaternion.identity);
+                        GameObject clone = Instantiate(_alterEgoMakura, throwPositionBlue, Quaternion.identity);
 
                         MakuraController cloneMC = clone.GetComponent<MakuraController>();
                         Rigidbody cloneRb = clone.GetComponent<Rigidbody>();
@@ -488,9 +455,9 @@ namespace Player
                     forwardForce = 300.0f;
                     throwDistance = 1.3f;
                     throwHeight = 1.0f;
-                    if (_blueMakura != null)
+                    if (_alterEgoMakura != null)
                     {
-                        _blueMakura.GetComponent<MakuraController>().CurrentColorType = ColorChanger.ColorType.Blue;
+                        _alterEgoMakura.GetComponent<MakuraController>().CurrentColorType = ColorChanger.ColorType.Blue;
                     }
                     Vector3 upDirection = transform.up;
 
@@ -504,7 +471,7 @@ namespace Player
                     {
                         Vector3 throwPositionGreen = transform.position + angle.normalized * throwDistance + Vector3.up * throwHeight;
 
-                        GameObject clone = Instantiate(_blueMakura, throwPositionGreen, Quaternion.identity);
+                        GameObject clone = Instantiate(_alterEgoMakura, throwPositionGreen, Quaternion.identity);
 
                         MakuraController cloneMC = clone.GetComponent<MakuraController>();
                         Rigidbody cloneRb = clone.GetComponent<Rigidbody>();
@@ -572,7 +539,7 @@ namespace Player
                 _isInvincibilityTime = true;
                 _playerStatus.CurrentSP += 5000;
                 StartCoroutine(JustChachMakuraInvincibilityTime());
-                Debug.Log("枕をキャッチした！");
+                // Debug.Log("枕をキャッチした！");
             }
         }
         /// <summary>
@@ -587,11 +554,11 @@ namespace Player
         private void OnTriggerEnter(Collider collider)
         {
             MakuraController makuraController = collider.GetComponent<MakuraController>();
-            if (collider.CompareTag("Makura") && makuraController.IsThrow && makuraController.Thrower != gameObject && makuraController.CurrentScaleType == MakuraController.ScaleType.Nomal)
+            if (collider.CompareTag("Makura") && makuraController.IsThrow && makuraController.Thrower != gameObject && makuraController.CurrentScaleType == MakuraController.ScaleType.Nomal && !makuraController.IsAlterEgo)
             {
                 _isCanCatch = true;
                 _thrownMakura = collider.gameObject;
-                Debug.Log("情報を記憶");
+                // Debug.Log("情報を記憶");
             }
         }
 
@@ -718,22 +685,52 @@ namespace Player
             {
                 Debug.Log("布団に入ったぜ");
                 _currentHuton = collision.gameObject.GetComponent<HutonController>();
-                Debug.Log("現在の布団はこれだ：" + _currentHuton);
             }
             MakuraController makuraController = collision.gameObject.GetComponent<MakuraController>();
-            if (collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject && makuraController.IsThrow && !_isInvincibilityTime)
+            if (collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject && makuraController.IsThrow && !_isInvincibilityTime && !_isHitCoolTime)
             {
                 _isCanCatch = false;
+                _isHitCoolTime = true;
                 _animator.SetBool("Walk", false);
                 Debug.Log("う、動けない！");
                 HitMotion();
+                if (!isVibrating)
+                {
+                    StartCoroutine(Vibrate());
+                }
             }
+        }
+        private IEnumerator Vibrate()
+        {
+            isVibrating = true;
+            Vector3 originalPosition = transform.position;
+
+            float elapsedTime = 0f;
+            while (elapsedTime < vibrationDuration)
+            {
+                Vector3 randomOffset = new Vector3(
+                    UnityEngine.Random.Range(-vibrationStrength, vibrationStrength),
+                    0,
+                    UnityEngine.Random.Range(-vibrationStrength, vibrationStrength)
+                );
+
+                transform.position = originalPosition + randomOffset;
+
+                elapsedTime += 0.05f;
+                yield return new WaitForSeconds(0.05f);
+            }
+
+            transform.position = originalPosition;
+
+            isVibrating = false;
+            _isHitCoolTime = false;
         }
         /// <summary>
         /// 枕が当たったときのモーション
         /// </summary>
         private void HitMotion()
         {
+
             _rb.velocity = Vector3.zero;
             _isHitStop = true;
             _playerStatus.SpUp();
