@@ -18,7 +18,7 @@ GameObject:
   m_TagString: Huton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &7730095850230992830
 Transform:
@@ -130,9 +130,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7730095850230992830}
     m_Modifications:
+    - target: {fileID: 4061676463183146912, guid: 042e5ccf1a29d3e40b3a0addd919ed8f, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4061676463183146912, guid: 042e5ccf1a29d3e40b3a0addd919ed8f, type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
     - target: {fileID: 7415008335774441174, guid: 042e5ccf1a29d3e40b3a0addd919ed8f, type: 3}
       propertyPath: m_Name
       value: KakeHuton
+      objectReference: {fileID: 0}
+    - target: {fileID: 7415008335774441174, guid: 042e5ccf1a29d3e40b3a0addd919ed8f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7458189811892719180, guid: 042e5ccf1a29d3e40b3a0addd919ed8f, type: 3}
       propertyPath: m_LocalPosition.x
