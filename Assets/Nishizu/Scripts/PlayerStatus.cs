@@ -13,10 +13,10 @@ namespace Player
         private Color _maxColor = Color.red;
         private const int _maxSP = 100000;
         private int _currentSP = 0;
-        private bool _chargeMax = false;
+        private bool _IsChargeMax = false;
 
         public int CurrentSP { get => _currentSP; set => _currentSP = value; }
-        public bool ChargeMax { get => _chargeMax; set => _chargeMax = value; }
+        public bool IsChargeMax { get => _IsChargeMax; set => _IsChargeMax = value; }
 
         private void Start()
         {
@@ -32,7 +32,7 @@ namespace Player
         {
             if (_currentSP < _maxSP)
             {
-                _chargeMax = false;
+                _IsChargeMax = false;
                 _currentSP += 20;
                 _currentSP = Mathf.Min(_currentSP, _maxSP);
                 _spBar.value = _currentSP;
@@ -41,7 +41,7 @@ namespace Player
             }
             else
             {
-                _chargeMax = true;
+                _IsChargeMax = true;
             }
         }
 

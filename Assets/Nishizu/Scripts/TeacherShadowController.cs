@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class TeacherShadowController : MonoBehaviour
 {
-    private bool _canRotated = false;
+    private bool _isCanRotated = false;
     private bool _isMove = false;
-    private bool _executeOnce = false;//一回だけ実行する
-    private bool _rotationDirection = true;
-    private bool _duringEvent = false;
+    private bool _isExecuteOnce = false;//一回だけ実行する
+    private bool _isRotationDirection = true;
+    private bool _isDuringEvent = false;
     private float _time;
     private float _targetAngle = 360.0f - 108.0f;//-108だとMathf.Approximatelyが動かない！！
     private float _startAngle = 360.0f - 180.0f;
@@ -38,17 +38,17 @@ public class TeacherShadowController : MonoBehaviour
         {
             Init();
         }
-        if (Mathf.Approximately(transform.eulerAngles.z, _startAngle) && !_rotationDirection)
+        if (Mathf.Approximately(transform.eulerAngles.z, _startAngle) && !_isRotationDirection)
         {
             transform.position = _startPosition;
-            _canRotated = false;
-            _duringEvent = false;
+            _isCanRotated = false;
+            _isDuringEvent = false;
         }
         if (Mathf.Approximately(transform.eulerAngles.z, _targetAngle))
         {
-            if (!_executeOnce)//一回だけ実行
+            if (!_isExecuteOnce)//一回だけ実行
             {
-                _executeOnce = true;
+                _isExecuteOnce = true;
                 _isMove = true;
                 StartCoroutine(MovePauseCoroutine(_SecondsToDoor));//ドアの前で止め、先生イベントを呼び出す
                 StartCoroutine(FadeUpdateCoroutine());//透明にして元に戻す
@@ -59,21 +59,21 @@ public class TeacherShadowController : MonoBehaviour
             Move();
             MoveUpDown();
         }
-        if (_canRotated)
+        if (_isCanRotated)
         {
-            Rotate(_rotationDirection);
+            Rotate(_isRotationDirection);
         }
     }
     public void Init()
     {
-        if (!_duringEvent)
+        if (!_isDuringEvent)
         {
-            _duringEvent = true;
+            _isDuringEvent = true;
             _time = 0.0f;
-            _canRotated = true;
-            _executeOnce = false;
+            _isCanRotated = true;
+            _isExecuteOnce = false;
             _isMove = false;
-            _rotationDirection = true;
+            _isRotationDirection = true;
             transform.position = _startPosition;
         }
     }
@@ -130,7 +130,7 @@ public class TeacherShadowController : MonoBehaviour
         _isMove = true;
         yield return new WaitForSeconds(6.0f);
         _isMove = false;
-        _rotationDirection = false;
+        _isRotationDirection = false;
     }
     private IEnumerator FadeOutCoroutine()
     {

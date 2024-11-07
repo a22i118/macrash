@@ -10,44 +10,33 @@ public class MakuraController : ColorChanger
     private Collider _col;
     private ScaleType _currentScaleType = ScaleType.Nomal;//今の大きさ
     private bool _isThrow = false;//投げられているかどうか
-    private bool _hitCoolTime = false;//当たった時のクールタイム
-    // private Renderer _renderer;
-    // private ColorType _currentColorType = ColorType.Nomal;
-    private bool _alterEgo = false;//分身
+    private bool _isHitCoolTime = false;//当たった時のクールタイム
+    private bool _isAlterEgo = false;//分身
+    private bool _isTouching = false;//何かと接触しているか
     private Quaternion _initialRotation;//最初の向き
     private GameObject _thrower;//投げたプレイヤー
     private Vector3 _targetPosition;
     public bool IsThrow { get => _isThrow; set => _isThrow = value; }
     public GameObject Thrower { get => _thrower; set => _thrower = value; }
     public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
-    // public ColorType CurrentColorType { get => _currentColorType; set => _currentColorType = value; }
-    public bool AlterEgo { get => _alterEgo; set => _alterEgo = value; }
+    public bool IsAlterEgo { get => _isAlterEgo; set => _isAlterEgo = value; }
     public enum ScaleType
     {
         Nomal,
         First,
         Second
     }
-    // public enum ColorType
-    // {
-    //     Nomal,
-    //     Red,//等速直線
-    //     Blue,//分身
-    //     Green,//
-    // }
-
     void Start()
     {
-        // base.Start();
         _rb = GetComponent<Rigidbody>();
         _col = GetComponent<Collider>();
-        // _renderer = GetComponent<Renderer>();
         _initialRotation = transform.rotation;
     }
     void Update()
     {
         ScaleChange(_currentScaleType);
         ColorChange(_currentColorType);
+        BlackMakuraPositionUpdate();
         if (_isThrow)
         {
             StartCoroutine(AutoUseGrabity());
@@ -59,6 +48,10 @@ public class MakuraController : ColorChanger
         if (_currentColorType == ColorType.Black && _isThrow)
         {
             StartCoroutine(BlackMakuraPlayerSerch());
+            if (_rb.useGravity && !_isTouching)
+            {
+                _col.isTrigger = false;
+            }
         }
 
         //デバッグ用
@@ -103,7 +96,8 @@ public class MakuraController : ColorChanger
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (CurrentColorType != ColorType.Red && !_rb.useGravity && _rb.velocity != Vector3.zero)
+        _isTouching = true;
+        if (CurrentColorType != ColorType.Red && !_rb.useGravity && _rb.velocity != Vector3.zero && collision.gameObject != _thrower)
         {
             _rb.useGravity = true;
             _rb.velocity = Vector3.zero;
@@ -115,7 +109,7 @@ public class MakuraController : ColorChanger
             transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
             _rb.isKinematic = true;
         }
-        if (collision.gameObject.CompareTag("Player") && _isThrow && !_hitCoolTime && collision.gameObject != _thrower)
+        if (collision.gameObject.CompareTag("Player") && _isThrow && !_isHitCoolTime && collision.gameObject != _thrower)
         {
 
             _isThrow = false;
@@ -136,23 +130,11 @@ public class MakuraController : ColorChanger
             {
 
             }
-            // if (_currentType == ScaleType.Nomal)
-            // {
-            //     //TODO
-            // }
         }
-        if (_alterEgo)
+        if (_isAlterEgo)
         {
             Destroy(gameObject);
         }
-        // if (collision.gameObject.CompareTag("Wall") && _isThrow && _currentColorType == ColorType.Red)
-        // {
-        //     Vector3 normal = collision.contacts[0].normal;
-
-        //     Vector3 reflectDirection = Vector3.Reflect(_rb.velocity, normal);
-
-        //     _rb.velocity = reflectDirection.normalized * _rb.velocity.magnitude;
-        // }
     }
     private Vector3 TargetPosition()
     {
@@ -170,7 +152,8 @@ public class MakuraController : ColorChanger
     }
     private void OnTriggerEnter(Collider collider)
     {
-        if (_col.isTrigger && _isThrow && !_hitCoolTime && collider.gameObject != _thrower)
+        _isTouching = true;
+        if (_col.isTrigger && _isThrow && !_isHitCoolTime && collider.gameObject != _thrower)
         {
             if (collider.gameObject.CompareTag("Player"))
             {
@@ -190,14 +173,59 @@ public class MakuraController : ColorChanger
                 }
             }
         }
+    }
+    private void OnTriggerExit()
+    {
+        _isTouching = false;
+    }
+    private void BlackMakuraPositionUpdate()
+    {
+        float xMin = -9f;
+        float xMax = 9f;
+        float yMin = 0f;
+        float yMax = 6f;
+        float zMin = -4f;
+        float zMax = 8f;
+        if (CurrentColorType == ColorType.Black && _isThrow)
+        {
+            Vector3 position = transform.position;
 
+            if (position.x > xMax)
+            {
+                position.x = xMin;
+            }
+            else if (position.x < xMin)
+            {
+                position.x = xMax;
+            }
+
+            if (position.y > yMax)
+            {
+                position.y = yMin;
+            }
+            else if (position.y < yMin)
+            {
+                position.y = yMax;
+            }
+
+            if (position.z > zMax)
+            {
+                position.z = zMin;
+            }
+            else if (position.z < zMin)
+            {
+                position.z = zMax;
+            }
+
+            transform.position = position;
+        }
     }
     private IEnumerator HitCoolTime()
     {
-        _hitCoolTime = true;
+        _isHitCoolTime = true;
 
         yield return new WaitForSeconds(1.0f);
-        _hitCoolTime = false;
+        _isHitCoolTime = false;
     }
     private IEnumerator ScaleChangeCoolTime()
     {
@@ -206,7 +234,7 @@ public class MakuraController : ColorChanger
     }
     private IEnumerator AutoUseGrabity()
     {
-        yield return new WaitForSeconds(10.0f);
+        yield return new WaitForSeconds(11.0f);
         _rb.useGravity = true;
     }
     private IEnumerator BlackMakuraPlayerSerch()

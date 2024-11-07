@@ -108,6 +108,28 @@ public class ThrowMakuraDemo : MonoBehaviour
                 throwDistance = 1.3f;
                 throwHeight = 1.0f;
             }
+            else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Blue)
+            {
+                rb.useGravity = false;
+                forwardForce = 300.0f;
+                throwDistance = 1.3f;
+                throwHeight = 1.0f;
+
+            }
+            else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Green)
+            {
+
+            }
+            else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Black)
+            {
+                Collider col = _currentMakura.GetComponent<Collider>();
+                col.isTrigger = true;
+                rb.useGravity = false;
+                forwardForce = 500.0f;
+                throwDistance = 1.3f;
+                throwHeight = 1.0f;
+            }
+
             Vector3 throwPosition = transform.position + throwDirection * throwDistance + Vector3.up * throwHeight;
 
             _currentMakura.transform.position = throwPosition;
