@@ -2301,6 +2301,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Huton
       objectReference: {fileID: 0}
+    - target: {fileID: 1431385376716321406, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3274231493593712271, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3274231493593712271, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+      propertyPath: m_Constraints
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.16666667
@@ -2351,6 +2363,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343753666228991993, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+      propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8942691157498905968, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
@@ -3393,6 +3409,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Huton (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 1431385376716321406, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.16666667
@@ -3443,6 +3463,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343753666228991993, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+      propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8942691157498905968, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
@@ -4995,6 +5019,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Huton (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 1431385376716321406, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.16666667
@@ -5045,6 +5073,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343753666228991993, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+      propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8942691157498905968, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
@@ -6209,6 +6241,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Huton (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1431385376716321406, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.16666667
@@ -6259,6 +6295,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343753666228991993, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+      propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8942691157498905968, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
