@@ -96,45 +96,56 @@ public class MakuraController : ColorChanger
 
     private void OnCollisionEnter(Collision collision)
     {
+
         _isTouching = true;
-        if (CurrentColorType != ColorType.Red && !_rb.useGravity && _rb.velocity != Vector3.zero && collision.gameObject != _thrower)
+        if (!_rb.isKinematic)
         {
-            _rb.useGravity = true;
-            _rb.velocity = Vector3.zero;
+            if (CurrentColorType != ColorType.Red && !_rb.useGravity && _rb.velocity != Vector3.zero && collision.gameObject != _thrower)
+            {
+                _rb.useGravity = true;
+                _rb.velocity = Vector3.zero;
+            }
+
+            if (collision.gameObject.CompareTag("Player") && _isThrow && !_isHitCoolTime && collision.gameObject != _thrower)
+            {
+
+                _currentScaleType = ScaleType.Nomal;
+                _rb.useGravity = true;
+                _rb.velocity = Vector3.zero;
+                Debug.Log("敵に当たったぜ");
+                // StartCoroutine(HitCoolTime());
+            }
+            if (collision.gameObject.CompareTag("Makura"))
+            {
+                _isThrow = false;
+                _currentScaleType = ScaleType.Nomal;
+                _rb.useGravity = true;
+                _rb.velocity = Vector3.zero;
+                transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
+                if (_isThrow)
+                {
+
+                }
+            }
         }
+
         if (((_groundLayer & (1 << collision.gameObject.layer)) == _groundLayer) || collision.gameObject.CompareTag("Huton"))
         {
             _isThrow = false;
             _currentScaleType = ScaleType.Nomal;
             transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
-            _rb.isKinematic = true;
-        }
-        if (collision.gameObject.CompareTag("Player") && _isThrow && !_isHitCoolTime && collision.gameObject != _thrower)
-        {
-
-            _isThrow = false;
-            _currentScaleType = ScaleType.Nomal;
-            _rb.useGravity = true;
-            _rb.velocity = Vector3.zero;
-            Debug.Log("敵に当たったぜ");
-            StartCoroutine(HitCoolTime());
-        }
-        if (collision.gameObject.CompareTag("Makura"))
-        {
-            _isThrow = false;
-            _currentScaleType = ScaleType.Nomal;
-            _rb.useGravity = true;
-            _rb.velocity = Vector3.zero;
-            transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
-            if (_isThrow)
+            if (!_rb.isKinematic)
             {
-
+                _rb.velocity = Vector3.zero;
             }
+            _rb.isKinematic = true;
         }
         if (_isAlterEgo)
         {
             Destroy(gameObject);
         }
+
+
     }
     private Vector3 TargetPosition()
     {

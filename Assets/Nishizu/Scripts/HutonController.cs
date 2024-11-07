@@ -10,7 +10,6 @@ public class HutonController : MonoBehaviour
 
     public Vector3 GetCenterPosition()
     {
-        Collider collider = GetComponent<Collider>();
         return GetComponent<Collider>().bounds.center;
     }
     public Quaternion GetRotation()
