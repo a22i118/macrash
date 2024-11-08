@@ -15,21 +15,24 @@ public class MakuraMeteor : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody>();
         Col = GetComponent<MeshCollider>();
-        _rb.constraints = RigidbodyConstraints.FreezeRotation; 
+        _rb.maxAngularVelocity = 10;
+        // _rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
 
     void Update()
-    { 
+    {
         //消えなかったときに時間経過でプールに返す
         _accumulate += Time.deltaTime;
 
-        if (_accumulate >= 5)   
+        if (_accumulate >= 5)
         {
             _onDisable?.Invoke();
             gameObject.SetActive(false);
 
-        }    
-        
+        }
+
+
+        _rb.AddTorque(Vector3.up * 100);
     }
     //オブジェクトの初期化
     public void Initialize(Action onDisable)
@@ -47,7 +50,7 @@ public class MakuraMeteor : MonoBehaviour
             _onDisable?.Invoke();
             gameObject.SetActive(false);
         }
-        
+
     }
     private void OnDisable()
     {

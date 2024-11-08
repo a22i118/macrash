@@ -20,7 +20,7 @@ namespace Player
         private CapsuleCollider _col;
         private float _speed = 5.0f;//プレイヤーの移動速度
         private float _jumpForce = 40.0f;//ジャンプの強さ
-        private float _groundCheckRadius = 0.15f;//足元が地面か判定する球の半径
+        private float _groundCheckRadius = 0.01f;//足元が地面か判定する球の半径
         private float _pickUpDistance = 1.0f;//まくらを拾うことができる距離
         private float _playerSerchDistance = 5.0f;//敵プレイヤーの捜索範囲
         private GameObject _currentMakura;//手持ちのまくら
@@ -45,10 +45,11 @@ namespace Player
         private float _showRadius = 0.6f;//プレイヤーからのまくらの距離
         private float _rotationAngle;
         ShowMakuraController _showMakuraController;
-        private float vibrationStrength = 0.1f;  // 振動の強さ
-        private float vibrationDuration = 0.5f;
-        private bool isVibrating = false;
+        private float _vibrationStrength = 0.1f;//振動の強さ
+        private float _vibrationTime = 0.3f;//振動する時間
+        private bool _isVibrating = false;
         private bool _isHitCoolTime = false;
+        private bool _isCounterAttackTime = false;
 
         public enum ThrowType
         {
@@ -369,6 +370,7 @@ namespace Player
                 {
                     rb.velocity = Vector3.zero;
                 }
+                rb.isKinematic = true;
                 rb.isKinematic = false;
 
                 Vector3 throwDirection;
@@ -410,14 +412,14 @@ namespace Player
                 else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Red)
                 {
                     rb.useGravity = false;
-                    forwardForce = 500.0f;
+                    forwardForce = _isCounterAttackTime ? 1000.0f : 500.0f;
                     throwDistance = 1.3f;
                     throwHeight = 1.0f;
                 }
                 else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Blue)
                 {
                     rb.useGravity = false;
-                    forwardForce = 300.0f;
+                    forwardForce = _isCounterAttackTime ? 600.0f : 300.0f;
                     throwDistance = 1.3f;
                     throwHeight = 1.0f;
                     if (_alterEgoMakura != null)
@@ -452,7 +454,7 @@ namespace Player
                 else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Green)
                 {
                     rb.useGravity = false;
-                    forwardForce = 300.0f;
+                    forwardForce = _isCounterAttackTime ? 600.0f : 300.0f;
                     throwDistance = 1.3f;
                     throwHeight = 1.0f;
                     if (_alterEgoMakura != null)
@@ -538,6 +540,7 @@ namespace Player
                 _isCanCatch = false;
                 _isInvincibilityTime = true;
                 _playerStatus.CurrentSP += 5000;
+                StartCoroutine(CounterAttackCoroutine());
                 StartCoroutine(JustChachMakuraInvincibilityTime());
                 // Debug.Log("枕をキャッチした！");
             }
@@ -687,6 +690,7 @@ namespace Player
                 _currentHuton = collision.gameObject.GetComponent<HutonController>();
             }
             MakuraController makuraController = collision.gameObject.GetComponent<MakuraController>();
+
             if (collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject && makuraController.IsThrow && !_isInvincibilityTime && !_isHitCoolTime)
             {
                 _isCanCatch = false;
@@ -694,35 +698,35 @@ namespace Player
                 _animator.SetBool("Walk", false);
                 Debug.Log("う、動けない！");
                 HitMotion();
-                if (!isVibrating)
+                if (!_isVibrating)
                 {
-                    StartCoroutine(Vibrate());
+                    StartCoroutine(HitStopVibration());
                 }
             }
         }
-        private IEnumerator Vibrate()
+        private IEnumerator HitStopVibration()
         {
-            isVibrating = true;
-            Vector3 originalPosition = transform.position;
+            _isVibrating = true;
+            Vector3 hitPosition = transform.position;
 
-            float elapsedTime = 0f;
-            while (elapsedTime < vibrationDuration)
+            float elapsedTime = 0.0f;
+            while (elapsedTime < _vibrationTime)
             {
                 Vector3 randomOffset = new Vector3(
-                    UnityEngine.Random.Range(-vibrationStrength, vibrationStrength),
+                    UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength),
                     0,
-                    UnityEngine.Random.Range(-vibrationStrength, vibrationStrength)
+                    UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength)
                 );
 
-                transform.position = originalPosition + randomOffset;
+                transform.position = hitPosition + randomOffset;
 
                 elapsedTime += 0.05f;
                 yield return new WaitForSeconds(0.05f);
             }
 
-            transform.position = originalPosition;
+            transform.position = hitPosition;
 
-            isVibrating = false;
+            _isVibrating = false;
             _isHitCoolTime = false;
         }
         /// <summary>
@@ -739,13 +743,20 @@ namespace Player
             Debug.Log("動けるぜ");
         }
         /// <summary>
-        /// 枕を当てられると2秒制止する
+        /// 枕を当てられると1秒制止する
         /// </summary>
         /// <returns>2秒後に解除</returns>
         private IEnumerator HitStopCoroutine()
         {
-            yield return new WaitForSeconds(2.0f);
+            yield return new WaitForSeconds(1.0f);
             _isHitStop = false;
+        }
+
+        private IEnumerator CounterAttackCoroutine()
+        {
+            _isCounterAttackTime = true;
+            yield return new WaitForSeconds(1.0f);
+            _isCounterAttackTime = false;
         }
 
         // private void OnCollisionExit(Collision collision)

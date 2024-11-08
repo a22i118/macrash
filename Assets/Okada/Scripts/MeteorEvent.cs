@@ -8,7 +8,7 @@ public class MeteorEvent : MonoBehaviour
     [SerializeField] private float _interval; // 発射の間隔
     private float _accumulate; //経過時間
     private bool _isFall = false;
-    private MeteorPool _meteorPool; 
+    private MeteorPool _meteorPool;
     private MeteorMarkerPool _markerPool;
 
     void Start()
@@ -16,8 +16,8 @@ public class MeteorEvent : MonoBehaviour
         _meteorPool = FindObjectOfType<MeteorPool>();
         _markerPool = FindObjectOfType<MeteorMarkerPool>();
         // 確認用のコード
-        //_isFall = true;
-        //StartCoroutine(FallCoroutine());
+        _isFall = true;
+        StartCoroutine(FallCoroutine());
     }
 
     //このイベント開始時に呼び出される関数
@@ -32,7 +32,7 @@ public class MeteorEvent : MonoBehaviour
 
     private IEnumerator FallCoroutine()
     {
-        while (_isFall)  
+        while (_isFall)
         {
             _accumulate += Time.deltaTime;
             if (_accumulate >= _interval)
@@ -56,8 +56,8 @@ public class MeteorEvent : MonoBehaviour
         }
     }
 
-    
 
-    
+
+
 
 }

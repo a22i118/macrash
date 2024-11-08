@@ -16,6 +16,9 @@ public class MakuraController : ColorChanger
     private Quaternion _initialRotation;//最初の向き
     private GameObject _thrower;//投げたプレイヤー
     private Vector3 _targetPosition;
+    private float _vibrationStrength = 0.05f;//振動の強さ
+    private float _vibrationTime = 0.2f;//振動する時間
+    private bool _isVibrating = false;
     public bool IsThrow { get => _isThrow; set => _isThrow = value; }
     public GameObject Thrower { get => _thrower; set => _thrower = value; }
     public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
@@ -111,7 +114,9 @@ public class MakuraController : ColorChanger
 
                 _currentScaleType = ScaleType.Nomal;
                 _rb.useGravity = true;
-                _rb.velocity = Vector3.zero;
+                _rb.isKinematic = true;
+                _rb.isKinematic = false;
+                StartCoroutine(HitStopVibration());
                 Debug.Log("敵に当たったぜ");
                 // StartCoroutine(HitCoolTime());
             }
@@ -166,13 +171,12 @@ public class MakuraController : ColorChanger
         _isTouching = true;
         if (_col.isTrigger && _isThrow && !_isHitCoolTime && collider.gameObject != _thrower)
         {
-            if (collider.gameObject.CompareTag("Player"))
+            if (collider.gameObject.CompareTag("Player") && collider is CapsuleCollider)
             {
-                _col.isTrigger = false;
-                _isThrow = false;
-                _currentScaleType = ScaleType.Nomal;
-                _rb.useGravity = true;
-                _rb.velocity = Vector3.zero;
+                StartCoroutine(BlackMakuraHit());
+
+                // _rb.velocity = Vector3.zero;
+
             }
             if (collider.gameObject.CompareTag("Makura"))
             {
@@ -252,5 +256,43 @@ public class MakuraController : ColorChanger
     {
         yield return new WaitForSeconds(2.0f);
         _targetPosition = TargetPosition();
+    }
+    public IEnumerator HitStopVibration()
+    {
+        _isVibrating = true;
+        Vector3 hitPosition = transform.position;
+
+        float elapsedTime = 0.0f;
+        while (elapsedTime < _vibrationTime)
+        {
+            Vector3 randomOffset = new Vector3(
+                UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength),
+                0,
+                UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength)
+            );
+
+            transform.position = hitPosition + randomOffset;
+
+            elapsedTime += 0.05f;
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        transform.position = hitPosition;
+
+        _isVibrating = false;
+        _isHitCoolTime = false;
+        _isThrow = false;
+    }
+    private IEnumerator BlackMakuraHit()
+    {
+        yield return new WaitForSeconds(0.01f);
+        _col.isTrigger = false;
+
+        _currentScaleType = ScaleType.Nomal;
+        _rb.useGravity = true;
+        _rb.isKinematic = true;
+        _rb.isKinematic = false;
+        StartCoroutine(HitStopVibration());
+
     }
 }

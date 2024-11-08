@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
-public class TatamiEvent: MonoBehaviour
+public class TatamiEvent : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _tatami = new List<GameObject>();
     private Vector3[] _startPosition = new Vector3[4]; // 初期位置
@@ -13,17 +13,17 @@ public class TatamiEvent: MonoBehaviour
     int[] _upscale = new int[4]; // 畳のせり上がり段階
     [SerializeField] private float _upSpeed;
     private bool _isUP = false;
-    
+
     void Start()
     {
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             _startPosition[i] = _tatami[i].transform.position;
         }
 
         // 確認用
-        InitializePosition();
-        _isUP = !_isUP;
+        // InitializePosition();
+        // _isUP = !_isUP;
     }
     // Update is called once per frame
     void Update()
@@ -40,10 +40,10 @@ public class TatamiEvent: MonoBehaviour
     // 最終位置の設定
     private void InitializePosition()
     {
-        
+
         for (int i = 0; i < 4; i++)
         {
-            if(i % 2 == 1)
+            if (i % 2 == 1)
             {
                 // 手前側の畳
                 _upscale[i] = Random.Range(0, 2);
@@ -53,11 +53,11 @@ public class TatamiEvent: MonoBehaviour
                 // 奥側の畳
                 _upscale[i] = Random.Range(0, 3);
             }
-            
+
             _upPosition[i] = _startPosition[i] + new Vector3(0, 1.5f * _upscale[i], 0);
         }
-        
-        if(_upscale.All(x  => x == 0))
+
+        if (_upscale.All(x => x == 0))
         {
             // どれも上がらなかった場合
             for (int i = 0; i < 4; i++)
@@ -71,13 +71,13 @@ public class TatamiEvent: MonoBehaviour
         {
             _upPosition[1].y += 1.5f;
         }
-        if(_upscale[2] == 2 && _upscale[3] == 0)
+        if (_upscale[2] == 2 && _upscale[3] == 0)
         {
             _upPosition[3].y += 1.5f;
         }
-        
+
     }
-    
+
     private void MoveTatami(bool isUP)
     {
         Vector3 _targetPosition0 = isUP ? _upPosition[0] : _startPosition[0];
