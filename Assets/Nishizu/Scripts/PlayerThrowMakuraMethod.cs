@@ -104,7 +104,7 @@ namespace Player
                     Collider col = _currentMakura.GetComponent<Collider>();
                     col.isTrigger = true;
                     rb.useGravity = false;
-                    forwardForce = 500.0f;
+                    forwardForce = _isCounterAttackTime ? 1000.0f : 500.0f;
                     throwDistance = 1.3f;
                     throwHeight = 1.0f;
                 }
@@ -120,6 +120,7 @@ namespace Player
                 _currentMakura.SetActive(true);
                 _makuraController.IsThrow = true;
                 _makuraController.Thrower = gameObject;
+                _makuraController.IsHitCoolTime = false;
 
                 rb.AddForce(throwDirection * forwardForce + Vector3.up * upwardForce);
                 rb.maxAngularVelocity = 100;
@@ -147,6 +148,7 @@ namespace Player
                 cloneMC.IsAlterEgo = true;
                 cloneMC.IsThrow = true;
                 cloneMC.Thrower = gameObject;
+                cloneMC.IsHitCoolTime = false;
                 cloneRb.useGravity = false;
 
                 cloneRb.AddForce(angle.normalized * forwardForce);

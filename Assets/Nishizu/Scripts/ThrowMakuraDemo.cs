@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class ThrowMakuraDemo : MonoBehaviour
 {
-    [SerializeField] private GameObject _makuraPrefab;
-
     private float _pickUpDistance = 3.0f;
-    private GameObject _currentMakura;
+    private GameObject _currentMakura = null;
 
     private Vector3 _targetPosition;
-
+    private bool _isPickUpCoolTime = false;
+    private bool _isExecuteOnce = false;
     private MakuraController _makuraController;
     [SerializeField] private GameObject _alterEgoMakura;
 
@@ -30,15 +29,18 @@ public class ThrowMakuraDemo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        if (_currentMakura == null)
+        if (_currentMakura != null && !_isExecuteOnce)
         {
-            PickUpMakura();
-        }
-        if (_currentMakura != null)
-        {
+            _isPickUpCoolTime = true;
+            _isExecuteOnce = true;
             StartCoroutine(ThrowMakuraNomal());
         }
+        if (_currentMakura == null && !_isPickUpCoolTime)
+        {
+            PickUpMakura();
+            _isExecuteOnce = false;
+        }
+
     }
     private void PickUpMakura()
     {
@@ -210,7 +212,8 @@ public class ThrowMakuraDemo : MonoBehaviour
 
     private IEnumerator ThrowMakuraNomal()
     {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(3.0f);
+        _isPickUpCoolTime = false;
         ThrowMakura(ThrowType.Nomal);
     }
 }
