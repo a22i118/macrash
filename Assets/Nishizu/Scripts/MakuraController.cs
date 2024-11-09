@@ -25,6 +25,7 @@ public class MakuraController : ColorChanger
     public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
     public bool IsAlterEgo { get => _isAlterEgo; set => _isAlterEgo = value; }
     public bool IsCharge { get => _isCharge; set => _isCharge = value; }
+    public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
 
     public enum ScaleType
     {
@@ -119,6 +120,7 @@ public class MakuraController : ColorChanger
                 _rb.useGravity = true;
                 _rb.isKinematic = true;
                 _rb.isKinematic = false;
+                _rb.velocity = Vector3.zero;
 
                 StartCoroutine(HitStopVibration());
                 StartCoroutine(HitCoolTime());
@@ -144,6 +146,7 @@ public class MakuraController : ColorChanger
                 _rb.velocity = Vector3.zero;
             }
             _rb.isKinematic = true;
+            _currentColorType = GetRandomColor();
         }
         if (_isCharge)
         {
@@ -232,6 +235,37 @@ public class MakuraController : ColorChanger
             }
 
             transform.position = position;
+        }
+    }
+    private ColorType GetRandomColor()
+    {
+        const int nomal = 30;
+        const int blue = 20;
+        const int green = 20;
+        const int red = 15;
+        const int black = 15;
+        int all = nomal + red + blue + green + black;
+        float randomValue = UnityEngine.Random.Range(0, all);
+
+        if (randomValue < nomal)
+        {
+            return ColorType.Nomal;
+        }
+        else if (randomValue < nomal + blue)
+        {
+            return ColorType.Blue;
+        }
+        else if (randomValue < nomal + blue + green)
+        {
+            return ColorType.Green;
+        }
+        else if (randomValue < nomal + blue + green + red)
+        {
+            return ColorType.Red;
+        }
+        else
+        {
+            return ColorType.Black;
         }
     }
     private IEnumerator HitCoolTime()
