@@ -46,7 +46,7 @@ namespace Player
         private float _showRadius = 0.6f;//プレイヤーからのまくらの距離
         private float _rotationAngle;
         ShowMakuraController _showMakuraController;
-        private float _vibrationStrength = 0.15f;//振動の強さ
+        private float _vibrationStrength = 0.3f;//振動の強さ
         private float _vibrationTime = 0.3f;//振動する時間
         private bool _isVibrating = false;
         private bool _isHitCoolTime = false;
@@ -469,7 +469,6 @@ namespace Player
         /// <returns>0.1秒後に有効化</returns>
         private IEnumerator PhysicsAndColliderDelay()
         {
-            // transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
             transform.rotation = _beforeSleepRotation;
             yield return new WaitForSeconds(0.1f);
 
@@ -544,28 +543,56 @@ namespace Player
                 HitMotion();
                 if (!_isVibrating)
                 {
-                    StartCoroutine(HitStopVibration());
+                    StartCoroutine(HitStopVibration(makuraController.IsCounterAttack));
                 }
             }
         }
-        private IEnumerator HitStopVibration()
+        // private IEnumerator HitStopVibration()
+        // {
+        //     _isVibrating = true;
+        //     Vector3 hitPosition = transform.position;
+
+        //     float elapsedTime = 0.0f;
+        //     while (elapsedTime < _vibrationTime)
+        //     {
+        //         Vector3 randomOffset = new Vector3(
+        //             UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength),
+        //             0,
+        //             UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength)
+        //         );
+
+        //         transform.position = hitPosition + randomOffset;
+
+        //         elapsedTime += 0.05f;
+        //         yield return new WaitForSeconds(0.05f);
+        //     }
+
+        //     transform.position = hitPosition;
+
+        //     _isVibrating = false;
+        //     _isHitCoolTime = false;
+        // }
+        private IEnumerator HitStopVibration(bool isCounterAttack)
         {
             _isVibrating = true;
             Vector3 hitPosition = transform.position;
 
             float elapsedTime = 0.0f;
+
             while (elapsedTime < _vibrationTime)
             {
+                float strength = Mathf.Lerp(_vibrationStrength * (isCounterAttack ? 2.0f : 1.0f), 0, elapsedTime / _vibrationTime);
+
                 Vector3 randomOffset = new Vector3(
-                    UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength),
+                    UnityEngine.Random.Range(-strength, strength),
                     0,
-                    UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength)
+                    UnityEngine.Random.Range(-strength, strength)
                 );
 
-                transform.position = hitPosition + randomOffset;
+                transform.position = Vector3.Lerp(transform.position, hitPosition + randomOffset, Time.deltaTime * 100);
 
-                elapsedTime += 0.05f;
-                yield return new WaitForSeconds(0.05f);
+                elapsedTime += Time.deltaTime;
+                yield return null;
             }
 
             transform.position = hitPosition;
