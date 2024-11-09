@@ -45,7 +45,7 @@ public class ThrowMakuraDemo : MonoBehaviour
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, _pickUpDistance);
         foreach (var collider in hitColliders)
         {
-            if (collider.CompareTag("Makura") && !collider.GetComponent<MakuraController>().IsThrow)
+            if (collider.CompareTag("Makura") && !collider.GetComponent<MakuraController>().IsThrow && !collider.GetComponent<MakuraController>().IsAlterEgo)
             {
                 _currentMakura = collider.gameObject;
 
@@ -200,7 +200,7 @@ public class ThrowMakuraDemo : MonoBehaviour
             _makuraController.IsThrow = true;
             _makuraController.Thrower = gameObject;
 
-            rb.AddForce(throwDirection * forwardForce * 0.5f + Vector3.up * upwardForce);
+            rb.AddForce(throwDirection * forwardForce + Vector3.up * upwardForce);
             rb.maxAngularVelocity = 100;
             rb.AddTorque(Vector3.up * 120.0f);
 

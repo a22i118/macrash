@@ -6,7 +6,7 @@ using System;
 
 namespace Player
 {
-    public class PlayerController : MonoBehaviour
+    public partial class PlayerController : MonoBehaviour
     {
         [SerializeField] private LayerMask _groundLayers;
         [SerializeField] private LayerMask _hutonLayer;
@@ -22,7 +22,7 @@ namespace Player
         private float _jumpForce = 40.0f;//ジャンプの強さ
         private float _groundCheckRadius = 0.01f;//足元が地面か判定する球の半径
         private float _pickUpDistance = 1.0f;//まくらを拾うことができる距離
-        private float _playerSerchDistance = 5.0f;//敵プレイヤーの捜索範囲
+        private float _playerSerchDistance = 3.0f;//敵プレイヤーの捜索範囲
         private GameObject _currentMakura;//手持ちのまくら
         private GameObject _thrownMakura;//投げられたまくら
         private bool _isSleep = false;//寝ているか
@@ -31,6 +31,7 @@ namespace Player
         private bool _isChargeTime = false;//ため攻撃中か
         private bool _isCanCatch = false;//ジャストキャッチ可能か
         private bool _isInvincibilityTime = false;//無敵中か
+        private bool isKeyboardOperation = false;//キーボード操作かどうか
         private Vector3 _beforeSleepPosition;//布団で寝る前の位置
         private Vector3 _targetPosition;//敵プレイヤーの位置
         private Quaternion _beforeSleepRotation;//布団で寝る前の向き
@@ -45,7 +46,7 @@ namespace Player
         private float _showRadius = 0.6f;//プレイヤーからのまくらの距離
         private float _rotationAngle;
         ShowMakuraController _showMakuraController;
-        private float _vibrationStrength = 0.1f;//振動の強さ
+        private float _vibrationStrength = 0.15f;//振動の強さ
         private float _vibrationTime = 0.3f;//振動する時間
         private bool _isVibrating = false;
         private bool _isHitCoolTime = false;
@@ -144,13 +145,16 @@ namespace Player
         /// </summary>
         private void ThrowDecide()
         {
+
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
+                isKeyboardOperation = true;
                 _keyHoldTime = Time.time;
                 _isChargeTime = true;
             }
             else if (Input.GetKeyUp(KeyCode.Mouse0))
             {
+                isKeyboardOperation = false;
                 _isChargeTime = false;
                 float holdTime = Time.time - _keyHoldTime;
                 if (holdTime < _keyLongPressTime)
@@ -162,26 +166,30 @@ namespace Player
                     ThrowMakura(ThrowType.Charge);
                 }
             }
-            if (Input.GetAxis("L_R_Trigger") > 0.5f)
+            if (!isKeyboardOperation)
             {
-                if (!_isChargeTime) // 新しく押し始めたとき
+                if (Input.GetAxis("L_R_Trigger") > 0.5f)
                 {
-                    _keyHoldTime = Time.time;
-                    _isChargeTime = true;
+                    if (!_isChargeTime)
+                    {
+                        _keyHoldTime = Time.time;
+                        _isChargeTime = true;
+                    }
                 }
-            }
-            else if (_isChargeTime) // トリガーが離されたら処理
-            {
-                _isChargeTime = false;
-                float holdTime = Time.time - _keyHoldTime;
-                if (holdTime < _keyLongPressTime)
+                else if (_isChargeTime)
                 {
-                    ThrowMakura(ThrowType.Nomal);
+                    _isChargeTime = false;
+                    float holdTime = Time.time - _keyHoldTime;
+                    if (holdTime < _keyLongPressTime)
+                    {
+                        ThrowMakura(ThrowType.Nomal);
+                    }
+                    else
+                    {
+                        ThrowMakura(ThrowType.Charge);
+                    }
                 }
-                else
-                {
-                    ThrowMakura(ThrowType.Charge);
-                }
+
             }
 
         }
@@ -355,169 +363,7 @@ namespace Player
         /// throwTypeに応じて投げ方を変える
         /// </summary>
         /// <param name="throwType">投げ方の種類</param>
-        private void ThrowMakura(ThrowType throwType)
-        {
-            if (_currentMakura != null)
-            {
-                if (IsWallThrowCheck())
-                {
-                    Debug.Log("壁が近いから投げられないぜ！");
-                    return;
-                }
-                Rigidbody rb = _currentMakura.GetComponent<Rigidbody>();
-                _makuraController = _currentMakura.GetComponent<MakuraController>();
-                if (rb.velocity != Vector3.zero)
-                {
-                    rb.velocity = Vector3.zero;
-                }
-                rb.isKinematic = true;
-                rb.isKinematic = false;
 
-                Vector3 throwDirection;
-                if (_targetPosition != Vector3.zero)
-                {
-                    Vector3 targetDirection = _targetPosition - transform.position;
-                    throwDirection = targetDirection.normalized;
-                    targetDirection.y = 0.0f;
-                    transform.rotation = Quaternion.LookRotation(targetDirection);
-                }
-                else
-                {
-                    throwDirection = transform.forward;
-                }
-                float forwardForce = 0.0f;
-                float upwardForce = 0.0f;
-                float throwDistance = 0.0f;
-                float throwHeight = 0.0f;
-                if (_makuraController.CurrentColorType == ColorChanger.ColorType.Nomal)
-                {
-                    switch (throwType)
-                    {
-                        case ThrowType.Nomal:
-                            forwardForce = 900.0f;
-                            upwardForce = 200.0f;
-                            throwDistance = 1.3f;
-                            throwHeight = 1.0f;
-                            Debug.Log("通常");
-                            break;
-                        case ThrowType.Charge:
-                            forwardForce = 300.0f;
-                            upwardForce = 700.0f;
-                            throwDistance = 0.5f;
-                            throwHeight = 2.0f;
-                            Debug.Log("くらえ！爆発まくら");
-                            break;
-                    }
-                }
-                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Red)
-                {
-                    rb.useGravity = false;
-                    forwardForce = _isCounterAttackTime ? 1000.0f : 500.0f;
-                    throwDistance = 1.3f;
-                    throwHeight = 1.0f;
-                }
-                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Blue)
-                {
-                    rb.useGravity = false;
-                    forwardForce = _isCounterAttackTime ? 600.0f : 300.0f;
-                    throwDistance = 1.3f;
-                    throwHeight = 1.0f;
-                    if (_alterEgoMakura != null)
-                    {
-                        _alterEgoMakura.GetComponent<MakuraController>().CurrentColorType = ColorChanger.ColorType.Blue;
-                    }
-                    Vector3[] throwAngles = new Vector3[]
-                    {
-                        Quaternion.Euler(0, 45, 0) * transform.forward,
-                        Quaternion.Euler(0, -45, 0) * transform.forward
-                    };
-                    foreach (var angle in throwAngles)
-                    {
-                        Vector3 throwPositionBlue = transform.position + angle.normalized * 1.7f + Vector3.up * throwHeight;
-
-                        GameObject clone = Instantiate(_alterEgoMakura, throwPositionBlue, Quaternion.identity);
-
-                        MakuraController cloneMC = clone.GetComponent<MakuraController>();
-                        Rigidbody cloneRb = clone.GetComponent<Rigidbody>();
-
-                        cloneMC.CurrentColorType = ColorChanger.ColorType.Blue;
-                        cloneMC.IsAlterEgo = true;
-                        cloneMC.IsThrow = true;
-                        cloneMC.Thrower = gameObject;
-                        cloneRb.useGravity = false;
-
-                        cloneRb.AddForce(angle.normalized * forwardForce);
-                        cloneRb.maxAngularVelocity = 100;
-                        cloneRb.AddTorque(Vector3.up * 120.0f);
-                    }
-                }
-                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Green)
-                {
-                    rb.useGravity = false;
-                    forwardForce = _isCounterAttackTime ? 600.0f : 300.0f;
-                    throwDistance = 1.3f;
-                    throwHeight = 1.0f;
-                    if (_alterEgoMakura != null)
-                    {
-                        _alterEgoMakura.GetComponent<MakuraController>().CurrentColorType = ColorChanger.ColorType.Blue;
-                    }
-                    Vector3 upDirection = transform.up;
-
-                    Vector3[] throwAngles = new Vector3[]
-                    {
-                        Quaternion.AngleAxis(60, transform.right) * upDirection,
-                        Quaternion.AngleAxis(75, transform.right) * upDirection
-                    };
-
-                    foreach (var angle in throwAngles)
-                    {
-                        Vector3 throwPositionGreen = transform.position + angle.normalized * throwDistance + Vector3.up * throwHeight;
-
-                        GameObject clone = Instantiate(_alterEgoMakura, throwPositionGreen, Quaternion.identity);
-
-                        MakuraController cloneMC = clone.GetComponent<MakuraController>();
-                        Rigidbody cloneRb = clone.GetComponent<Rigidbody>();
-
-                        cloneMC.CurrentColorType = ColorChanger.ColorType.Green;
-                        cloneMC.IsAlterEgo = true;
-                        cloneMC.IsThrow = true;
-                        cloneMC.Thrower = gameObject;
-                        cloneRb.useGravity = false;
-
-                        cloneRb.AddForce(angle.normalized * forwardForce);
-                        cloneRb.maxAngularVelocity = 100;
-                        cloneRb.AddTorque(Vector3.up * 120.0f);
-                    }
-                }
-                else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Black)
-                {
-                    Collider col = _currentMakura.GetComponent<Collider>();
-                    col.isTrigger = true;
-                    rb.useGravity = false;
-                    forwardForce = 500.0f;
-                    throwDistance = 1.3f;
-                    throwHeight = 1.0f;
-                }
-
-                if (_makuraController.CurrentScaleType == MakuraController.ScaleType.Second || _makuraController.CurrentScaleType == MakuraController.ScaleType.First)
-                {
-                    throwDistance += 1.5f;
-                }
-                Vector3 throwPosition = transform.position + throwDirection * throwDistance + Vector3.up * throwHeight;
-
-
-                _currentMakura.transform.position = throwPosition;
-                _currentMakura.SetActive(true);
-                _makuraController.IsThrow = true;
-                _makuraController.Thrower = gameObject;
-
-                rb.AddForce(throwDirection * forwardForce + Vector3.up * upwardForce);
-                rb.maxAngularVelocity = 100;
-                rb.AddTorque(Vector3.up * 120.0f);
-
-                _currentMakura = null;
-            }
-        }
         private bool IsWallThrowCheck()
         {
             Vector3 throwDirection = transform.forward;
@@ -573,8 +419,6 @@ namespace Player
                 _thrownMakura = null;
             }
         }
-
-
         /// <summary>
         /// 布団の上で寝る
         /// </summary>
@@ -664,14 +508,14 @@ namespace Player
 
             return false;
         }
-        private Vector3 TargetPosition()
+        private Vector3 TargetPosition(GameObject targetPlayer)
         {
             Vector3 playerPosition = transform.position;
-            Collider[] hitColliders = Physics.OverlapSphere(playerPosition, _playerSerchDistance);
+            Collider[] hitColliders = Physics.OverlapSphere(playerPosition, 10.0f);
 
             foreach (var collider in hitColliders)
             {
-                if (collider.CompareTag("Player") && collider.gameObject != gameObject)
+                if (collider.CompareTag("Player") && collider.gameObject == targetPlayer)
                 {
                     return collider.gameObject.transform.position;
                 }

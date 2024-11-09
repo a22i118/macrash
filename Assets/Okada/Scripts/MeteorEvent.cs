@@ -16,8 +16,8 @@ public class MeteorEvent : MonoBehaviour
         _meteorPool = FindObjectOfType<MeteorPool>();
         _markerPool = FindObjectOfType<MeteorMarkerPool>();
         // 確認用のコード
-        _isFall = true;
-        StartCoroutine(FallCoroutine());
+        // _isFall = true;
+        // StartCoroutine(FallCoroutine());
     }
 
     //このイベント開始時に呼び出される関数
