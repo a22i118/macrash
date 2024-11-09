@@ -7,12 +7,19 @@ public class ThrowMakuraDemo : MonoBehaviour
     private float _pickUpDistance = 3.0f;
     private GameObject _currentMakura = null;
 
+    private Rigidbody _rb;
     private Vector3 _targetPosition;
     private bool _isPickUpCoolTime = false;
     private bool _isExecuteOnce = false;
     private MakuraController _makuraController;
     [SerializeField] private GameObject _alterEgoMakura;
 
+    private float _vibrationStrength = 0.3f;//振動の強さ
+    private float _vibrationTime = 0.3f;//振動する時間
+    private bool _isVibrating = false;
+    private bool _isHitCoolTime = false;
+    private bool _isInvincibilityTime = false;//無敵中か
+    private bool _isHitStop = false;
 
     public enum ThrowType
     {
@@ -24,6 +31,7 @@ public class ThrowMakuraDemo : MonoBehaviour
     void Start()
     {
         _targetPosition = new Vector3(transform.position.x + -4, transform.position.y, transform.position.z);
+        _rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -208,6 +216,87 @@ public class ThrowMakuraDemo : MonoBehaviour
 
             _currentMakura = null;
         }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        MakuraController makuraController = collision.gameObject.GetComponent<MakuraController>();
+
+        if (collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject && makuraController.IsThrow && !_isInvincibilityTime && !_isHitCoolTime)
+        {
+            _isHitCoolTime = true;
+            HitMotion();
+            if (!_isVibrating)
+            {
+                StartCoroutine(HitStopVibration(makuraController.IsCounterAttack));
+            }
+        }
+    }
+    // private IEnumerator HitStopVibration()
+    // {
+    //     _isVibrating = true;
+    //     Vector3 hitPosition = transform.position;
+
+    //     float elapsedTime = 0.0f;
+    //     while (elapsedTime < _vibrationTime)
+    //     {
+    //         Vector3 randomOffset = new Vector3(
+    //             UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength),
+    //             0,
+    //             UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength)
+    //         );
+
+    //         transform.position = hitPosition + randomOffset;
+
+    //         elapsedTime += 0.05f;
+    //         yield return new WaitForSeconds(0.05f);
+    //     }
+
+    //     transform.position = hitPosition;
+
+    //     _isVibrating = false;
+    //     _isHitCoolTime = false;
+    // }
+    private IEnumerator HitStopVibration(bool isCounterAttack)
+    {
+        _isVibrating = true;
+        Vector3 hitPosition = transform.position;
+
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < _vibrationTime)
+        {
+            float strength = Mathf.Lerp(_vibrationStrength * (isCounterAttack ? 2.0f : 1.0f), 0, elapsedTime / _vibrationTime);
+
+            Vector3 randomOffset = new Vector3(
+                UnityEngine.Random.Range(-strength, strength),
+                0,
+                UnityEngine.Random.Range(-strength, strength)
+            );
+
+            transform.position = Vector3.Lerp(transform.position, hitPosition + randomOffset, Time.deltaTime * 100);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = hitPosition;
+
+        _isVibrating = false;
+        _isHitCoolTime = false;
+    }
+    private void HitMotion()
+    {
+
+        _rb.velocity = Vector3.zero;
+        _isHitStop = true;
+
+        StartCoroutine(HitStopCoroutine());
+        Debug.Log("動けるぜ");
+    }
+    private IEnumerator HitStopCoroutine()
+    {
+        yield return new WaitForSeconds(1.0f);
+        _isHitStop = false;
     }
 
     private IEnumerator ThrowMakuraNomal()

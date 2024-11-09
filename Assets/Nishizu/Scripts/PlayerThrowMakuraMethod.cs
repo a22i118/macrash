@@ -119,6 +119,7 @@ namespace Player
                 _currentMakura.transform.position = throwPosition;
                 _currentMakura.SetActive(true);
                 _makuraController.IsThrow = true;
+                _makuraController.IsCounterAttack = _isCounterAttackTime ? true : false;
                 _makuraController.Thrower = gameObject;
                 _makuraController.IsHitCoolTime = false;
 
@@ -147,6 +148,7 @@ namespace Player
                 cloneMC.CurrentColorType = colorType;
                 cloneMC.IsAlterEgo = true;
                 cloneMC.IsThrow = true;
+                cloneMC.IsCounterAttack = _isCounterAttackTime ? true : false;
                 cloneMC.Thrower = gameObject;
                 cloneMC.IsHitCoolTime = false;
                 cloneRb.useGravity = false;

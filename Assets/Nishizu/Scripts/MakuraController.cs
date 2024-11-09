@@ -20,12 +20,14 @@ public class MakuraController : ColorChanger
     [SerializeField] private GameObject _explosionRange;
     private ExplosionRange _explosionRangeScript;
     private bool _isCharge = false;
+    private bool _isCounterAttack = false;
     public bool IsThrow { get => _isThrow; set => _isThrow = value; }
     public GameObject Thrower { get => _thrower; set => _thrower = value; }
     public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
     public bool IsAlterEgo { get => _isAlterEgo; set => _isAlterEgo = value; }
     public bool IsCharge { get => _isCharge; set => _isCharge = value; }
     public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
+    public bool IsCounterAttack { get => _isCounterAttack; set => _isCounterAttack = value; }
 
     public enum ScaleType
     {
@@ -111,6 +113,7 @@ public class MakuraController : ColorChanger
             {
                 _rb.useGravity = true;
                 _rb.velocity = Vector3.zero;
+                // _isCounterAttack = false;
             }
 
             if (collision.gameObject.CompareTag("Player") && _isThrow && !_isHitCoolTime && collision.gameObject != _thrower)
@@ -139,6 +142,7 @@ public class MakuraController : ColorChanger
         if (((_groundLayer & (1 << collision.gameObject.layer)) == _groundLayer) || collision.gameObject.CompareTag("Huton"))
         {
             _isThrow = false;
+            _isCounterAttack = false;
             _currentScaleType = ScaleType.Nomal;
             transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
             if (!_rb.isKinematic)
