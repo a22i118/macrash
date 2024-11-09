@@ -7,14 +7,12 @@ using UnityEngine;
 public class MakuraMeteor : MonoBehaviour
 {
     private Rigidbody _rb;
-    private MeshCollider _col;
-    public MeshCollider Col { get => _col; set => _col = value; }
     private Action _onDisable;
     private float _accumulate; //Œo‰ßŽžŠÔ
+    
     void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-        Col = GetComponent<MeshCollider>();
         _rb.maxAngularVelocity = 10;
         // _rb.constraints = RigidbodyConstraints.FreezeRotation;
     }

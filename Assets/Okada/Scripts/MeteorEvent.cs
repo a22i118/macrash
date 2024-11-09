@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class MeteorEvent : MonoBehaviour
 {
@@ -10,14 +11,15 @@ public class MeteorEvent : MonoBehaviour
     private bool _isFall = false;
     private MeteorPool _meteorPool;
     private MeteorMarkerPool _markerPool;
+   [SerializeField] private LayerMask _groundLayer;
 
     void Start()
     {
         _meteorPool = FindObjectOfType<MeteorPool>();
         _markerPool = FindObjectOfType<MeteorMarkerPool>();
         // 確認用のコード
-        // _isFall = true;
-        // StartCoroutine(FallCoroutine());
+        _isFall = true;
+        StartCoroutine(FallCoroutine());
     }
 
     //このイベント開始時に呼び出される関数
@@ -49,7 +51,9 @@ public class MeteorEvent : MonoBehaviour
                 MakuraMeteor _meteor = _meteorPool.GetGameObject();
                 _meteor.transform.position = new Vector3(_finalposition_x, 15f, _finalposition_z);
                 MeteorMarker _marker = _markerPool.GetGameObject();
-                _marker.transform.position = new Vector3(_finalposition_x, 0.01f, _finalposition_z);
+                _marker.MarkerMeteor = _meteor;
+                Physics.Raycast(_meteor.transform.position + Vector3.up * 10, Vector3.down, out RaycastHit hit, 30, _groundLayer);
+                _marker.transform.position = new Vector3(_finalposition_x, hit.point.y + 0.01f, _finalposition_z);
             }
 
             yield return null;

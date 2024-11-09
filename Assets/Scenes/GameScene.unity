@@ -4649,6 +4649,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _center: {x: 0, y: 0, z: 2}
   _interval: 3
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!4 &1352615759
 Transform:
   m_ObjectHideFlags: 0
