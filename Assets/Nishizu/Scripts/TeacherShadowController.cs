@@ -34,10 +34,6 @@ public class TeacherShadowController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Init();
-        }
         if (Mathf.Approximately(transform.eulerAngles.z, _startAngle) && !_isRotationDirection)
         {
             transform.position = _startPosition;

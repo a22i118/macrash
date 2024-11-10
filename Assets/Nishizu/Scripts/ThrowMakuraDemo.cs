@@ -291,7 +291,6 @@ public class ThrowMakuraDemo : MonoBehaviour
         _isHitStop = true;
 
         StartCoroutine(HitStopCoroutine());
-        Debug.Log("動けるぜ");
     }
     private IEnumerator HitStopCoroutine()
     {
