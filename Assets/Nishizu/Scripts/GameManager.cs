@@ -70,82 +70,113 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Z))
+
+        // if (!_isPlayerSet)
+        // {
+        //     for (int i = 0; i < _players.Count; i++)
+        //     {
+        //         // _players[i].transform.position = initialPosition;
+
+        //         Debug.Log($"Setting position for player {i} to {initialPosition}");
+        //         _players[i].transform.position = initialPosition;
+
+        //         Debug.Log($"New position: {_players[i].transform.position}");
+        //         initialPosition.x += 2.0f;
+        //         if (i == _players.Count - 1)
+        //         {
+        //             _isPlayerSet = true;
+        //         }
+        //     }
+        // }
+
+
+        //デバッグ用
+        if (Input.GetKeyDown(KeyCode.S))
         {
-            _isGameStart = true;
+            _teacherEvent.Init();
         }
-        if (_isGameStart)
+        if (Input.GetKeyDown(KeyCode.T))
         {
-            if (!_isPlayerSet)
+            _tatamiEvent.Init();
+        }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            _meteorEvent.Init();
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            foreach (var makura in _makuraControllers)
             {
-                for (int i = 0; i < _players.Count; i++)
-                {
-                    _players[i].transform.position = initialPosition;
-                    initialPosition.x += 2.0f;
-                    if (i == _players.Count - 1)
-                    {
-                        _isPlayerSet = true;
-                    }
-                }
-            }
-
-
-
-            //デバッグ用
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                _teacherEvent.Init();
-            }
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                _tatamiEvent.Init();
-            }
-            if (Input.GetKeyDown(KeyCode.M))
-            {
-                _meteorEvent.Init();
-            }
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                foreach (var makura in _makuraControllers)
-                {
-                    makura.CurrentColorType = ColorChanger.ColorType.Red;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.G))
-            {
-                foreach (var makura in _makuraControllers)
-                {
-                    makura.CurrentColorType = ColorChanger.ColorType.Green;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.B))
-            {
-                foreach (var makura in _makuraControllers)
-                {
-                    makura.CurrentColorType = ColorChanger.ColorType.Blue;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                foreach (var makura in _makuraControllers)
-                {
-                    makura.CurrentColorType = ColorChanger.ColorType.Black;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.N))
-            {
-                foreach (var makura in _makuraControllers)
-                {
-                    makura.CurrentColorType = ColorChanger.ColorType.Nomal;
-                }
+                makura.CurrentColorType = ColorChanger.ColorType.Red;
             }
         }
-    }
-    private void LateUpdate()
-    {
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            foreach (var makura in _makuraControllers)
+            {
+                makura.CurrentColorType = ColorChanger.ColorType.Green;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            foreach (var makura in _makuraControllers)
+            {
+                makura.CurrentColorType = ColorChanger.ColorType.Blue;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            foreach (var makura in _makuraControllers)
+            {
+                makura.CurrentColorType = ColorChanger.ColorType.Black;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            foreach (var makura in _makuraControllers)
+            {
+                makura.CurrentColorType = ColorChanger.ColorType.Nomal;
+            }
+        }
 
     }
+    // void LateUpdate()
+    // {
+    //     if (!_isPlayerSet)
+    //     {
+    // for (int i = 0; i<_players.Count; i++)
+    // {
+    //     // _players[i].transform.position = initialPosition;
 
+    //     Debug.Log($"Setting position for player {i} to {initialPosition}");
+    //     _players[i].transform.position = initialPosition;
+
+    //     Debug.Log($"New position: {_players[i].transform.position}");
+    //     initialPosition.x += 2.0f;
+    //     if (i == _players.Count - 1)
+    //     {
+    //         _isPlayerSet = true;
+    //     }
+    // }
+
+    // IEnumerator ForcePositionReset()
+    // {
+    //     yield return new WaitForEndOfFrame();  // 次のフレームに遅延
+
+    //     for (int i = 0; i < _players.Count; i++)
+    //     {
+    //         if (_players[i] != null)
+    //         {
+    //             Debug.Log($"Setting position for player {i} to {initialPosition}");
+    //             _players[i].transform.position = initialPosition;
+    //             Debug.Log($"New position: {_players[i].transform.position}");
+
+    //             initialPosition.x += 2.0f;  // 次のプレイヤーは x 座標が +2 になる
+    //         }
+    //     }
+
+    //     _isPlayerSet = true;
+    // }
     private void Init()
     {
 

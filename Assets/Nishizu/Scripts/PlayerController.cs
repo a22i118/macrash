@@ -68,13 +68,17 @@ namespace Player
                 _currentMakuraDisplay = Instantiate(_showMakura);
             }
             _showMakuraController = _currentMakuraDisplay.GetComponent<ShowMakuraController>();
+            Debug.Log($"Start position: {transform.position}");
+
         }
 
         void Update()
         {
+            Debug.Log($"1 position: {transform.position}");
             JumpForce(IsJump());
             IsCheckPlayer();
             MakuraDisplayColorChange();
+
             // if (_currentMakura != null && !_isSleep && _playerStatus.ChargeMax && Input.GetButtonDown("Jump"))
             // {
             //     _makuraController = _currentMakura.GetComponent<MakuraController>();
