@@ -31,7 +31,7 @@ public class TatamiEvent : MonoBehaviour
         MoveTatami(_isUP);
     }
 
-    public void init()
+    public void Init()
     {
         InitializePosition();
         _isUP = !_isUP;

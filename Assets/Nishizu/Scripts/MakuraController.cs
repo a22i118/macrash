@@ -63,29 +63,6 @@ public class MakuraController : ColorChanger
                 _col.isTrigger = false;
             }
         }
-
-        //デバッグ用
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            _currentColorType = ColorType.Red;
-        }
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            _currentColorType = ColorType.Green;
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            _currentColorType = ColorType.Blue;
-        }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            _currentColorType = ColorType.Black;
-        }
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            _currentColorType = ColorType.Nomal;
-        }
-
     }
     private void ScaleChange(ScaleType type)
     {
