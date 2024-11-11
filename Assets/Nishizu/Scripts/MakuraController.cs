@@ -41,7 +41,7 @@ public class MakuraController : ColorChanger
         _rb = GetComponent<Rigidbody>();
         _col = GetComponent<Collider>();
         _initialRotation = transform.rotation;
-        _scoreManager = FindObjectOfType <ScoreManager>();
+        _scoreManager = FindObjectOfType<ScoreManager>();
     }
     void Update()
     {
@@ -163,6 +163,8 @@ public class MakuraController : ColorChanger
             {
                 StartCoroutine(BlackMakuraHit());
                 StartCoroutine(HitCoolTime());
+                _scoreManager.UpdateScore(_thrower.name);
+
             }
             if (collider.gameObject.CompareTag("Makura"))
             {

@@ -22,8 +22,8 @@ public class TatamiEvent : MonoBehaviour
         }
 
         // Šm”F—p
-        InitializePosition();
-        _isUP = !_isUP;
+        // InitializePosition();
+        // _isUP = !_isUP;
     }
     // Update is called once per frame
     void Update()
