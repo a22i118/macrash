@@ -4994,11 +4994,11 @@ RectTransform:
   - {fileID: 1280710842}
   - {fileID: 415812723}
   - {fileID: 1592900414}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1197199743}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 960, y: 540}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1128876192
@@ -5136,6 +5136,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11229e9ba9c86764fbc9f473106edc5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _makuras: []
+  _players: []
+  _door: {fileID: 0}
+  _teacher: {fileID: 0}
+  _meteor: {fileID: 0}
+  _tatami: {fileID: 0}
 --- !u!4 &1130005880
 Transform:
   m_ObjectHideFlags: 0
@@ -5720,7 +5726,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1117389710}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -10014,7 +10021,6 @@ SceneRoots:
   - {fileID: 1632291690}
   - {fileID: 1501596993}
   - {fileID: 1197199743}
-  - {fileID: 1117389710}
   - {fileID: 900372602}
   - {fileID: 897565102062023824}
   - {fileID: 114574368}
