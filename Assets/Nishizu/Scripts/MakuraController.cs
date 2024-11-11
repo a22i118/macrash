@@ -21,6 +21,7 @@ public class MakuraController : ColorChanger
     private ExplosionRange _explosionRangeScript;
     private bool _isCharge = false;
     private bool _isCounterAttack = false;
+    private ScoreManager _scoreManager;
     public bool IsThrow { get => _isThrow; set => _isThrow = value; }
     public GameObject Thrower { get => _thrower; set => _thrower = value; }
     public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
@@ -40,6 +41,7 @@ public class MakuraController : ColorChanger
         _rb = GetComponent<Rigidbody>();
         _col = GetComponent<Collider>();
         _initialRotation = transform.rotation;
+        _scoreManager = FindObjectOfType <ScoreManager>();
     }
     void Update()
     {
@@ -104,6 +106,7 @@ public class MakuraController : ColorChanger
 
                 StartCoroutine(HitStopVibration());
                 StartCoroutine(HitCoolTime());
+                _scoreManager.UpdateScore(_thrower.name);
                 Debug.Log("敵に当たったぜ");
             }
             if (collision.gameObject.CompareTag("Makura"))
