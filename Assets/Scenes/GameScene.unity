@@ -2502,6 +2502,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _alterEgoMakura: {fileID: 3835372720629781789, guid: e64e57ef704ef6e419c2f11671845d58, type: 3}
+--- !u!114 &603841452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603841443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ae0be113488e86478427b03a8a3a4cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _spBar: {fileID: 1032199695}
 --- !u!1 &606719191
 GameObject:
   m_ObjectHideFlags: 0
@@ -7112,6 +7125,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100076, guid: 69c3ed15e9d13481e8f7dc4db5532fb6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 603841448}
+    - targetCorrespondingSourceObject: {fileID: 100076, guid: 69c3ed15e9d13481e8f7dc4db5532fb6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 603841452}
   m_SourcePrefab: {fileID: 100100000, guid: 69c3ed15e9d13481e8f7dc4db5532fb6, type: 3}
 --- !u!4 &1546433462 stripped
 Transform:

@@ -88,8 +88,6 @@ namespace Player
             // }
             if (_currentMakura != null && !_isSleep && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.B)))//デバッグ用のif文。本来は一つ上のif文
             {
-
-                // _makuraController.CurrentType = MakuraController.ScaleType.Second;
                 _playerStatus.CurrentSP = 0;
             }
             if (_currentMakura != null && !_isSleep)
