@@ -68,13 +68,10 @@ namespace Player
                 _currentMakuraDisplay = Instantiate(_showMakura);
             }
             _showMakuraController = _currentMakuraDisplay.GetComponent<ShowMakuraController>();
-            Debug.Log($"Start position: {transform.position}");
-
         }
 
         void Update()
         {
-            Debug.Log($"1 position: {transform.position}");
             JumpForce(IsJump());
             IsCheckPlayer();
             MakuraDisplayColorChange();
@@ -548,32 +545,19 @@ namespace Player
                     StartCoroutine(HitStopVibration(makuraController.IsCounterAttack));
                 }
             }
+            if (collision.gameObject.CompareTag("Meteor"))
+            {
+                _isCanCatch = false;
+                _isHitCoolTime = true;
+                _animator.SetBool("Walk", false);
+                Debug.Log("う、動けない！");
+                HitMotion();
+                if (!_isVibrating)
+                {
+                    StartCoroutine(HitStopVibration(false));
+                }
+            }
         }
-        // private IEnumerator HitStopVibration()
-        // {
-        //     _isVibrating = true;
-        //     Vector3 hitPosition = transform.position;
-
-        //     float elapsedTime = 0.0f;
-        //     while (elapsedTime < _vibrationTime)
-        //     {
-        //         Vector3 randomOffset = new Vector3(
-        //             UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength),
-        //             0,
-        //             UnityEngine.Random.Range(-_vibrationStrength, _vibrationStrength)
-        //         );
-
-        //         transform.position = hitPosition + randomOffset;
-
-        //         elapsedTime += 0.05f;
-        //         yield return new WaitForSeconds(0.05f);
-        //     }
-
-        //     transform.position = hitPosition;
-
-        //     _isVibrating = false;
-        //     _isHitCoolTime = false;
-        // }
         private IEnumerator HitStopVibration(bool isCounterAttack)
         {
             _isVibrating = true;
@@ -587,7 +571,7 @@ namespace Player
 
                 Vector3 randomOffset = new Vector3(
                     UnityEngine.Random.Range(-strength, strength),
-                    0,
+                    OnGround() ? 0 : UnityEngine.Random.Range(-strength, strength),
                     UnityEngine.Random.Range(-strength, strength)
                 );
 

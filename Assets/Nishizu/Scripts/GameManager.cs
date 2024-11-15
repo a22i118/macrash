@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
 
 
 
-        // _isGameStart = true;
+
 
 
 
@@ -70,24 +70,31 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            _isGameStart = true;
+        }
 
-        // if (!_isPlayerSet)
-        // {
-        //     for (int i = 0; i < _players.Count; i++)
-        //     {
-        //         // _players[i].transform.position = initialPosition;
+        if (_isGameStart)
+        {
+            if (!_isPlayerSet)
+            {
+                for (int i = 0; i < _players.Count; i++)
+                {
+                    // Debug.Log($"Setting position for player {i} to {initialPosition}");
+                    _players[i].transform.position = initialPosition;
 
-        //         Debug.Log($"Setting position for player {i} to {initialPosition}");
-        //         _players[i].transform.position = initialPosition;
+                    // Debug.Log($"New position: {_players[i].transform.position}");
+                    initialPosition.x += 2.0f;
+                    // if (i == _players.Count - 1)
+                    // {
+                    //     _isPlayerSet = true;
+                    // }
+                }
+                _isPlayerSet = true;
+            }
+        }
 
-        //         Debug.Log($"New position: {_players[i].transform.position}");
-        //         initialPosition.x += 2.0f;
-        //         if (i == _players.Count - 1)
-        //         {
-        //             _isPlayerSet = true;
-        //         }
-        //     }
-        // }
 
 
         //デバッグ用
