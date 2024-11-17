@@ -1906,6 +1906,16 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7028193564881055018, guid: 051d192e985a6f3409aed93ad4cd1e17, type: 3}
   m_PrefabInstance: {fileID: 46967088}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &427055331 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6100276500344840609, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+  m_PrefabInstance: {fileID: 613021597}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &431344358 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6100276500344840609, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+  m_PrefabInstance: {fileID: 1646460665}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &441099480
 GameObject:
   m_ObjectHideFlags: 0
@@ -4958,6 +4968,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1052415766}
   m_Mesh: {fileID: 4300002, guid: 8ec5367501908df4f81362683743025f, type: 3}
+--- !u!1 &1064298529 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6100276500344840609, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+  m_PrefabInstance: {fileID: 1362301507}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1087051624 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4107485980790187612, guid: bba36eb6ba80c37449105c3aa8c0e11e, type: 3}
@@ -5166,7 +5181,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11229e9ba9c86764fbc9f473106edc5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _makuras: []
+  _makuras:
+  - {fileID: 427055331}
+  - {fileID: 431344358}
+  - {fileID: 1379485866}
+  - {fileID: 1064298529}
   _players: []
   _door: {fileID: 1087051624}
   _teacher: {fileID: 114574365}
@@ -6441,6 +6460,11 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300002, guid: 8ec5367501908df4f81362683743025f, type: 3}
+--- !u!1 &1379485866 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6100276500344840609, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
+  m_PrefabInstance: {fileID: 934845282}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1390013176
 GameObject:
   m_ObjectHideFlags: 0

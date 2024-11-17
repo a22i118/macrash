@@ -30,7 +30,6 @@ namespace Player
         private bool _isJumping = false;//ジャンプ中か
         private bool _isChargeTime = false;//ため攻撃中か
         private bool _isCanCatch = false;//ジャストキャッチ可能か
-        private bool _isInvincibilityTime = false;//無敵中か
         private bool isKeyboardOperation = false;//キーボード操作かどうか
         private Vector3 _beforeSleepPosition;//布団で寝る前の位置
         private Vector3 _targetPosition;//敵プレイヤーの位置
@@ -51,6 +50,8 @@ namespace Player
         private bool _isVibrating = false;
         private bool _isHitCoolTime = false;
         private bool _isCounterAttackTime = false;
+        public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
+
 
         public enum ThrowType
         {
@@ -68,6 +69,7 @@ namespace Player
                 _currentMakuraDisplay = Instantiate(_showMakura);
             }
             _showMakuraController = _currentMakuraDisplay.GetComponent<ShowMakuraController>();
+            _groundLayers |= _hutonLayer;
         }
 
         void Update()
@@ -383,7 +385,7 @@ namespace Player
                 _thrownMakura.SetActive(false);
                 _thrownMakura = null;
                 _isCanCatch = false;
-                _isInvincibilityTime = true;
+                _isHitCoolTime = true;
                 _playerStatus.CurrentSP += 5000;
                 StartCoroutine(CounterAttackCoroutine());
                 StartCoroutine(JustChachMakuraInvincibilityTime());
@@ -397,16 +399,34 @@ namespace Player
         private IEnumerator JustChachMakuraInvincibilityTime()
         {
             yield return new WaitForSeconds(0.3f);
-            _isInvincibilityTime = false;
+            _isHitCoolTime = false;
         }
         private void OnTriggerEnter(Collider collider)
         {
-            MakuraController makuraController = collider.GetComponent<MakuraController>();
-            if (collider.CompareTag("Makura") && makuraController.IsThrow && makuraController.Thrower != gameObject && makuraController.CurrentScaleType == MakuraController.ScaleType.Nomal && !makuraController.IsAlterEgo)
+            if (collider.CompareTag("Makura"))
             {
-                _isCanCatch = true;
-                _thrownMakura = collider.gameObject;
-                // Debug.Log("情報を記憶");
+                MakuraController makuraController = collider.GetComponent<MakuraController>();
+                if (makuraController.IsThrow && makuraController.Thrower != gameObject && makuraController.CurrentScaleType == MakuraController.ScaleType.Nomal && !makuraController.IsAlterEgo)
+                {
+                    _isCanCatch = true;
+                    _thrownMakura = collider.gameObject;
+                    // Debug.Log("情報を記憶");
+                }
+            }
+            if (collider.CompareTag("Explosion"))
+            {
+                ExplosionRange explosionRangeScript = collider.GetComponent<ExplosionRange>();
+                if (explosionRangeScript.Thrower != gameObject)
+                {
+                    _isHitCoolTime = true;
+                    _animator.SetBool("Walk", false);
+                    Debug.Log("う、動けない！");
+                    HitMotion();
+                    if (!_isVibrating)
+                    {
+                        StartCoroutine(HitStopVibration(true));
+                    }
+                }
             }
         }
 
@@ -528,17 +548,15 @@ namespace Player
         {
             if (collision.gameObject.CompareTag("Huton"))
             {
-                Debug.Log("布団に入ったぜ");
                 _currentHuton = collision.gameObject.GetComponent<HutonController>();
             }
             MakuraController makuraController = collision.gameObject.GetComponent<MakuraController>();
 
-            if (collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject && makuraController.IsThrow && !_isInvincibilityTime && !_isHitCoolTime)
+            if (makuraController != null && collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject && makuraController.IsThrow && !_isHitCoolTime)
             {
                 _isCanCatch = false;
                 _isHitCoolTime = true;
                 _animator.SetBool("Walk", false);
-                Debug.Log("う、動けない！");
                 HitMotion();
                 if (!_isVibrating)
                 {
@@ -550,7 +568,6 @@ namespace Player
                 _isCanCatch = false;
                 _isHitCoolTime = true;
                 _animator.SetBool("Walk", false);
-                Debug.Log("う、動けない！");
                 HitMotion();
                 if (!_isVibrating)
                 {
@@ -568,7 +585,6 @@ namespace Player
             while (elapsedTime < _vibrationTime)
             {
                 float strength = Mathf.Lerp(_vibrationStrength * (isCounterAttack ? 2.0f : 1.0f), 0, elapsedTime / _vibrationTime);
-
                 Vector3 randomOffset = new Vector3(
                     UnityEngine.Random.Range(-strength, strength),
                     OnGround() ? 0 : UnityEngine.Random.Range(-strength, strength),

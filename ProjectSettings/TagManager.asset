@@ -8,6 +8,7 @@ TagManager:
   - Huton
   - Wall
   - Meteor
+  - Explosion
   layers:
   - Default
   - TransparentFX
