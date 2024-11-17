@@ -1906,11 +1906,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7028193564881055018, guid: 051d192e985a6f3409aed93ad4cd1e17, type: 3}
   m_PrefabInstance: {fileID: 46967088}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &429273243 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1431385376716321406, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
-  m_PrefabInstance: {fileID: 613021597}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &441099480
 GameObject:
   m_ObjectHideFlags: 0
@@ -2484,16 +2479,6 @@ Transform:
   - {fileID: 1865565279}
   m_Father: {fileID: 1984832277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &568739720 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1431385376716321406, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
-  m_PrefabInstance: {fileID: 1646460665}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &590412930 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1431385376716321406, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
-  m_PrefabInstance: {fileID: 934845282}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &603841443 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100076, guid: 69c3ed15e9d13481e8f7dc4db5532fb6, type: 3}
@@ -3110,11 +3095,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.71, y: 0.93, z: 0.42}
   m_Center: {x: 0.01, y: 0.87, z: 0.48}
---- !u!1 &752804305 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1431385376716321406, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
-  m_PrefabInstance: {fileID: 1362301507}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &782191684
 GameObject:
   m_ObjectHideFlags: 0
@@ -5186,17 +5166,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11229e9ba9c86764fbc9f473106edc5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _makuras: []
   _players: []
-  _hutons:
-  - {fileID: 429273243}
-  - {fileID: 568739720}
-  - {fileID: 590412930}
-  - {fileID: 752804305}
   _door: {fileID: 1087051624}
   _teacher: {fileID: 114574365}
   _meteor: {fileID: 1352615757}
   _tatami: {fileID: 815756654}
-  _makuraPrefub: {fileID: 3835372720629781789, guid: e64e57ef704ef6e419c2f11671845d58, type: 3}
 --- !u!4 &1130005880
 Transform:
   m_ObjectHideFlags: 0
