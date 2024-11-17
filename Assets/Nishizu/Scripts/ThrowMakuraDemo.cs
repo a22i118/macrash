@@ -21,8 +21,6 @@ public class ThrowMakuraDemo : MonoBehaviour
     private bool _isInvincibilityTime = false;//無敵中か
     private bool _isHitStop = false;
 
-    public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
-
     public enum ThrowType
     {
         Nomal,
@@ -223,7 +221,7 @@ public class ThrowMakuraDemo : MonoBehaviour
     {
         MakuraController makuraController = collision.gameObject.GetComponent<MakuraController>();
 
-        if (collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject && makuraController.IsThrow && !_isHitCoolTime)
+        if (collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject && makuraController.IsThrow && !_isInvincibilityTime && !_isHitCoolTime)
         {
             _isHitCoolTime = true;
             HitMotion();
@@ -285,22 +283,6 @@ public class ThrowMakuraDemo : MonoBehaviour
 
         _isVibrating = false;
         _isHitCoolTime = false;
-    }
-    private void OnTriggerEnter(Collider collider)
-    {
-        if (collider.CompareTag("Explosion"))
-        {
-            ExplosionRange explosionRangeScript = collider.GetComponent<ExplosionRange>();
-            if (explosionRangeScript.Thrower != gameObject)
-            {
-                _isHitCoolTime = true;
-                HitMotion();
-                if (!_isVibrating)
-                {
-                    StartCoroutine(HitStopVibration(true));
-                }
-            }
-        }
     }
     private void HitMotion()
     {

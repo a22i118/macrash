@@ -9,7 +9,7 @@ public class MakuraMeteor : MonoBehaviour
     private Rigidbody _rb;
     private Action _onDisable;
     private float _accumulate; //åoâﬂéûä‘
-
+    
     void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -45,21 +45,13 @@ public class MakuraMeteor : MonoBehaviour
         //Ç‡ÇÃÇ…ìñÇΩÇ¡ÇΩÇÁÉvÅ[ÉãÇ…ï‘Ç∑
         if (gameObject.activeSelf)
         {
-
+            _onDisable?.Invoke();
             gameObject.SetActive(false);
-            // StartCoroutine(DestroyMeteorCoroutine());
         }
 
     }
     private void OnDisable()
     {
         _rb.velocity = Vector3.zero;
-    }
-    private IEnumerator DestroyMeteorCoroutine()
-    {
-
-        yield return new WaitForSeconds(0.5f);
-        _onDisable?.Invoke();
-        gameObject.SetActive(false);
     }
 }

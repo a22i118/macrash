@@ -2,8 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Player;
-using Unity.VisualScripting;
 
 public class MakuraController : ColorChanger
 {
@@ -90,53 +88,26 @@ public class MakuraController : ColorChanger
 
         if (!_rb.isKinematic)
         {
-            // && !collision.gameObject.CompareTag("Player")
-            if (CurrentColorType != ColorType.Red)
-            {
-                if (_rb.velocity != Vector3.zero && collision.gameObject != _thrower)
-                {
-                    _rb.useGravity = true;
-                    _rb.velocity = Vector3.zero;
-                }
-            }
-            else if (collision.gameObject.CompareTag("Player"))
+            if (CurrentColorType != ColorType.Red && !_rb.useGravity && _rb.velocity != Vector3.zero && collision.gameObject != _thrower)
             {
                 _rb.useGravity = true;
                 _rb.velocity = Vector3.zero;
+                // _isCounterAttack = false;
             }
 
-
-
-            if (collision.gameObject.CompareTag("Player") && _isThrow && collision.gameObject != _thrower)
+            if (collision.gameObject.CompareTag("Player") && _isThrow && !_isHitCoolTime && collision.gameObject != _thrower)
             {
-                PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
-                if (playerController == null)
-                {
-                    ThrowMakuraDemo throwMakuraDemo = collision.gameObject.GetComponent<ThrowMakuraDemo>();
-                    if (!throwMakuraDemo.IsHitCoolTime)
-                    {
-                        _currentScaleType = ScaleType.Nomal;
-                        _rb.useGravity = true;
-                        _rb.isKinematic = true;
-                        _rb.isKinematic = false;
-                        _rb.velocity = Vector3.zero;
-                        StartCoroutine(HitStopVibration());
-                        StartCoroutine(HitCoolTime());
-                        _scoreManager.UpdateScore(_thrower.name);
-                    }
-                }
-                else if (!playerController.IsHitCoolTime)
-                {
-                    _currentScaleType = ScaleType.Nomal;
-                    _rb.useGravity = true;
-                    _rb.isKinematic = true;
-                    _rb.isKinematic = false;
-                    _rb.velocity = Vector3.zero;
-                    StartCoroutine(HitStopVibration());
-                    StartCoroutine(HitCoolTime());
-                    _scoreManager.UpdateScore(_thrower.name);
 
-                }
+                _currentScaleType = ScaleType.Nomal;
+                _rb.useGravity = true;
+                _rb.isKinematic = true;
+                _rb.isKinematic = false;
+                _rb.velocity = Vector3.zero;
+
+                StartCoroutine(HitStopVibration());
+                StartCoroutine(HitCoolTime());
+                _scoreManager.UpdateScore(_thrower.name);
+                Debug.Log("敵に当たったぜ");
             }
             if (collision.gameObject.CompareTag("Makura"))
             {
@@ -159,7 +130,6 @@ public class MakuraController : ColorChanger
                 _rb.velocity = Vector3.zero;
             }
             _rb.isKinematic = true;
-            // _rb.isKinematic = false;
             _currentColorType = GetRandomColor();
         }
         if (_isCharge)
@@ -191,21 +161,10 @@ public class MakuraController : ColorChanger
         {
             if (collider.gameObject.CompareTag("Player") && collider is CapsuleCollider)
             {
-                PlayerController playerController = collider.gameObject.GetComponent<PlayerController>();
-                if (playerController == null)
-                {
-                    ThrowMakuraDemo throwMakuraDemo = collider.gameObject.GetComponent<ThrowMakuraDemo>();
-                    if (!throwMakuraDemo.IsHitCoolTime)
-                    {
-                        StartCoroutine(BlackMakuraHit());
-                        StartCoroutine(HitCoolTime());
-                    }
-                }
-                else if (!playerController.IsHitCoolTime)
-                {
-                    StartCoroutine(BlackMakuraHit());
-                    StartCoroutine(HitCoolTime());
-                }
+                StartCoroutine(BlackMakuraHit());
+                StartCoroutine(HitCoolTime());
+                _scoreManager.UpdateScore(_thrower.name);
+
             }
             if (collider.gameObject.CompareTag("Makura"))
             {
@@ -224,12 +183,12 @@ public class MakuraController : ColorChanger
     }
     private void BlackMakuraPositionUpdate()
     {
-        float xMin = -9.0f;
-        float xMax = 9.0f;
-        float yMin = 0.0f;
-        float yMax = 6.0f;
-        float zMin = -4.0f;
-        float zMax = 8.0f;
+        float xMin = -9f;
+        float xMax = 9f;
+        float yMin = 0f;
+        float yMax = 6f;
+        float zMin = -4f;
+        float zMax = 8f;
         if (CurrentColorType == ColorType.Black && _isThrow)
         {
             Vector3 position = transform.position;
@@ -300,7 +259,6 @@ public class MakuraController : ColorChanger
         _isHitCoolTime = true;
 
         yield return new WaitForSeconds(1.0f);
-        _isThrow = false;
         _isHitCoolTime = false;
     }
     private IEnumerator ScaleChangeCoolTime()

@@ -1,19 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Player;
+
 public class ExplosionRange : MonoBehaviour
 {
+    private bool _isHitCoolTime = false;//当たった時のクールタイム
     private GameObject _thrower;//投げたプレイヤー
-    private ScoreManager _scoreManager;
-
 
     public GameObject Thrower { get => _thrower; set => _thrower = value; }
 
     // Start is called before the first frame update
     void Start()
     {
-        _scoreManager = FindObjectOfType<ScoreManager>();
+
     }
 
     // Update is called once per frame
@@ -23,24 +22,13 @@ public class ExplosionRange : MonoBehaviour
     }
     private void OnTriggerEnter(Collider collider)
     {
-        if (collider.gameObject != _thrower)
+        if (!_isHitCoolTime && collider.gameObject != _thrower)
         {
             if (collider.gameObject.CompareTag("Player") && collider is CapsuleCollider)
             {
-                PlayerController playerController = collider.gameObject.GetComponent<PlayerController>();
-                if (playerController == null)
-                {
-                    ThrowMakuraDemo throwMakuraDemo = collider.GetComponent<ThrowMakuraDemo>();
-                    if (!throwMakuraDemo.IsHitCoolTime)
-                    {
-                        _scoreManager.UpdateScore(_thrower.name);
-                    }
-                }
-                else if (!playerController.IsHitCoolTime)
-                {
-                    Debug.Log("爆発がヒットしたぜ！");
-                    _scoreManager.UpdateScore(_thrower.name);
-                }
+                Debug.Log("爆発がヒットしたぜ！");
+
+                StartCoroutine(HitCoolTime());
             }
             if (collider.gameObject.CompareTag("Makura"))
             {
@@ -52,5 +40,12 @@ public class ExplosionRange : MonoBehaviour
                 }
             }
         }
+    }
+    private IEnumerator HitCoolTime()
+    {
+        _isHitCoolTime = true;
+
+        yield return new WaitForSeconds(1.0f);
+        _isHitCoolTime = false;
     }
 }

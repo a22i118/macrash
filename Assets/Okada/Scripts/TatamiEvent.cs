@@ -20,6 +20,10 @@ public class TatamiEvent : MonoBehaviour
         {
             _startPosition[i] = _tatami[i].transform.position;
         }
+
+        // Šm”F—p
+        // InitializePosition();
+        // _isUP = !_isUP;
     }
     // Update is called once per frame
     void Update()
