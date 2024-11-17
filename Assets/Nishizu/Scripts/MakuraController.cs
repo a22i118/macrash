@@ -159,6 +159,7 @@ public class MakuraController : ColorChanger
                 _rb.velocity = Vector3.zero;
             }
             _rb.isKinematic = true;
+            // _rb.isKinematic = false;
             _currentColorType = GetRandomColor();
         }
         if (_isCharge)
