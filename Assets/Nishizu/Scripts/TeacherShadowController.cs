@@ -11,7 +11,7 @@ public class TeacherShadowController : MonoBehaviour
     private bool _isRotationDirection = true;
     private bool _isDuringEvent = false;
     private float _time;
-    private float _targetAngle = 360.0f - 108.0f;//-108だとMathf.Approximatelyが動かない！！
+    private float _targetAngle = 360.0f - 108.0f;//-108だとMathf.Approximatelyが動かねぇ
     private float _startAngle = 360.0f - 180.0f;
     private float _moveDistance = 0.1f;//上下移動の距離
     private float _moveSpeed = 5.0f;//移動速度

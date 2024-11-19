@@ -70,6 +70,7 @@ public class WarningUI : MonoBehaviour
     {
         _isWarning = true;
         _isNearingEnd = false;
+        _isExecuteOnce = false;
         StartCoroutine(WarningCoroutine());
         for (int i = 0; i < 4; i++)
         {
