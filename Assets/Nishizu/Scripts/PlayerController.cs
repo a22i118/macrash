@@ -70,6 +70,7 @@ namespace Player
             }
             _showMakuraController = _currentMakuraDisplay.GetComponent<ShowMakuraController>();
             _groundLayers |= _hutonLayer;
+            _groundLayers |= _wallLayer;
         }
 
         void Update()

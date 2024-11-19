@@ -7,6 +7,7 @@ public class TeacherShadowController : MonoBehaviour
     private bool _isCanRotated = false;
     private bool _isMove = false;
     private bool _isExecuteOnce = false;//一回だけ実行する
+    private bool _isWarningExecuteOnce = false;
     private bool _isRotationDirection = true;
     private bool _isDuringEvent = false;
     private float _time;
@@ -21,6 +22,7 @@ public class TeacherShadowController : MonoBehaviour
     private Vector3 _startPosition;
     private Renderer _teacherRenderer;
     [SerializeField] private DoorController _doorController;
+    [SerializeField] private GameObject _warningController;
 
     // Start is called before the first frame update
     private void Start()
@@ -58,6 +60,12 @@ public class TeacherShadowController : MonoBehaviour
         if (_isCanRotated)
         {
             Rotate(_isRotationDirection);
+            if (!_isWarningExecuteOnce)
+            {
+                _isWarningExecuteOnce = true;
+                _warningController.GetComponent<WarningUI>().Init();
+            }
+
         }
     }
     public void Init()
@@ -68,6 +76,7 @@ public class TeacherShadowController : MonoBehaviour
             _time = 0.0f;
             _isCanRotated = true;
             _isExecuteOnce = false;
+            _isWarningExecuteOnce = false;
             _isMove = false;
             _isRotationDirection = true;
             transform.position = _startPosition;

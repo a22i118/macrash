@@ -18,7 +18,6 @@ public class ThrowMakuraDemo : MonoBehaviour
     private float _vibrationTime = 0.3f;//振動する時間
     private bool _isVibrating = false;
     private bool _isHitCoolTime = false;
-    private bool _isInvincibilityTime = false;//無敵中か
     private bool _isHitStop = false;
 
     public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
