@@ -17,12 +17,13 @@ public class TeacherShadowController : MonoBehaviour
     private float _moveSpeed = 5.0f;//移動速度
     private float _rotatedSpeed = 10.0f;
     private float _startAlpha;
-    private float _SecondsToDoor = 6.0f;
+    private float _secondsToDoor = 6.0f;
     private float _teacherEventTime = 5.0f;
     private Vector3 _startPosition;
     private Renderer _teacherRenderer;
     [SerializeField] private DoorController _doorController;
     [SerializeField] private GameObject _warningController;
+    [SerializeField] private GameObject _tensionSprite;
 
     // Start is called before the first frame update
     private void Start()
@@ -48,7 +49,7 @@ public class TeacherShadowController : MonoBehaviour
             {
                 _isExecuteOnce = true;
                 _isMove = true;
-                StartCoroutine(MovePauseCoroutine(_SecondsToDoor));//ドアの前で止め、先生イベントを呼び出す
+                StartCoroutine(MovePauseCoroutine());//ドアの前で止め、先生イベントを呼び出す
                 StartCoroutine(FadeUpdateCoroutine());//透明にして元に戻す
             }
         }
@@ -64,8 +65,8 @@ public class TeacherShadowController : MonoBehaviour
             {
                 _isWarningExecuteOnce = true;
                 _warningController.GetComponent<WarningUI>().Init();
+                _tensionSprite.GetComponent<TensionSpriteManager>().Init();
             }
-
         }
     }
     public void Init()
@@ -124,9 +125,11 @@ public class TeacherShadowController : MonoBehaviour
     {
 
     }
-    private IEnumerator MovePauseCoroutine(float second)
+    private IEnumerator MovePauseCoroutine()
     {
-        yield return new WaitForSeconds(second);
+        yield return new WaitForSeconds(4.0f);
+        _tensionSprite.GetComponent<TensionSpriteManager>().Loop = false;
+        yield return new WaitForSeconds(2.0f);
         _isMove = false;
         _doorController.IsOpen = true;
         TeacherEvent();
@@ -171,7 +174,7 @@ public class TeacherShadowController : MonoBehaviour
     {
         yield return new WaitForSeconds(2.0f);
         StartCoroutine(FadeOutCoroutine());//透明にする
-        yield return new WaitForSeconds(_SecondsToDoor - 2.0f);//透明にする前に待った2秒を引く
+        yield return new WaitForSeconds(_secondsToDoor - 2.0f);//透明にする前に待った2秒を引く
         yield return new WaitForSeconds(_teacherEventTime);
         yield return new WaitForSeconds(2.2f);
         StartCoroutine(FadeInCoroutine());//透明度を戻す

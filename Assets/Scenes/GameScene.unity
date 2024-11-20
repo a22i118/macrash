@@ -614,6 +614,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _doorController: {fileID: 1087051625}
   _warningController: {fileID: 805805487}
+  _tensionSprite: {fileID: 1343484424}
 --- !u!1 &129666765
 GameObject:
   m_ObjectHideFlags: 0
