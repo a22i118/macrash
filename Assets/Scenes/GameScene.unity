@@ -1114,7 +1114,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1P
+  m_text: 3P
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1835,7 +1835,7 @@ GameObject:
   - component: {fileID: 415812725}
   - component: {fileID: 415812724}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: 3P
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1858,9 +1858,9 @@ RectTransform:
   - {fileID: 274488253}
   m_Father: {fileID: 1117389710}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 285, y: -426}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 242.7514, y: 143.4757}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &415812724
@@ -2158,7 +2158,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1P
+  m_text: 4P
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4345,7 +4345,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1P
+  m_text: 2P
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4434,7 +4434,7 @@ GameObject:
   - component: {fileID: 1014868776}
   - component: {fileID: 1014868775}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: 1PScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4823,7 +4823,7 @@ GameObject:
   - component: {fileID: 1038499306}
   - component: {fileID: 1038499305}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: 4PScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5055,6 +5055,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1117389710}
   - component: {fileID: 1117389711}
+  - component: {fileID: 1117389712}
   m_Layer: 5
   m_Name: GameObject
   m_TagString: Untagged
@@ -5071,7 +5072,7 @@ RectTransform:
   m_GameObject: {fileID: 1117389709}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.80554, y: 0.80554, z: 0.80554}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1984832277}
@@ -5082,7 +5083,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -474, y: -425}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1117389711
@@ -5101,6 +5102,32 @@ MonoBehaviour:
   _score2: {fileID: 1681128746}
   _score3: {fileID: 2052081432}
   _score4: {fileID: 1038499305}
+--- !u!114 &1117389712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1117389709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 100
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &1128876192
 GameObject:
   m_ObjectHideFlags: 0
@@ -6180,7 +6207,7 @@ GameObject:
   - component: {fileID: 1280710844}
   - component: {fileID: 1280710843}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: 2P
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6203,9 +6230,9 @@ RectTransform:
   - {fileID: 1010382785}
   m_Father: {fileID: 1117389710}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -58, y: -426}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 242.7514, y: 143.4757}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1280710843
@@ -7582,7 +7609,7 @@ GameObject:
   - component: {fileID: 1592900416}
   - component: {fileID: 1592900415}
   m_Layer: 5
-  m_Name: Image (3)
+  m_Name: 4P
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7605,9 +7632,9 @@ RectTransform:
   - {fileID: 485936113}
   m_Father: {fileID: 1117389710}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 612, y: -426}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 242.7514, y: 143.4757}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1592900415
@@ -8068,7 +8095,7 @@ GameObject:
   - component: {fileID: 1681128747}
   - component: {fileID: 1681128746}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: 2PScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9206,7 +9233,7 @@ GameObject:
   - component: {fileID: 1984832279}
   - component: {fileID: 1984832278}
   m_Layer: 5
-  m_Name: Image
+  m_Name: 1P
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9229,9 +9256,9 @@ RectTransform:
   - {fileID: 822525311}
   m_Father: {fileID: 1117389710}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -384.44, y: -426}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 242.7514, y: 143.4757}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1984832278
@@ -9908,7 +9935,7 @@ GameObject:
   - component: {fileID: 2052081433}
   - component: {fileID: 2052081432}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: 3PScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
