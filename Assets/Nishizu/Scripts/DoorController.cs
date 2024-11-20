@@ -7,7 +7,7 @@ public class DoorController : MonoBehaviour
     private List<GameObject> _door = new List<GameObject>();
     private Vector3[] _closedPosition = new Vector3[2];
     private Vector3[] _openPosition = new Vector3[2];
-    private float _openSpeed = 2.0f;
+    private float _openSpeed = 3.0f;
     private bool _isOpen = false;//ドアが開いているかどうか
 
     public bool IsOpen { get => _isOpen; set => _isOpen = value; }
