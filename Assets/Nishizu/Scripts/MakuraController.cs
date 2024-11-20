@@ -209,6 +209,10 @@ public class MakuraController : ColorChanger
             }
             if (collider.gameObject.CompareTag("Makura"))
             {
+                if (collider.gameObject.GetComponent<MakuraController>()._currentColorType == ColorType.Black)
+                {
+                    StartCoroutine(BlackMakuraHit());
+                }
                 Rigidbody rb = collider.gameObject.GetComponent<Rigidbody>();
                 if (rb != null)
                 {
