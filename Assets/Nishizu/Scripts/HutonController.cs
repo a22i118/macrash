@@ -7,6 +7,7 @@ public class HutonController : MonoBehaviour
     private GameObject _makura;
 
     public GameObject Makura { get => _makura; set => _makura = value; }
+   
 
     public Vector3 GetCenterPosition()
     {
@@ -28,5 +29,14 @@ public class HutonController : MonoBehaviour
     void Update()
     {
 
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Makura"))
+        {
+
+            // 布団に触れたプレイヤー以外のオブジェクトを子に設定
+            collision.transform.SetParent(transform.parent);
+        }
     }
 }

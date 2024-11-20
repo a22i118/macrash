@@ -9,6 +9,7 @@ TagManager:
   - Wall
   - Meteor
   - Explosion
+  - Obstacles
   layers:
   - Default
   - TransparentFX
