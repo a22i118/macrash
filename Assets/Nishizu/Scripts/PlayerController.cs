@@ -354,7 +354,7 @@ namespace Player
                 if (collider.CompareTag("Makura") && !collider.GetComponent<MakuraController>().IsThrow)
                 {
                     _currentMakura = collider.gameObject;
-
+                    _currentMakura.transform.SetParent(null);
                     _currentMakura.SetActive(false);
                     break;
                 }
