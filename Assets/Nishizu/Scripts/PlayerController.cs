@@ -27,7 +27,7 @@ namespace Player
         private GameObject _thrownMakura;//投げられたまくら
         private bool _isSleep = false;//寝ているか
         private bool _isHitStop = false;//止まっているか
-        private bool _isJumping = false;//ジャンプ中か
+        private bool _isJumping=false;//ジャンプ中か
         private bool _isChargeTime = false;//ため攻撃中か
         private bool _isCanCatch = false;//ジャストキャッチ可能か
         private bool isKeyboardOperation = false;//キーボード操作かどうか
@@ -50,6 +50,12 @@ namespace Player
         private bool _isVibrating = false;
         private bool _isHitCoolTime = false;
         private bool _isCounterAttackTime = false;
+
+        private float _jumpHoldTime = 0f;//ジャンプキーが押されている時間
+        private float _maxJumpHoldTime = 0.2f;//最大ジャンプの押す時間
+        [SerializeField]private float _minJumpForce = 6.5f;  // 最小ジャンプ力
+        [SerializeField]private float _maxJumpForce = 9.0f;
+        const float _gravity = -25;
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
 
 
@@ -71,11 +77,13 @@ namespace Player
             _showMakuraController = _currentMakuraDisplay.GetComponent<ShowMakuraController>();
             _groundLayers |= _hutonLayer;
             _groundLayers |= _wallLayer;
+            _rb.useGravity = false;
+            //Physics.gravity = new Vector3(0, -25f, 0);
         }
 
         void Update()
         {
-            JumpForce(IsJump());
+            Jump();
             IsCheckPlayer();
             MakuraDisplayColorChange();
 
@@ -124,7 +132,7 @@ namespace Player
                 if (!_isHitStop)
                 {
                     Walk();
-                    IsJump();
+                    //IsJump();
                     if (_currentMakura != null && OnHuton() && (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire3")))
                     {
                         Debug.Log("寝るぜ！");
@@ -195,10 +203,11 @@ namespace Player
             }
 
         }
-        // private void FixedUpdate()
-        // {
-        //     JumpForce(Jump());
-        // }
+        private void FixedUpdate()
+        {
+            Vector3 gravityForce = new Vector3(0, _gravity, 0);
+            _rb.AddForce(gravityForce, ForceMode.Acceleration);
+        }
 
         /// <summary>
         /// 歩く
@@ -242,27 +251,43 @@ namespace Player
             Vector3 groundCheckPosition = new Vector3(_col.bounds.center.x, _col.bounds.min.y, _col.bounds.center.z);
             return Physics.CheckSphere(groundCheckPosition, _groundCheckRadius, _hutonLayer);
         }
-        /// <summary>
-        /// ジャンプの入力を返す
-        /// </summary>
-        private bool IsJump()
+        private void Jump()
         {
-            if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButton("Fire2")) && OnGround() && !_isJumping && !_isHitStop)
+            if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Fire2")) && OnGround() && !_isHitStop)
             {
+                _jumpHoldTime = 0f;
                 _isJumping = true;
-                return true;
             }
-            return false;
+            else if ((Input.GetKeyUp(KeyCode.LeftShift) || Input.GetButtonUp("Fire2")) && !_isHitStop && _isJumping)
+            {
+                _isJumping = false;
+            }
+            if (_isJumping)
+            {
+                if (_jumpHoldTime < _maxJumpHoldTime)
+                {
+                    _jumpHoldTime += Time.deltaTime;
+                }
+                else
+                {
+                    _jumpHoldTime = _maxJumpHoldTime;
+                    _isJumping = false;
+                }
+                JumpForce();
+            }
         }
         /// <summary>
         /// プレイヤーに上向きの力を加える
         /// </summary>
         /// <param name="jump">ジャンプ入力</param>
-        private void JumpForce(bool jump)
+        private void JumpForce()
         {
-            if (jump)
+            if (_isJumping)
             {
-                _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+                float jumpForce = Mathf.Lerp(_minJumpForce, _maxJumpForce, _jumpHoldTime / _maxJumpHoldTime);
+                _rb.velocity = new Vector3(_rb.velocity.x,  jumpForce, _rb.velocity.z);
+                Debug.Log(jumpForce);
+                //_rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
             if (!OnGround())
             {
@@ -271,7 +296,6 @@ namespace Player
             else
             {
                 _animator.SetBool("Jump", false);
-                _isJumping = false;
             }
         }
         private void RotateShowMakura()
