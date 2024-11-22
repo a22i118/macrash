@@ -90,7 +90,6 @@ public class MakuraController : ColorChanger
 
         if (!_rb.isKinematic)
         {
-            // && !collision.gameObject.CompareTag("Player")
             if (CurrentColorType != ColorType.Red)
             {
                 if (_rb.velocity != Vector3.zero && collision.gameObject != _thrower)
@@ -104,9 +103,6 @@ public class MakuraController : ColorChanger
                 _rb.useGravity = true;
                 _rb.velocity = Vector3.zero;
             }
-
-
-
             if (collision.gameObject.CompareTag("Player") && _isThrow && collision.gameObject != _thrower)
             {
                 PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
@@ -135,7 +131,6 @@ public class MakuraController : ColorChanger
                     StartCoroutine(HitStopVibration());
                     StartCoroutine(HitCoolTime());
                     _scoreManager.UpdateScore(_thrower.name);
-
                 }
             }
             if (collision.gameObject.CompareTag("Makura"))
@@ -159,7 +154,6 @@ public class MakuraController : ColorChanger
                 _rb.velocity = Vector3.zero;
             }
             _rb.isKinematic = true;
-            // _rb.isKinematic = false;
             _currentColorType = GetRandomColor();
         }
         if (_isCharge)
@@ -180,6 +174,10 @@ public class MakuraController : ColorChanger
         if (_explosionRange != null)
         {
             _explosionRangeScript = spawnedObject.GetComponent<ExplosionRange>();
+        }
+        if (CurrentScaleType == ScaleType.Second)
+        {
+            spawnedObject.transform.localScale = new Vector3(10, 10, 10);
         }
         _explosionRangeScript.Thrower = _thrower;
         Destroy(spawnedObject, 2.0f);

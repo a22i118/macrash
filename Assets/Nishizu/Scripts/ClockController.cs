@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ClockController : MonoBehaviour
 {
-    public GameObject _hourHand;
-    public GameObject _minuteHand;
+    [SerializeField] private GameObject _hourHand;
+    [SerializeField] private GameObject _minuteHand;
 
     private float _hour = 10.0f;//時
     private float _minute = 0.0f;//分
-    private float _oneLap = 0.333333f;
+    private float _oneLap = 0.333333f;//3分で一周
 
     public float Hour { get => _hour; }
     public float Minute { get => _minute; }
@@ -33,10 +33,10 @@ public class ClockController : MonoBehaviour
                 _hour = 0.0f;
             }
         }
-        UpdateClockHands();
+        HandRotation();
     }
 
-    void UpdateClockHands()
+    private void HandRotation()
     {
         float minuteRotation = _minute * _oneLap * 6.0f;
         _minuteHand.transform.localRotation = Quaternion.Euler(0.0f, -minuteRotation, 0.0f);

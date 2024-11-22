@@ -6,8 +6,6 @@ public class ExplosionRange : MonoBehaviour
 {
     private GameObject _thrower;//投げたプレイヤー
     private ScoreManager _scoreManager;
-
-
     public GameObject Thrower { get => _thrower; set => _thrower = value; }
 
     // Start is called before the first frame update
@@ -38,7 +36,7 @@ public class ExplosionRange : MonoBehaviour
                 }
                 else if (!playerController.IsHitCoolTime)
                 {
-                    Debug.Log("爆発がヒットしたぜ！");
+                    // Debug.Log("爆発がヒットしたぜ！");
                     _scoreManager.UpdateScore(_thrower.name);
                 }
             }

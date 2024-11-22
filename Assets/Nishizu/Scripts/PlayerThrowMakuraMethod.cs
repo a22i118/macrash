@@ -112,6 +112,15 @@ namespace Player
                 if (_makuraController.CurrentScaleType == MakuraController.ScaleType.Second || _makuraController.CurrentScaleType == MakuraController.ScaleType.First)
                 {
                     throwDistance += 1.5f;
+
+                    if (throwType == ThrowType.Charge)
+                    {
+                        throwHeight = 2.0f;
+                    }
+                    else
+                    {
+                        throwHeight = 0.5f;
+                    }
                 }
                 Vector3 throwPosition = transform.position + throwDirection * throwDistance + Vector3.up * throwHeight;
 

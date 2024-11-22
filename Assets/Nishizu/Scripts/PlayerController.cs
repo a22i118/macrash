@@ -19,7 +19,6 @@ namespace Player
         private Animator _animator;
         private CapsuleCollider _col;
         private float _speed = 5.0f;//プレイヤーの移動速度
-        private float _jumpForce = 40.0f;//ジャンプの強さ
         private float _groundCheckRadius = 0.01f;//足元が地面か判定する球の半径
         private float _pickUpDistance = 1.0f;//まくらを拾うことができる距離
         private float _playerSerchDistance = 3.0f;//敵プレイヤーの捜索範囲
@@ -55,7 +54,7 @@ namespace Player
         private float _maxJumpHoldTime = 0.2f;//最大ジャンプの押す時間
         [SerializeField] private float _minJumpForce = 6.5f;  // 最小ジャンプ力
         [SerializeField] private float _maxJumpForce = 9.0f;
-        const float _gravity = -25;
+        const float _gravity = -25.0f;
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
 
 
@@ -94,9 +93,10 @@ namespace Player
             //     _showMakuraController.CurrentType = MakuraController.ScaleType.First;
             //     _playerStatus.CurrentSP = 0;
             // }
-            if (_currentMakura != null && !_isSleep && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.B)))//デバッグ用のif文。本来は一つ上のif文
+            if (_currentMakura != null && !_isSleep && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.Q)))//デバッグ用のif文。本来は一つ上のif文
             {
                 _playerStatus.CurrentSP = 0;
+                _makuraController.CurrentScaleType = MakuraController.ScaleType.Second;
             }
             if (_currentMakura != null && !_isSleep)
             {
@@ -155,7 +155,6 @@ namespace Player
         /// </summary>
         private void ThrowDecide()
         {
-
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 isKeyboardOperation = true;
@@ -199,9 +198,7 @@ namespace Player
                         ThrowMakura(ThrowType.Charge);
                     }
                 }
-
             }
-
         }
         private void FixedUpdate()
         {
@@ -302,15 +299,6 @@ namespace Player
         {
             if (_currentMakuraDisplay != null)
             {
-
-                // if (_showMakuraController.CurrentType == ShowMakuraController.ScaleType.First || _showMakuraController.CurrentType == ShowMakuraController.ScaleType.Second)
-                // {
-                //     _showRadius = 1.0f;
-                // }
-                // else
-                // {
-                //     _showRadius = 0.6f;
-                // }
                 _rotationAngle += _rotationSpeed * Time.deltaTime;
 
                 Vector3 offset = new Vector3(Mathf.Cos(_rotationAngle * Mathf.Deg2Rad) * _showRadius, 1.0f, Mathf.Sin(_rotationAngle * Mathf.Deg2Rad) * _showRadius);
@@ -385,11 +373,6 @@ namespace Player
                 }
             }
         }
-        /// <summary>
-        /// throwTypeに応じて投げ方を変える
-        /// </summary>
-        /// <param name="throwType">投げ方の種類</param>
-
         private bool IsWallThrowCheck()
         {
             Vector3 throwDirection = transform.forward;
