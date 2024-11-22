@@ -27,7 +27,7 @@ namespace Player
         private GameObject _thrownMakura;//投げられたまくら
         private bool _isSleep = false;//寝ているか
         private bool _isHitStop = false;//止まっているか
-        private bool _isJumping=false;//ジャンプ中か
+        private bool _isJumping = false;//ジャンプ中か
         private bool _isChargeTime = false;//ため攻撃中か
         private bool _isCanCatch = false;//ジャストキャッチ可能か
         private bool isKeyboardOperation = false;//キーボード操作かどうか
@@ -53,8 +53,8 @@ namespace Player
 
         private float _jumpHoldTime = 0f;//ジャンプキーが押されている時間
         private float _maxJumpHoldTime = 0.2f;//最大ジャンプの押す時間
-        [SerializeField]private float _minJumpForce = 6.5f;  // 最小ジャンプ力
-        [SerializeField]private float _maxJumpForce = 9.0f;
+        [SerializeField] private float _minJumpForce = 6.5f;  // 最小ジャンプ力
+        [SerializeField] private float _maxJumpForce = 9.0f;
         const float _gravity = -25;
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
 
@@ -285,8 +285,8 @@ namespace Player
             if (_isJumping)
             {
                 float jumpForce = Mathf.Lerp(_minJumpForce, _maxJumpForce, _jumpHoldTime / _maxJumpHoldTime);
-                _rb.velocity = new Vector3(_rb.velocity.x,  jumpForce, _rb.velocity.z);
-                Debug.Log(jumpForce);
+                _rb.velocity = new Vector3(_rb.velocity.x, jumpForce, _rb.velocity.z);
+                // Debug.Log(jumpForce);
                 //_rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
             if (!OnGround())
