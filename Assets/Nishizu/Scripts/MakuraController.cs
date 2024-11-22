@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 public class MakuraController : ColorChanger
 {
     [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] private LayerMask _hutonLayer;
     private Rigidbody _rb;
     private Collider _col;
     private ScaleType _currentScaleType = ScaleType.Nomal;//今の大きさ
@@ -44,6 +45,7 @@ public class MakuraController : ColorChanger
         _col = GetComponent<Collider>();
         _initialRotation = transform.rotation;
         _scoreManager = FindObjectOfType<ScoreManager>();
+        _groundLayer |= _hutonLayer;
     }
     void Update()
     {
@@ -143,7 +145,7 @@ public class MakuraController : ColorChanger
             }
         }
 
-        if (((_groundLayer & (1 << collision.gameObject.layer)) == _groundLayer) || collision.gameObject.CompareTag("Huton"))
+        if ((_groundLayer & (1 << collision.gameObject.layer)) != 0)
         {
             _isThrow = false;
             _isCounterAttack = false;
