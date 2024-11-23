@@ -103,14 +103,14 @@ public class ThrowMakuraDemo : MonoBehaviour
                         upwardForce = 200.0f;
                         throwDistance = 1.3f;
                         throwHeight = 1.0f;
-                        Debug.Log("通常");
+                        // Debug.Log("通常");
                         break;
                     case ThrowType.Charge:
                         forwardForce = 300.0f;
                         upwardForce = 700.0f;
                         throwDistance = 0.5f;
                         throwHeight = 2.0f;
-                        Debug.Log("くらえ！爆発まくら");
+                        // Debug.Log("くらえ！爆発まくら");
                         break;
                 }
             }

@@ -41,7 +41,7 @@ public class ClockController : MonoBehaviour
         float minuteRotation = _minute * _oneLap * 6.0f;
         _minuteHand.transform.localRotation = Quaternion.Euler(0.0f, -minuteRotation, 0.0f);
 
-        float hourRotation = (_hour % 12.0f + _minute / 180.0f) * 30.0f;
+        float hourRotation = (_hour % 12.0f + _minute / 60.0f * _oneLap) * 30.0f;
         _hourHand.transform.localRotation = Quaternion.Euler(0.0f, -hourRotation, 0.0f);
     }
 }

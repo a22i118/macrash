@@ -165,7 +165,7 @@ public class MakuraController : ColorChanger
         }
         if (_isAlterEgo)
         {
-            Destroy(gameObject, 0.3f);
+            Destroy(gameObject, 0.4f);
         }
 
 

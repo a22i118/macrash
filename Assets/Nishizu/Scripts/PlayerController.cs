@@ -432,7 +432,7 @@ namespace Player
                     HitMotion();
                     if (!_isVibrating)
                     {
-                        StartCoroutine(HitStopVibration(true));
+                        StartCoroutine(HitStopVibration(true, null));
                     }
                 }
             }
@@ -568,7 +568,7 @@ namespace Player
                 HitMotion();
                 if (!_isVibrating)
                 {
-                    StartCoroutine(HitStopVibration(makuraController.IsCounterAttack));
+                    StartCoroutine(HitStopVibration(makuraController.IsCounterAttack, collision.gameObject.transform));
                 }
             }
             if (collision.gameObject.CompareTag("Meteor"))
@@ -579,11 +579,11 @@ namespace Player
                 HitMotion();
                 if (!_isVibrating)
                 {
-                    StartCoroutine(HitStopVibration(false));
+                    StartCoroutine(HitStopVibration(false, null));
                 }
             }
         }
-        private IEnumerator HitStopVibration(bool isCounterAttack)
+        private IEnumerator HitStopVibration(bool isCounterAttack, Transform makuratransform)
         {
             _isVibrating = true;
             Vector3 hitPosition = transform.position;
@@ -606,7 +606,20 @@ namespace Player
             }
 
             transform.position = hitPosition;
+            if (makuratransform != null)
+            {
+                Vector3 direction = transform.position - makuratransform.position;
+                if (direction.y <= 0)
+                {
+                    direction = new Vector3(direction.x, -direction.y, direction.z);
+                }
+                float lerpPercentage = 1 - Mathf.InverseLerp(0.1f, 0.5f, direction.y);
+                float upForce = Mathf.Lerp(50, 100, lerpPercentage);
 
+                _rb.AddForce(direction.normalized * 100 + Vector3.up * upForce, ForceMode.Impulse);
+            }
+
+            yield return new WaitForSeconds(0.5f);
             _isVibrating = false;
             _isHitCoolTime = false;
         }
@@ -621,7 +634,7 @@ namespace Player
             _playerStatus.SpUp();
 
             StartCoroutine(HitStopCoroutine());
-            Debug.Log("動けるぜ");
+            // Debug.Log("動けるぜ");
         }
         /// <summary>
         /// 枕を当てられると1秒制止する
