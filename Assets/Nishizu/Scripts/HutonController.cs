@@ -32,7 +32,7 @@ public class HutonController : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Makura"))
+        if (collision.gameObject.CompareTag("Makura") || collision.gameObject.CompareTag("Obstacles"))
         {
 
             // 布団に触れたプレイヤー以外のオブジェクトを子に設定
