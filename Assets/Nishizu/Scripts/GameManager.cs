@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
 
     private Event _event;
     private List<HappeningBall> _happeningBalls = new List<HappeningBall>();
-    private bool aa = false;
 
     // Start is called before the first frame update
     private void Awake()
@@ -93,7 +92,7 @@ public class GameManager : MonoBehaviour
                 if (happeningBall.Outbreak)
                 {
                     _event.RandomEvent(happeningBall.Starter);
-                    // happeningBall.Outbreak = false;
+                    happeningBall.Outbreak = false;
                 }
             }
         }
@@ -121,7 +120,7 @@ public class GameManager : MonoBehaviour
     {
         GameObject happeningBall = Instantiate(_happeningBall, RandomPosition(), Quaternion.identity);
         _happeningBalls.Add(happeningBall.GetComponent<HappeningBall>());
-        yield return new WaitForSeconds(30.0f);
+        yield return new WaitForSeconds(10.0f);
         StartCoroutine(HappeningBallGeneration());
     }
 }

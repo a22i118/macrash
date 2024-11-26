@@ -116,13 +116,13 @@ namespace Player
             {
                 _speed = 4.0f;
             }
-            if (_currentMakura == null && _thrownMakura != null && _isCanCatch && Input.GetAxis("L_R_Trigger") < -0.5f)
+            if (_currentMakura == null && _thrownMakura != null && _isCanCatch && (Input.GetAxis("L_R_Trigger") < -0.5f || Input.GetKeyDown(KeyCode.Mouse1)))
             {
                 CatchMakura();
             }
             if (_isSleep)
             {
-                if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire3"))
+                if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Fire3"))
                 {
                     WakeUp();
                 }
@@ -133,12 +133,12 @@ namespace Player
                 {
                     Walk();
                     //IsJump();
-                    if (_currentMakura != null && OnHuton() && (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire3")))
+                    if (_currentMakura != null && OnHuton() && (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Fire3")))
                     {
                         Debug.Log("寝るぜ！");
                         Sleep();
                     }
-                    if (_currentMakura == null && CheckMakura() && (Input.GetKeyDown(KeyCode.Space) || Input.GetAxis("L_R_Trigger") < -0.5f))
+                    if (_currentMakura == null && CheckMakura() && (Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.Z) || Input.GetAxis("L_R_Trigger") < -0.5f))
                     {
                         PickUpMakura();
 
@@ -155,13 +155,13 @@ namespace Player
         /// </summary>
         private void ThrowDecide()
         {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.X))
             {
                 isKeyboardOperation = true;
                 _keyHoldTime = Time.time;
                 _isChargeTime = true;
             }
-            else if (Input.GetKeyUp(KeyCode.Mouse0))
+            else if (Input.GetKeyUp(KeyCode.Mouse0) || Input.GetKeyUp(KeyCode.X))
             {
                 isKeyboardOperation = false;
                 _isChargeTime = false;
@@ -250,12 +250,12 @@ namespace Player
         }
         private void Jump()
         {
-            if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Fire2")) && OnGround() && !_isHitStop)
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire2")) && OnGround() && !_isHitStop)
             {
                 _jumpHoldTime = 0f;
                 _isJumping = true;
             }
-            else if ((Input.GetKeyUp(KeyCode.LeftShift) || Input.GetButtonUp("Fire2")) && !_isHitStop && _isJumping)
+            else if ((Input.GetKeyUp(KeyCode.Space) || Input.GetButtonUp("Fire2")) && !_isHitStop && _isJumping)
             {
                 _isJumping = false;
             }

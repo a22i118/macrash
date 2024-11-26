@@ -87,7 +87,6 @@ public class MakuraController : ColorChanger
 
     private void OnCollisionEnter(Collision collision)
     {
-
         _isTouching = true;
 
         if (!_rb.isKinematic)
@@ -167,8 +166,6 @@ public class MakuraController : ColorChanger
         {
             Destroy(gameObject, 0.4f);
         }
-
-
     }
     private void HitSpawn()
     {

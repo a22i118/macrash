@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 8062840699458782522}
   m_Layer: 0
   m_Name: HappeningBall
-  m_TagString: Untagged
+  m_TagString: Obstacles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -105,7 +105,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1264339034604123603}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 859f2994591430b49a77983beb1bba7d, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

@@ -21,6 +21,7 @@ public class Event : MonoBehaviour
 
     public List<GameObject> Makuras { get => _makuras; set => _makuras = value; }
     private bool _one = false;
+    private int _lastEvent = -1;
 
     // Start is called before the first frame update
     void Start()
@@ -113,8 +114,14 @@ public class Event : MonoBehaviour
     {
         if (!_one)
         {
+            _one = true;
+
             int randomNumber = Random.Range(0, 8);
-            Debug.Log(starter);
+            while (randomNumber == _lastEvent)
+            {
+                randomNumber = Random.Range(0, 8);
+            }
+            // Debug.Log(starter);
             switch (randomNumber)
             {
                 case 0:
@@ -129,35 +136,51 @@ public class Event : MonoBehaviour
                 case 3:
                     foreach (var makura in _makuraControllers)
                     {
-                        makura.CurrentColorType = ColorChanger.ColorType.Red;
+                        if (!makura.IsThrow)
+                        {
+                            makura.CurrentColorType = ColorChanger.ColorType.Red;
+                        }
                     }
                     break;
                 case 4:
                     foreach (var makura in _makuraControllers)
                     {
-                        makura.CurrentColorType = ColorChanger.ColorType.Green;
+                        if (!makura.IsThrow)
+                        {
+                            makura.CurrentColorType = ColorChanger.ColorType.Green;
+                        }
                     }
                     break;
                 case 5:
                     foreach (var makura in _makuraControllers)
                     {
-                        makura.CurrentColorType = ColorChanger.ColorType.Blue;
+                        if (!makura.IsThrow)
+                        {
+                            makura.CurrentColorType = ColorChanger.ColorType.Blue;
+                        }
                     }
                     break;
                 case 6:
                     foreach (var makura in _makuraControllers)
                     {
-                        makura.CurrentColorType = ColorChanger.ColorType.Black;
+                        if (!makura.IsThrow)
+                        {
+                            makura.CurrentColorType = ColorChanger.ColorType.Black;
+                        }
                     }
                     break;
                 case 7:
                     foreach (var makura in _makuraControllers)
                     {
-                        makura.CurrentColorType = ColorChanger.ColorType.Nomal;
+                        if (!makura.IsThrow)
+                        {
+                            makura.CurrentColorType = ColorChanger.ColorType.Nomal;
+                        }
                     }
                     break;
             }
-            _one = true;
+            _one = false;
+            _lastEvent = randomNumber;
         }
     }
 }
