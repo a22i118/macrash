@@ -7,8 +7,9 @@ public class HappeningBall : MonoBehaviour
     private Renderer _renderer;
     private GameObject _starter = null;
     private float hue;
-
+    private bool _outbreak = false;
     public GameObject Starter { get => _starter; set => _starter = value; }
+    public bool Outbreak { get => _outbreak; set => _outbreak = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -22,8 +23,8 @@ public class HappeningBall : MonoBehaviour
         ColorChange();
         if (_starter != null)
         {
-
-            Destroy(gameObject, 0.2f);
+            _outbreak = true;
+            Destroy(gameObject);
         }
     }
     private void ColorChange()

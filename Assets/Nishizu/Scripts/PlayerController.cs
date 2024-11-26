@@ -43,7 +43,7 @@ namespace Player
         private float _rotationSpeed = 200.0f;//持っているまくらの回転速度
         private float _showRadius = 0.6f;//プレイヤーからのまくらの距離
         private float _rotationAngle;
-        ShowMakuraController _showMakuraController;
+        private ShowMakuraController _showMakuraController;
         private float _vibrationStrength = 0.3f;//振動の強さ
         private float _vibrationTime = 0.3f;//振動する時間
         private bool _isVibrating = false;

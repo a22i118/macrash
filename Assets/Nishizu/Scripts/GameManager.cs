@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Player;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _meteor;
     [SerializeField] private GameObject _tatami;
     [SerializeField] private GameObject _makuraPrefub;
+    [SerializeField] private GameObject _happeningBall;
+
     private List<GameObject> _makuras = new List<GameObject>();
     private List<MakuraController> _makuraControllers = new List<MakuraController>();
     private List<PlayerController> _playerControllers = new List<PlayerController>();
@@ -23,10 +26,15 @@ public class GameManager : MonoBehaviour
     private bool _isPlayerSet = false;
     private Vector3 initialPosition = new Vector3(-3.0f, 0.5f, 0.0f);
 
+    private Event _event;
+    private List<HappeningBall> _happeningBalls = new List<HappeningBall>();
+    private bool aa = false;
 
     // Start is called before the first frame update
-    private void Start()
+    private void Awake()
     {
+        _event = GetComponent<Event>();
+
         if (_hutons != null)
         {
             foreach (var huton in _hutons)
@@ -35,7 +43,11 @@ public class GameManager : MonoBehaviour
                 Quaternion hutonRotation = huton.GetComponent<HutonController>().GetRotation();
                 _makuras.Add(Instantiate(_makuraPrefub, new Vector3(hutonPosition.x, hutonPosition.y + 0.1f, hutonPosition.z + 0.6f), hutonRotation));
             }
-
+            _event.Makuras = _makuras;
+            if (_happeningBall != null)
+            {
+                StartCoroutine(HappeningBallGeneration());
+            }
         }
         if (_makuras != null)
         {
@@ -69,134 +81,47 @@ public class GameManager : MonoBehaviour
         {
             _tatamiEvent = _tatami.GetComponent<TatamiEvent>();
         }
-
-
-
-
-
-
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (_happeningBalls != null)
         {
-            _isGameStart = true;
-        }
-
-        if (_isGameStart)
-        {
-            if (!_isPlayerSet)
+            foreach (var happeningBall in _happeningBalls)
             {
-                for (int i = 0; i < _players.Count; i++)
+                if (happeningBall.Outbreak)
                 {
-                    // Debug.Log($"Setting position for player {i} to {initialPosition}");
-                    _players[i].transform.position = initialPosition;
-
-                    // Debug.Log($"New position: {_players[i].transform.position}");
-                    initialPosition.x += 2.0f;
-                    // if (i == _players.Count - 1)
-                    // {
-                    //     _isPlayerSet = true;
-                    // }
+                    _event.RandomEvent(happeningBall.Starter);
+                    // happeningBall.Outbreak = false;
                 }
-                _isPlayerSet = true;
             }
         }
-
-
-
-        //デバッグ用
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            _teacherEvent.Init();
-        }
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            _tatamiEvent.Init();
-        }
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            _meteorEvent.Init();
-        }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            foreach (var makura in _makuraControllers)
-            {
-                makura.CurrentColorType = ColorChanger.ColorType.Red;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            foreach (var makura in _makuraControllers)
-            {
-                makura.CurrentColorType = ColorChanger.ColorType.Green;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            foreach (var makura in _makuraControllers)
-            {
-                makura.CurrentColorType = ColorChanger.ColorType.Blue;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            foreach (var makura in _makuraControllers)
-            {
-                makura.CurrentColorType = ColorChanger.ColorType.Black;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            foreach (var makura in _makuraControllers)
-            {
-                makura.CurrentColorType = ColorChanger.ColorType.Nomal;
-            }
-        }
-
     }
-    // void LateUpdate()
-    // {
-    //     if (!_isPlayerSet)
-    //     {
-    // for (int i = 0; i<_players.Count; i++)
-    // {
-    //     // _players[i].transform.position = initialPosition;
 
-    //     Debug.Log($"Setting position for player {i} to {initialPosition}");
-    //     _players[i].transform.position = initialPosition;
-
-    //     Debug.Log($"New position: {_players[i].transform.position}");
-    //     initialPosition.x += 2.0f;
-    //     if (i == _players.Count - 1)
-    //     {
-    //         _isPlayerSet = true;
-    //     }
-    // }
-
-    // IEnumerator ForcePositionReset()
-    // {
-    //     yield return new WaitForEndOfFrame();  // 次のフレームに遅延
-
-    //     for (int i = 0; i < _players.Count; i++)
-    //     {
-    //         if (_players[i] != null)
-    //         {
-    //             Debug.Log($"Setting position for player {i} to {initialPosition}");
-    //             _players[i].transform.position = initialPosition;
-    //             Debug.Log($"New position: {_players[i].transform.position}");
-
-    //             initialPosition.x += 2.0f;  // 次のプレイヤーは x 座標が +2 になる
-    //         }
-    //     }
-
-    //     _isPlayerSet = true;
-    // }
     private void Init()
     {
 
+    }
+    private Vector3 RandomPosition()
+    {
+        float xMin = -8.0f;
+        float xMax = 8.0f;
+        float zMin = -3.0f;
+        float zMax = 7.0f;
+        float y = 6.0f;
+
+        float randomX = Random.Range(xMin, xMax);
+        float randomZ = Random.Range(zMin, zMax);
+
+        return new Vector3(randomX, y, randomZ);
+    }
+
+    private IEnumerator HappeningBallGeneration()
+    {
+        GameObject happeningBall = Instantiate(_happeningBall, RandomPosition(), Quaternion.identity);
+        _happeningBalls.Add(happeningBall.GetComponent<HappeningBall>());
+        yield return new WaitForSeconds(30.0f);
+        StartCoroutine(HappeningBallGeneration());
     }
 }
