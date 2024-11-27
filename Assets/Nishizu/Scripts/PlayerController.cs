@@ -474,11 +474,11 @@ namespace Player
             _animator.SetBool("Walk", false);
             _rb.isKinematic = true;
             _isSleep = true;
-            _beforeSleepPosition = transform.position;
-            _beforeSleepRotation = transform.rotation;
+            // _beforeSleepPosition = transform.position;
+            // _beforeSleepRotation = transform.rotation;
 
             Vector3 hutonPosition = _currentHutonController.GetCenterPosition();
-            transform.position = new Vector3(hutonPosition.x, hutonPosition.y + 0.0f, hutonPosition.z - 0.75f);
+            transform.position = new Vector3(hutonPosition.x, hutonPosition.y, hutonPosition.z - 0.75f);
 
             if (_currentHutonController != null)
             {
@@ -500,7 +500,9 @@ namespace Player
                 _col.enabled = false;
 
                 _currentHutonController.Makura.SetActive(false);
-                transform.position = _beforeSleepPosition + Vector3.up * 0.04f;
+                // transform.position = _beforeSleepPosition + Vector3.up * 0.04f;
+                Vector3 hutonPosition = _currentHutonController.GetCenterPosition();
+                transform.position = new Vector3(hutonPosition.x, hutonPosition.y + 0.04f, hutonPosition.z);
 
                 StartCoroutine(PhysicsAndColliderDelay());
             }
