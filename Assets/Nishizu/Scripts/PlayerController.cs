@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Player;
 using System;
+using Unity.VisualScripting;
 
 namespace Player
 {
@@ -57,6 +58,7 @@ namespace Player
         [SerializeField] private float _minJumpForce = 6.5f;//最小ジャンプ力
         [SerializeField] private float _maxJumpForce = 9.0f;//最大ジャンプ力
         private const float _gravity = -25.0f;
+        private Transform _huton;
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
         public bool IsCanSleep { get => _isCanSleep; set => _isCanSleep = value; }
         public bool IsSleep { get => _isSleep; }
@@ -88,7 +90,11 @@ namespace Player
             Jump();
             IsCheckPlayer();
             MakuraDisplayColorChange();
-
+            if (_isSleep)
+            {
+                Vector3 offset = _huton.position - transform.position;
+                transform.position = new Vector3(transform.position.x, transform.position.y + offset.y, transform.position.z);
+            }
             // if (_currentMakura != null && !_isSleep && _playerStatus.ChargeMax && Input.GetButtonDown("Jump"))
             // {
             //     _makuraController = _currentMakura.GetComponent<MakuraController>();
@@ -291,8 +297,6 @@ namespace Player
             {
                 float jumpForce = Mathf.Lerp(_minJumpForce, _maxJumpForce, _jumpHoldTime / _maxJumpHoldTime);
                 _rb.velocity = new Vector3(_rb.velocity.x, jumpForce, _rb.velocity.z);
-                // Debug.Log(jumpForce);
-                //_rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
             if (!OnGround())
             {
@@ -479,7 +483,7 @@ namespace Player
 
             Vector3 hutonPosition = _currentHutonController.GetCenterPosition();
             transform.position = new Vector3(hutonPosition.x, hutonPosition.y, hutonPosition.z - 0.75f);
-
+            _huton = _currentHutonController.transform;
             if (_currentHutonController != null)
             {
                 _currentHutonController.Makura.SetActive(true);
