@@ -7,7 +7,7 @@ public class HutonController : MonoBehaviour
     private GameObject _makura;
 
     public GameObject Makura { get => _makura; set => _makura = value; }
-   
+
 
     public Vector3 GetCenterPosition()
     {

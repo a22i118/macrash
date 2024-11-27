@@ -615,6 +615,7 @@ MonoBehaviour:
   _doorController: {fileID: 1087051625}
   _warningController: {fileID: 805805487}
   _tensionSprite: {fileID: 1343484424}
+  _teacherObj: {fileID: 1832000451}
 --- !u!1 &129666765
 GameObject:
   m_ObjectHideFlags: 0
@@ -5758,7 +5759,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11229e9ba9c86764fbc9f473106edc5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _players: []
+  _players:
+  - {fileID: 706210768}
   _hutons:
   - {fileID: 429273243}
   - {fileID: 568739720}
@@ -5797,7 +5799,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6810371a7364fa64b8c9be17e1b7651d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _players: []
+  _players:
+  - {fileID: 706210768}
   _hutons:
   - {fileID: 429273243}
   - {fileID: 568739720}
@@ -9403,6 +9406,7 @@ GameObject:
   - component: {fileID: 1832000454}
   - component: {fileID: 1832000453}
   - component: {fileID: 1832000452}
+  - component: {fileID: 1832000456}
   m_Layer: 0
   m_Name: Teacher
   m_TagString: Untagged
@@ -9499,6 +9503,19 @@ Transform:
   - {fileID: 114574368}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1832000456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1832000451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e56a0954b1437f64c849829fabee81e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objMakura: {fileID: 2321852645634001250, guid: c05474d169a7b0c49a95a7355252d0fc, type: 3}
 --- !u!1 &1860273199
 GameObject:
   m_ObjectHideFlags: 0

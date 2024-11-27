@@ -25,6 +25,7 @@ namespace Player
         private GameObject _currentMakura;//手持ちのまくら
         private GameObject _thrownMakura;//投げられたまくら
         private bool _isSleep = false;//寝ているか
+        private bool _isCanSleep = false;
         private bool _isHitStop = false;//止まっているか
         private bool _isJumping = false;//ジャンプ中か
         private bool _isChargeTime = false;//ため攻撃中か
@@ -34,7 +35,8 @@ namespace Player
         private Vector3 _targetPosition;//敵プレイヤーの位置
         private Quaternion _beforeSleepRotation;//布団で寝る前の向き
         private Quaternion _lastDirection;//移動入力の最後に向いている向き
-        private HutonController _currentHuton;//布団のスクリプト
+        private HutonController _currentHutonController;//布団のスクリプト
+        private Transform _currentHuton;
         private MakuraController _makuraController;//まくらのスクリプト
         private PlayerStatus _playerStatus;//プレイヤーのスクリプト
         private float _keyHoldTime;//長押ししている時間
@@ -52,11 +54,12 @@ namespace Player
 
         private float _jumpHoldTime = 0f;//ジャンプキーが押されている時間
         private float _maxJumpHoldTime = 0.2f;//最大ジャンプの押す時間
-        [SerializeField] private float _minJumpForce = 6.5f;  // 最小ジャンプ力
-        [SerializeField] private float _maxJumpForce = 9.0f;
-        const float _gravity = -25.0f;
+        [SerializeField] private float _minJumpForce = 6.5f;//最小ジャンプ力
+        [SerializeField] private float _maxJumpForce = 9.0f;//最大ジャンプ力
+        private const float _gravity = -25.0f;
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
-
+        public bool IsCanSleep { get => _isCanSleep; set => _isCanSleep = value; }
+        public bool IsSleep { get => _isSleep; }
 
         public enum ThrowType
         {
@@ -122,9 +125,10 @@ namespace Player
             }
             if (_isSleep)
             {
-                if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Fire3"))
+                if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Fire3")) && _isCanSleep)
                 {
                     WakeUp();
+                    transform.SetParent(null);
                 }
             }
             else
@@ -133,9 +137,10 @@ namespace Player
                 {
                     Walk();
                     //IsJump();
-                    if (_currentMakura != null && OnHuton() && (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Fire3")))
+                    if (_currentMakura != null && OnHuton() && _isCanSleep && (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Fire3")))
                     {
-                        Debug.Log("寝るぜ！");
+                        // Debug.Log("寝るぜ！");
+                        transform.SetParent(_currentHuton);
                         Sleep();
                     }
                     if (_currentMakura == null && CheckMakura() && (Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.Z) || Input.GetAxis("L_R_Trigger") < -0.5f))
@@ -211,22 +216,25 @@ namespace Player
         /// </summary>
         private void Walk()
         {
-            float inputHorizontal = Input.GetAxis("Horizontal");
-            float inputVertical = Input.GetAxis("Vertical");
-            Vector3 movement = new Vector3(inputHorizontal, 0.0f, inputVertical);
-
-            _rb.velocity = new Vector3(movement.x * _speed, _rb.velocity.y, movement.z * _speed);
-
-            if (movement.magnitude > 0.01f)
+            if (!_rb.isKinematic)
             {
-                _animator.SetBool("Walk", true);
-                transform.rotation = Quaternion.LookRotation(movement);
-                _lastDirection = transform.rotation;
-            }
-            else
-            {
-                _animator.SetBool("Walk", false);
-                transform.rotation = _lastDirection;
+                float inputHorizontal = Input.GetAxis("Horizontal");
+                float inputVertical = Input.GetAxis("Vertical");
+                Vector3 movement = new Vector3(inputHorizontal, 0.0f, inputVertical);
+
+                _rb.velocity = new Vector3(movement.x * _speed, _rb.velocity.y, movement.z * _speed);
+
+                if (movement.magnitude > 0.01f)
+                {
+                    _animator.SetBool("Walk", true);
+                    transform.rotation = Quaternion.LookRotation(movement);
+                    _lastDirection = transform.rotation;
+                }
+                else
+                {
+                    _animator.SetBool("Walk", false);
+                    transform.rotation = _lastDirection;
+                }
             }
         }
 
@@ -414,11 +422,14 @@ namespace Player
             if (collider.CompareTag("Makura"))
             {
                 MakuraController makuraController = collider.GetComponent<MakuraController>();
-                if (makuraController.IsThrow && makuraController.Thrower != gameObject && makuraController.CurrentScaleType == MakuraController.ScaleType.Nomal && !makuraController.IsAlterEgo)
+                if (makuraController != null)
                 {
-                    _isCanCatch = true;
-                    _thrownMakura = collider.gameObject;
-                    // Debug.Log("情報を記憶");
+                    if (makuraController.IsThrow && makuraController.Thrower != gameObject && makuraController.CurrentScaleType == MakuraController.ScaleType.Nomal && !makuraController.IsAlterEgo)
+                    {
+                        _isCanCatch = true;
+                        _thrownMakura = collider.gameObject;
+                        // Debug.Log("情報を記憶");
+                    }
                 }
             }
             if (collider.CompareTag("Explosion"))
@@ -428,12 +439,21 @@ namespace Player
                 {
                     _isHitCoolTime = true;
                     _animator.SetBool("Walk", false);
-                    Debug.Log("う、動けない！");
-                    HitMotion();
+                    // Debug.Log("う、動けない！");
+                    HitMotion(false);
                     if (!_isVibrating)
                     {
                         StartCoroutine(HitStopVibration(true, null));
                     }
+                }
+            }
+            if (collider.CompareTag("TeaherMakura"))
+            {
+                _animator.SetBool("Walk", false);
+                HitMotion(true);
+                if (!_isVibrating)
+                {
+                    StartCoroutine(TeacherMakuraHit());
                 }
             }
         }
@@ -457,38 +477,33 @@ namespace Player
             _beforeSleepPosition = transform.position;
             _beforeSleepRotation = transform.rotation;
 
-            Vector3 hutonPosition = _currentHuton.GetCenterPosition();
+            Vector3 hutonPosition = _currentHutonController.GetCenterPosition();
             transform.position = new Vector3(hutonPosition.x, hutonPosition.y + 0.0f, hutonPosition.z - 0.75f);
 
-            if (_currentHuton != null)
+            if (_currentHutonController != null)
             {
-                _currentHuton.Makura.SetActive(true);
+                _currentHutonController.Makura.SetActive(true);
             }
 
-            transform.rotation = _currentHuton.GetRotation();
+            transform.rotation = _currentHutonController.GetRotation();
 
             transform.rotation = Quaternion.Euler(-81.0f, transform.rotation.eulerAngles.y, 0.0f);
         }
         /// <summary>
         /// 布団から起きる
         /// </summary>
-        private void WakeUp()
+        public void WakeUp()
         {
-            _rb.isKinematic = true;
-            _col.enabled = false;
-
-            if (_currentHuton != null)
+            if (_currentHutonController != null)
             {
-                _currentHuton.Makura.SetActive(false);
-            }
-            else
-            {
-                Debug.LogWarning("現在の布団がnullだってよまじかよ");
-            }
+                _rb.isKinematic = true;
+                _col.enabled = false;
 
-            transform.position = _beforeSleepPosition + Vector3.up * 0.04f;
+                _currentHutonController.Makura.SetActive(false);
+                transform.position = _beforeSleepPosition + Vector3.up * 0.04f;
 
-            StartCoroutine(PhysicsAndColliderDelay());
+                StartCoroutine(PhysicsAndColliderDelay());
+            }
         }
         /// <summary>
         /// プレイヤーの物理とコライダーの無効化
@@ -556,7 +571,8 @@ namespace Player
         {
             if (collision.gameObject.CompareTag("Huton"))
             {
-                _currentHuton = collision.gameObject.GetComponent<HutonController>();
+                _currentHuton = collision.gameObject.transform;
+                _currentHutonController = collision.gameObject.GetComponent<HutonController>();
             }
             MakuraController makuraController = collision.gameObject.GetComponent<MakuraController>();
 
@@ -565,7 +581,7 @@ namespace Player
                 _isCanCatch = false;
                 _isHitCoolTime = true;
                 _animator.SetBool("Walk", false);
-                HitMotion();
+                HitMotion(false);
                 if (!_isVibrating)
                 {
                     StartCoroutine(HitStopVibration(makuraController.IsCounterAttack, collision.gameObject.transform));
@@ -576,7 +592,7 @@ namespace Player
                 _isCanCatch = false;
                 _isHitCoolTime = true;
                 _animator.SetBool("Walk", false);
-                HitMotion();
+                HitMotion(false);
                 if (!_isVibrating)
                 {
                     StartCoroutine(HitStopVibration(false, null));
@@ -626,20 +642,25 @@ namespace Player
         /// <summary>
         /// 枕が当たったときのモーション
         /// </summary>
-        private void HitMotion()
+        private void HitMotion(bool teacher)
         {
-
             _rb.velocity = Vector3.zero;
             _isHitStop = true;
             _playerStatus.SpUp();
 
-            StartCoroutine(HitStopCoroutine());
-            // Debug.Log("動けるぜ");
+            if (teacher)
+            {
+                StartCoroutine(TeacherMakuraHitStopCoroutine());
+            }
+            else
+            {
+                StartCoroutine(HitStopCoroutine());
+            }
         }
         /// <summary>
         /// 枕を当てられると1秒制止する
         /// </summary>
-        /// <returns>2秒後に解除</returns>
+        /// <returns>1秒後に解除</returns>
         private IEnumerator HitStopCoroutine()
         {
             yield return new WaitForSeconds(1.0f);
@@ -653,15 +674,34 @@ namespace Player
             _isCounterAttackTime = false;
         }
 
-        // private void OnCollisionExit(Collision collision)
-        // {
-        //     if (collision.gameObject.CompareTag("Huton"))
-        //     {
-        //         Debug.Log("布団から出たぜ");
+        private IEnumerator TeacherMakuraHit()
+        {
+            _isVibrating = true;
+            Vector3 hitPosition = transform.position;
 
-        //         _currentHuton = null;
-        //     }
-        // }
+            float elapsedTime = 0.0f;
+
+            while (elapsedTime < 8.0f)
+            {
+                Vector3 randomOffset = new Vector3(
+                    UnityEngine.Random.Range(-0.1f, 0.1f),
+                    OnGround() ? 0 : UnityEngine.Random.Range(-0.1f, 0.1f),
+                    UnityEngine.Random.Range(-0.1f, 0.1f)
+                );
+
+                transform.position = Vector3.Lerp(transform.position, hitPosition + randomOffset, Time.deltaTime * 100);
+
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            transform.position = hitPosition;
+            _isVibrating = false;
+        }
+        private IEnumerator TeacherMakuraHitStopCoroutine()
+        {
+            yield return new WaitForSeconds(8.0f);
+            _isHitStop = false;
+        }
     }
-
 }

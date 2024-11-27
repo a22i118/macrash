@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Player;
 using UnityEngine;
 
 public class TeacherShadowController : MonoBehaviour
@@ -21,16 +22,19 @@ public class TeacherShadowController : MonoBehaviour
     private float _teacherEventTime = 5.0f;
     private Vector3 _startPosition;
     private Renderer _teacherRenderer;
+    private List<PlayerController> _playerControllers = new List<PlayerController>();
     [SerializeField] private DoorController _doorController;
     [SerializeField] private GameObject _warningController;
     [SerializeField] private GameObject _tensionSprite;
-
+    [SerializeField] private GameObject _teacherObj;
+    private Teacher _teacher;
     // Start is called before the first frame update
     private void Start()
     {
         _startPosition = transform.position;
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, _startAngle);
         _teacherRenderer = GetComponent<Renderer>();
+        _teacher = _teacherObj.GetComponent<Teacher>();
         _startAlpha = _teacherRenderer.material.color.a;
     }
 
@@ -69,8 +73,9 @@ public class TeacherShadowController : MonoBehaviour
             }
         }
     }
-    public void Init()
+    public void Init(List<PlayerController> playerControllers)
     {
+        _playerControllers = playerControllers;
         if (!_isDuringEvent)
         {
             _isDuringEvent = true;
@@ -123,7 +128,14 @@ public class TeacherShadowController : MonoBehaviour
     }
     private void TeacherEvent()
     {
-
+        foreach (var player in _playerControllers)
+        {
+            player.IsCanSleep = false;
+            if (!player.IsSleep)
+            {
+                _teacher.Angry(player.transform);
+            }
+        }
     }
     private IEnumerator MovePauseCoroutine()
     {
@@ -136,7 +148,15 @@ public class TeacherShadowController : MonoBehaviour
         yield return new WaitForSeconds(_teacherEventTime);//先生イベントの時間
         _doorController.IsOpen = false;
         _isMove = true;
-        yield return new WaitForSeconds(6.0f);
+        yield return new WaitForSeconds(2.0f);
+        foreach (var player in _playerControllers)
+        {
+            if (player.IsSleep)
+            {
+                player.WakeUp();
+            }
+        }
+        yield return new WaitForSeconds(4.0f);
         _isMove = false;
         _isRotationDirection = false;
     }

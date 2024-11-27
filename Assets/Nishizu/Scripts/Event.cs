@@ -63,7 +63,11 @@ public class Event : MonoBehaviour
         //デバッグ用
         if (Input.GetKeyDown(KeyCode.T))
         {
-            _teacherEvent.Init();
+            foreach (var player in _playerControllers)
+            {
+                player.IsCanSleep = true;
+            }
+            _teacherEvent.Init(_playerControllers);
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
@@ -125,7 +129,11 @@ public class Event : MonoBehaviour
             switch (randomNumber)
             {
                 case 0:
-                    _teacherEvent.Init();
+                    // foreach (var player in _playerControllers)
+                    // {
+                    //     player.IsCanSleep = true;
+                    // }
+                    // _teacherEvent.Init(_playerControllers);
                     break;
                 case 1:
                     _tatamiEvent.Init();

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tatami : MonoBehaviour
 {
-    
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Makura") || collision.gameObject.CompareTag("Obstacles"))
