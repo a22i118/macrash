@@ -95,6 +95,13 @@ public class GameManager : MonoBehaviour
                     happeningBall.Outbreak = false;
                 }
             }
+            if (_happeningBalls.Count > 10)
+            {
+                HappeningBall happeningBall = _happeningBalls[0];
+                _happeningBalls.RemoveAt(0);
+
+                Destroy(happeningBall.gameObject);
+            }
         }
     }
 
