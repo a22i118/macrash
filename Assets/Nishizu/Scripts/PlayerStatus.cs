@@ -7,7 +7,7 @@ namespace Player
 {
     public class PlayerStatus : MonoBehaviour
     {
-        [SerializeField] private Slider _spBar;
+        private Slider _spBar;
         private Image _fillImage;
         private Color _normalColor;
         private Color _maxColor = Color.red;
@@ -17,6 +17,7 @@ namespace Player
 
         public int CurrentSP { get => _currentSP; set => _currentSP = value; }
         public bool IsChargeMax { get => _IsChargeMax; set => _IsChargeMax = value; }
+        public Slider SpBar { get => _spBar; set => _spBar = value; }
 
         private void Start()
         {

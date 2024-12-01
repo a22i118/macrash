@@ -4,6 +4,8 @@ using UnityEngine;
 using Player;
 using System;
 using Unity.VisualScripting;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace Player
 {
@@ -59,15 +61,22 @@ namespace Player
         [SerializeField] private float _maxJumpForce = 9.0f;//最大ジャンプ力
         private const float _gravity = -25.0f;
         private Transform _huton;
+        private Vector3 _movement;
+        private int _playerIndex;
+        [SerializeField] private GameObject _spGageUI;
+        private Slider _slider;
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
         public bool IsCanSleep { get => _isCanSleep; set => _isCanSleep = value; }
         public bool IsSleep { get => _isSleep; }
+        public int PlayerIndex { get => _playerIndex; set => _playerIndex = value; }
 
         public enum ThrowType
         {
             Nomal,
             Charge
         }
+
+
         void Start()
         {
             _rb = GetComponent<Rigidbody>();
@@ -82,7 +91,17 @@ namespace Player
             _groundLayers |= _hutonLayer;
             _groundLayers |= _wallLayer;
             _rb.useGravity = false;
-            //Physics.gravity = new Vector3(0, -25f, 0);
+
+            _slider = _spGageUI.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
+            _playerStatus.SpBar = _slider;
+
+            Canvas canvas = FindObjectOfType<Canvas>();
+            if (canvas != null)
+            {
+                GameObject spGageInstance = Instantiate(_spGageUI, new Vector2(500.0f + 340.0f * _playerIndex, 150.0f), Quaternion.identity);
+
+                spGageInstance.transform.SetParent(canvas.transform, false);
+            }
         }
 
         void Update()
@@ -217,23 +236,26 @@ namespace Player
             _rb.AddForce(gravityForce, ForceMode.Acceleration);
         }
 
-        /// <summary>
-        /// 歩く
-        /// </summary>
+        private void OnMove(InputValue value)
+        {
+            Vector2 movementInput = value.Get<Vector2>();
+
+            _movement = new Vector3(movementInput.x, 0, movementInput.y);
+        }
         private void Walk()
         {
             if (!_rb.isKinematic)
             {
-                float inputHorizontal = Input.GetAxis("Horizontal");
-                float inputVertical = Input.GetAxis("Vertical");
-                Vector3 movement = new Vector3(inputHorizontal, 0.0f, inputVertical);
+                // float inputHorizontal = Input.GetAxis("Horizontal");
+                // float inputVertical = Input.GetAxis("Vertical");
+                // Vector3 movement = new Vector3(inputHorizontal, 0.0f, inputVertical);
 
-                _rb.velocity = new Vector3(movement.x * _speed, _rb.velocity.y, movement.z * _speed);
+                _rb.velocity = new Vector3(_movement.x * _speed, _rb.velocity.y, _movement.z * _speed);
 
-                if (movement.magnitude > 0.01f)
+                if (_movement.magnitude > 0.1f)
                 {
                     _animator.SetBool("Walk", true);
-                    transform.rotation = Quaternion.LookRotation(movement);
+                    transform.rotation = Quaternion.LookRotation(_movement);
                     _lastDirection = transform.rotation;
                 }
                 else
