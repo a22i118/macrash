@@ -1167,6 +1167,46 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: fa3feaa3-9b62-4cb8-9ed3-ea9b25493386
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 48e2b5e2-ba76-4c13-8cba-1576b68856a0
+    m_ActionName: Player/PickUp&Catch[/XInputControllerWindows/leftTrigger,/Mouse/rightButton,/Keyboard/z]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6633a4fd-7f01-41f9-a7ad-4ed9e91227af
+    m_ActionName: Player/Sleep[/XInputControllerWindows/buttonWest,/Keyboard/leftShift]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 84ffeafb-d26f-40df-964e-5500f7515b79
+    m_ActionName: Player/SpcialAttack[/XInputControllerWindows/buttonNorth,/Keyboard/q,/Keyboard/c]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6803693172901993574}
+        m_TargetAssemblyTypeName: Player.PlayerController, Assembly-CSharp
+        m_MethodName: OnJumpStarted
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6803693172901993574}
+        m_TargetAssemblyTypeName: Player.PlayerController, Assembly-CSharp
+        m_MethodName: OnJumpCanceled
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 975f54d1-baa1-4d3f-ac8e-394e636dd141
+    m_ActionName: Player/Jump[/XInputControllerWindows/buttonEast,/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

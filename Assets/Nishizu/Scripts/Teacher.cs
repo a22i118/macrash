@@ -5,11 +5,10 @@ using UnityEngine;
 public class Teacher : MonoBehaviour
 {
     [SerializeField] private GameObject _objMakura;
-    TeaherMakuraController _objMakuraController;
     // Start is called before the first frame update
     void Start()
     {
-        // _objMakuraController = _objMakura.GetComponent<TeaherMakuraController>();
+
     }
 
     // Update is called once per frame
