@@ -6,7 +6,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static UnityEngine.InputSystem.InputAction;
+using TMPro;
 namespace Player
 {
     public partial class PlayerController : MonoBehaviour
@@ -33,8 +33,6 @@ namespace Player
         private bool _isJumping = false;//ジャンプ中か
         private bool _isChargeTime = false;//ため攻撃中か
         private bool _isCanCatch = false;//ジャストキャッチ可能か
-        private bool isKeyboardOperation = false;//キーボード操作かどうか
-        private Vector3 _beforeSleepPosition;//布団で寝る前の位置
         private Vector3 _targetPosition;//敵プレイヤーの位置
         private Quaternion _beforeSleepRotation;//布団で寝る前の向き
         private Quaternion _lastDirection;//移動入力の最後に向いている向き
@@ -69,8 +67,6 @@ namespace Player
         public bool IsCanSleep { get => _isCanSleep; set => _isCanSleep = value; }
         public bool IsSleep { get => _isSleep; }
         public int PlayerIndex { get => _playerIndex; set => _playerIndex = value; }
-        private bool _isJumpCanceled = false;
-
         public enum ThrowType
         {
             Nomal,
@@ -100,7 +96,27 @@ namespace Player
             if (canvas != null)
             {
                 GameObject spGageInstance = Instantiate(_spGageUI, new Vector2(500.0f + 340.0f * _playerIndex, 150.0f), Quaternion.identity);
-
+                TextMeshProUGUI text = spGageInstance.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+                text.text = _playerIndex + 1 + " P";
+                Color color;
+                if (_playerIndex == 0)
+                {
+                    color = Color.red;
+                }
+                else if (_playerIndex == 1)
+                {
+                    color = Color.blue;
+                }
+                else if (_playerIndex == 2)
+                {
+                    color = Color.yellow;
+                }
+                else
+                {
+                    color = Color.green;
+                }
+                color.a = 0.5f;
+                spGageInstance.GetComponent<Image>().color = color;
                 spGageInstance.transform.SetParent(canvas.transform, false);
             }
         }
@@ -173,13 +189,11 @@ namespace Player
             {
                 if (value.isPressed)
                 {
-                    isKeyboardOperation = true;
                     _keyHoldTime = Time.time;
                     _isChargeTime = true;
                 }
                 else
                 {
-                    isKeyboardOperation = false;
                     _isChargeTime = false;
                     float holdTime = Time.time - _keyHoldTime;
                     if (holdTime < _keyLongPressTime)

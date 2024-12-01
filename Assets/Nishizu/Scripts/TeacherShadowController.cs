@@ -131,10 +131,10 @@ public class TeacherShadowController : MonoBehaviour
         foreach (var player in _playerControllers)
         {
             player.IsCanSleep = false;
-            // if (!player.IsSleep)
-            // {
-            //     _teacher.Angry(player.transform);
-            // }
+            if (!player.IsSleep)
+            {
+                _teacher.Angry(player.transform);
+            }
         }
     }
     private IEnumerator MovePauseCoroutine()

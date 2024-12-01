@@ -26,7 +26,6 @@ public class GameManager : MonoBehaviour
     private bool _isGameStart = false;
     private bool _isPlayerSet = true;
     private Vector3 initialPosition = new Vector3(-3.0f, 0.5f, 0.0f);
-    private int _x = 0;
     private Event _event;
     private List<HappeningBall> _happeningBalls = new List<HappeningBall>();
 
@@ -112,13 +111,6 @@ public class GameManager : MonoBehaviour
         {
             _players = _playerInputM.Players;
             _event.Players = _players;
-            // if (_players != null)
-            // {
-            //     Debug.Log(_players.Count);
-            // }
-
-
-
         }
         if (_players.Count > 1 && Input.GetKeyDown(KeyCode.L))
         {

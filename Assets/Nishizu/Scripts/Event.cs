@@ -66,11 +66,14 @@ public class Event : MonoBehaviour
     {
         if (_isGameStart)
         {
-            for (int i = 0; i < _players.Count; i++)
+            if (_isPlayerSet)
             {
-                var playerController = _players[i].GetComponent<PlayerController>();
-                _playerControllers.Add(playerController);
-                _isPlayerSet = false;
+                for (int i = 0; i < _players.Count; i++)
+                {
+                    var playerController = _players[i].GetComponent<PlayerController>();
+                    _playerControllers.Add(playerController);
+                    _isPlayerSet = false;
+                }
             }
         }
         //デバッグ用
