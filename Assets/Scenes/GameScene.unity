@@ -4243,7 +4243,7 @@ GameObject:
   - component: {fileID: 1117389711}
   - component: {fileID: 1117389712}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: ScoreManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4280,10 +4280,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d882e51540f2c4d45a6ea85636d66bc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _score1: {fileID: 0}
-  _score2: {fileID: 0}
-  _score3: {fileID: 0}
-  _score4: {fileID: 0}
 --- !u!114 &1117389712
 MonoBehaviour:
   m_ObjectHideFlags: 0

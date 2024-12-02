@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _makuraPrefub;
     [SerializeField] private GameObject _happeningBall;
     [SerializeField] private GameObject _playerInputManager;
+    [SerializeField] private GameObject _scoreManager;
     private PlayerInputManager _playerInputM;
     private List<GameObject> _makuras = new List<GameObject>();
     private List<MakuraController> _makuraControllers = new List<MakuraController>();
@@ -25,7 +26,6 @@ public class GameManager : MonoBehaviour
     private TatamiEvent _tatamiEvent;
     private bool _isGameStart = false;
     private bool _isPlayerSet = true;
-    private Vector3 initialPosition = new Vector3(-3.0f, 0.5f, 0.0f);
     private Event _event;
     private List<HappeningBall> _happeningBalls = new List<HappeningBall>();
 
@@ -112,10 +112,11 @@ public class GameManager : MonoBehaviour
             _players = _playerInputM.Players;
             _event.Players = _players;
         }
-        if (_players.Count > 1 && Input.GetKeyDown(KeyCode.L))
+        if (_players.Count == 4 || _players.Count > 1 && Input.GetKeyDown(KeyCode.L))
         {
             _isGameStart = true;
             _event.IsGameStart = true;
+            _scoreManager.GetComponent<ScoreManager>().IsGameStart = true;
             if (_happeningBall != null)
             {
                 StartCoroutine(HappeningBallGeneration());

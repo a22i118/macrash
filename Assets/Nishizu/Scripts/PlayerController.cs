@@ -73,9 +73,7 @@ namespace Player
             Nomal,
             Charge
         }
-
-
-        void Start()
+        void Awake()
         {
             _rb = GetComponent<Rigidbody>();
             _animator = GetComponent<Animator>();
@@ -120,6 +118,9 @@ namespace Player
                 Slider _slider = spGageInstance.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
                 _playerStatus.SpBar = _slider;
                 _playerStatus.IsGameStart = true;
+
+                ScoreManager scoreManager = canvas.transform.GetChild(1).GetComponent<ScoreManager>();
+                scoreManager.Scores.Add(spGageInstance.transform.GetChild(1).GetComponent<TextMeshProUGUI>());
             }
         }
 

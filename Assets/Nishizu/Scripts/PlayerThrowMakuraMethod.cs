@@ -38,9 +38,7 @@ namespace Player
                 }
                 else
                 {
-
                     throwDirection = transform.forward;
-                    Debug.Log("投げるとき" + throwDirection);
                 }
                 float forwardForce = 0.0f;
                 float upwardForce = 0.0f;
