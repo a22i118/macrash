@@ -4469,6 +4469,7 @@ MonoBehaviour:
   _makuraPrefub: {fileID: 3835372720629781789, guid: e64e57ef704ef6e419c2f11671845d58, type: 3}
   _happeningBall: {fileID: 1264339034604123603, guid: 71ffd84f0d40978499021840284fdf6a, type: 3}
   _playerInputManager: {fileID: 131623352}
+  _scoreManager: {fileID: 1117389709}
 --- !u!4 &1130005880
 Transform:
   m_ObjectHideFlags: 0

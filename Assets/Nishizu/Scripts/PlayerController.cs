@@ -247,7 +247,7 @@ namespace Player
             {
                 _rb.velocity = new Vector3(_movement.x * _speed, _rb.velocity.y, _movement.z * _speed);
 
-                if (_movement.magnitude > 0.5f)
+                if (_movement.magnitude > 0.1f)
                 {
                     _animator.SetBool("Walk", true);
                     transform.rotation = Quaternion.LookRotation(_movement);

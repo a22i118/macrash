@@ -143,7 +143,11 @@ public class MakuraController : ColorChanger
                 transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
             }
         }
-
+        if (_isCharge)
+        {
+            HitSpawn();
+            _isCharge = false;
+        }
         if ((_groundLayer & (1 << collision.gameObject.layer)) != 0)
         {
             _isThrow = false;
@@ -157,11 +161,7 @@ public class MakuraController : ColorChanger
             _rb.isKinematic = true;
             _currentColorType = GetRandomColor();
         }
-        if (_isCharge)
-        {
-            HitSpawn();
-            _isCharge = false;
-        }
+
         if (_isAlterEgo)
         {
             Destroy(gameObject, 0.4f);
@@ -206,7 +206,7 @@ public class MakuraController : ColorChanger
             }
             if (collider.gameObject.CompareTag("Makura"))
             {
-                if (collider.gameObject.GetComponent<MakuraController>()._currentColorType == ColorType.Black&& collider.gameObject.GetComponent<MakuraController>().Thrower!=_thrower)
+                if (collider.gameObject.GetComponent<MakuraController>()._currentColorType == ColorType.Black && collider.gameObject.GetComponent<MakuraController>().Thrower != _thrower)
                 {
                     StartCoroutine(BlackMakuraHit());
                     Rigidbody rb = collider.gameObject.GetComponent<Rigidbody>();
