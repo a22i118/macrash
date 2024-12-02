@@ -11,7 +11,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _score2;
     [SerializeField] private TextMeshProUGUI _score3;
     [SerializeField] private TextMeshProUGUI _score4;
-    
+
     void Start()
     {
         InitializeScore();
@@ -36,23 +36,22 @@ public class ScoreManager : MonoBehaviour
     {
         switch (player)
         {
-            case "Player1":
+            case "Player (1)":
                 Score[0]++;
                 _score1.text = $"{Score[0]}";
                 break;
-            case "Player2":
+            case "Player (2)":
                 Score[1]++;
                 _score2.text = $"{Score[1]}";
                 break;
-            case "Player3":
+            case "Player (3)":
                 Score[2]++;
                 _score3.text = $"{Score[2]}";
                 break;
-            case "Player4":
+            case "Player (4)":
                 Score[3]++;
                 _score4.text = $"{Score[3]}";
                 break;
         }
-
     }
 }

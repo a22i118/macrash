@@ -14,36 +14,48 @@ namespace Player
         private const int _maxSP = 100000;
         private int _currentSP = 0;
         private bool _IsChargeMax = false;
+        private bool _isGameStart = false;
+        private bool _isPlayerSet = true;
 
         public int CurrentSP { get => _currentSP; set => _currentSP = value; }
         public bool IsChargeMax { get => _IsChargeMax; set => _IsChargeMax = value; }
         public Slider SpBar { get => _spBar; set => _spBar = value; }
+        public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
 
         private void Start()
         {
-            _currentSP = 0;
-            _spBar.maxValue = _maxSP;
-            _spBar.value = _currentSP;
 
-            _fillImage = _spBar.fillRect.GetComponent<Image>();
-            _normalColor = _fillImage.color;
         }
 
         private void Update()
         {
-            if (_currentSP < _maxSP)
+            if (_isGameStart)
             {
-                _IsChargeMax = false;
-                _currentSP += 20;
-                _currentSP = Mathf.Min(_currentSP, _maxSP);
-                _spBar.value = _currentSP;
+                if (_isPlayerSet)
+                {
+                    _currentSP = 0;
+                    _spBar.maxValue = _maxSP;
+                    _spBar.value = _currentSP;
 
-                ChangeSPBarColor();
+                    _fillImage = _spBar.fillRect.GetComponent<Image>();
+                    _normalColor = _fillImage.color;
+                    _isPlayerSet = false;
+                }
+                if (_currentSP < _maxSP)
+                {
+                    _IsChargeMax = false;
+                    _currentSP += 20;
+                    _currentSP = Mathf.Min(_currentSP, _maxSP);
+                    _spBar.value = _currentSP;
+
+                    ChangeSPBarColor();
+                }
+                else
+                {
+                    _IsChargeMax = true;
+                }
             }
-            else
-            {
-                _IsChargeMax = true;
-            }
+
         }
 
         public void SpUp()
