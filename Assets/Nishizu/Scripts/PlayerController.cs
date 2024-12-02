@@ -61,8 +61,9 @@ namespace Player
         private Transform _huton;
         private Vector3 _movement;
         private int _playerIndex;
+        private bool _isPushed = false;
         [SerializeField] private GameObject _spGageUI;
-        private Slider _slider;
+
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
         public bool IsCanSleep { get => _isCanSleep; set => _isCanSleep = value; }
         public bool IsSleep { get => _isSleep; }
@@ -88,9 +89,6 @@ namespace Player
             _groundLayers |= _hutonLayer;
             _groundLayers |= _wallLayer;
             _rb.useGravity = false;
-
-            _slider = _spGageUI.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
-            _playerStatus.SpBar = _slider;
 
             Canvas canvas = FindObjectOfType<Canvas>();
             if (canvas != null)
@@ -118,8 +116,13 @@ namespace Player
                 color.a = 0.5f;
                 spGageInstance.GetComponent<Image>().color = color;
                 spGageInstance.transform.SetParent(canvas.transform, false);
+
+                Slider _slider = spGageInstance.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
+                _playerStatus.SpBar = _slider;
+                _playerStatus.IsGameStart = true;
             }
         }
+
         void Update()
         {
             Jump();
@@ -139,7 +142,7 @@ namespace Player
             {
                 _currentMakuraDisplay.SetActive(false);
             }
-            if (IsHuton() || _isChargeTime)
+            if (IsHuton() || _isPushed)
             {
                 _speed = 2.0f;
             }
@@ -150,6 +153,7 @@ namespace Player
             if (!_isHitStop && !_isSleep)
             {
                 Move();
+                MakuraThrow();
             }
         }
         private void OnSpecialAttack(InputValue value)
@@ -163,7 +167,6 @@ namespace Player
                     _makuraController.CurrentScaleType = MakuraController.ScaleType.Second;
                 }
             }
-
         }
         private void OnSleep_WakeUp(InputValue value)
         {
@@ -179,9 +182,7 @@ namespace Player
                     transform.SetParent(_currentHuton);
                     Sleep();
                 }
-
             }
-
         }
         private void OnThrow(InputValue value)
         {
@@ -189,13 +190,30 @@ namespace Player
             {
                 if (value.isPressed)
                 {
-                    _keyHoldTime = Time.time;
-                    _isChargeTime = true;
+                    _isPushed = true;
                 }
                 else
                 {
-                    _isChargeTime = false;
+                    _isPushed = false;
+                }
+            }
+        }
+        private void MakuraThrow()
+        {
+            if (_currentMakura != null)
+            {
+                if (_isPushed)
+                {
+                    if (!_isChargeTime)
+                    {
+                        _keyHoldTime = Time.time;
+                        _isChargeTime = true;
+                    }
+                }
+                else if (_isChargeTime && !_isPushed)
+                {
                     float holdTime = Time.time - _keyHoldTime;
+
                     if (holdTime < _keyLongPressTime)
                     {
                         ThrowMakura(ThrowType.Nomal);
@@ -204,6 +222,8 @@ namespace Player
                     {
                         ThrowMakura(ThrowType.Charge);
                     }
+
+                    _isChargeTime = false;
                 }
             }
         }
@@ -226,7 +246,7 @@ namespace Player
             {
                 _rb.velocity = new Vector3(_movement.x * _speed, _rb.velocity.y, _movement.z * _speed);
 
-                if (_movement.magnitude > 0.1f)
+                if (_movement.magnitude > 0.5f)
                 {
                     _animator.SetBool("Walk", true);
                     transform.rotation = Quaternion.LookRotation(_movement);
@@ -729,6 +749,26 @@ namespace Player
         {
             yield return new WaitForSeconds(8.0f);
             _isHitStop = false;
+        }
+        private IEnumerator vib()
+        {
+            var gamepad = Gamepad.current;
+            if (gamepad == null)
+            {
+                Debug.Log("ゲームパッド未接続");
+                yield break;
+            }
+
+            // Debug.Log("左モーター振動");
+            // gamepad.SetMotorSpeeds(1.0f, 0.0f);
+            // yield return new WaitForSeconds(1.0f);
+
+            // Debug.Log("右モーター振動");
+            // gamepad.SetMotorSpeeds(0.0f, 1.0f);
+            // yield return new WaitForSeconds(1.0f);
+
+            Debug.Log("モーター停止");
+            gamepad.SetMotorSpeeds(0.0f, 0.0f);
         }
     }
 }
