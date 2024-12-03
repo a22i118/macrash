@@ -10,6 +10,7 @@ TagManager:
   - Meteor
   - Explosion
   - Obstacles
+  - UI
   layers:
   - Default
   - TransparentFX

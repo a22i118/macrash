@@ -36,7 +36,8 @@ public class HutonController : MonoBehaviour
         {
 
             // 布団に触れたプレイヤー以外のオブジェクトを子に設定
-            collision.transform.SetParent(transform.parent);
+            //collision.transform.SetParent(transform.parent);
+            collision.transform.SetParent(transform);
         }
     }
 }
