@@ -65,6 +65,7 @@ namespace Player
         [SerializeField] private GameObject _spGageUI;
         private bool _isGameStart = false;
         private bool _isGameStartCheck = false;
+        private bool _isGameEnd = false;
 
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
         public bool IsCanSleep { get => _isCanSleep; set => _isCanSleep = value; }
@@ -72,7 +73,9 @@ namespace Player
         public int PlayerIndex { get => _playerIndex; set => _playerIndex = value; }
         public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
         public bool IsGameStartCheck { get => _isGameStartCheck; }
+        public ShowMakuraController ShowMakuraController { get => _showMakuraController; set => _showMakuraController = value; }
         public GameObject CurrentMakuraDisplay { get => _currentMakuraDisplay; set => _currentMakuraDisplay = value; }
+        public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
 
         public enum ThrowType
         {
@@ -141,39 +144,41 @@ namespace Player
         }
         void Update()
         {
-            Jump();
-            IsCheckPlayer();
-            MakuraDisplayColorChange();
-            if (_isSleep)
+            if (!_isGameEnd)
             {
-                Vector3 offset = _huton.position - transform.position;
-                transform.position = new Vector3(transform.position.x, transform.position.y + offset.y, transform.position.z);
-            }
-            if (_currentMakura != null && !_isSleep)
-            {
-                RotateShowMakura();
-                _currentMakuraDisplay.SetActive(true);
-            }
-            else
-            {
-                _currentMakuraDisplay.SetActive(false);
-            }
-            if (IsHuton() || _isPushed)
-            {
-                _speed = 2.0f;
-            }
-            else
-            {
-                _speed = 4.0f;
-            }
-            if (!_isHitStop && !_isSleep)
-            {
-                Move();
-                if (_isGameStart)
+                Jump();
+                IsCheckPlayer();
+                MakuraDisplayColorChange();
+                if (_isSleep)
                 {
-                    MakuraThrow();
+                    Vector3 offset = _huton.position - transform.position;
+                    transform.position = new Vector3(transform.position.x, transform.position.y + offset.y, transform.position.z);
                 }
-
+                if (_currentMakura != null && !_isSleep)
+                {
+                    RotateShowMakura();
+                    _currentMakuraDisplay.SetActive(true);
+                }
+                else
+                {
+                    _currentMakuraDisplay.SetActive(false);
+                }
+                if (IsHuton() || _isPushed)
+                {
+                    _speed = 2.0f;
+                }
+                else
+                {
+                    _speed = 4.0f;
+                }
+                if (!_isHitStop && !_isSleep)
+                {
+                    Move();
+                    if (_isGameStart)
+                    {
+                        MakuraThrow();
+                    }
+                }
             }
         }
         private void OnSpecialAttack(InputValue value)

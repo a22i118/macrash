@@ -182,7 +182,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator GameEnd()
     {
-        yield return new WaitForSeconds(179.0f);//6分359.0f
+        yield return new WaitForSeconds(30.0f);//6分359.0f
         _isGameStart = false;
         _isGameStartCheck = false;
         _event.IsGameStart = false;
@@ -191,15 +191,22 @@ public class GameManager : MonoBehaviour
         foreach (var player in _players)
         {
             player.GetComponent<PlayerStatus>().IsGameStart = false;
-            player.GetComponent<PlayerController>().IsGameStart = false;
-        }
-        foreach (var happeningBall in _happeningBalls)
-        {
-            Destroy(happeningBall.gameObject);
         }
         foreach (var playerController in _playerControllers)
         {
-            playerController.CurrentMakuraDisplay.SetActive(false);
+            playerController.IsGameStart = false;
+            playerController.IsGameEnd = true;
+        }
+        for (int i = _happeningBalls.Count - 1; i >= 0; i--)
+        {
+            var happeningBall = _happeningBalls[i];
+
+            if (happeningBall != null)
+            {
+                Destroy(happeningBall.gameObject);
+                yield return null;
+                _happeningBalls.RemoveAt(i);
+            }
         }
     }
 }

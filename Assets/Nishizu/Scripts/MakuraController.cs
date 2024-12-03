@@ -13,7 +13,6 @@ public class MakuraController : ColorChanger
     private Collider _col;
     private ScaleType _currentScaleType = ScaleType.Nomal;//今の大きさ
     private bool _isThrow = false;//投げられているかどうか
-    private bool _isHitCoolTime = false;//当たった時のクールタイム
     private bool _isAlterEgo = false;//分身
     private bool _isTouching = false;//何かと接触しているか
     private Quaternion _initialRotation;//最初の向き
