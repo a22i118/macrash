@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> _players;
+    private List<GameObject> _players;
     [SerializeField] private List<GameObject> _hutons;
     [SerializeField] private GameObject _door;
     [SerializeField] private GameObject _teacher;
@@ -14,7 +14,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _tatami;
     [SerializeField] private GameObject _makuraPrefub;
     [SerializeField] private GameObject _happeningBall;
-
+    [SerializeField] private GameObject _playerInputManager;
+    private PlayerInputManager _playerInputM;
     private List<GameObject> _makuras = new List<GameObject>();
     private List<MakuraController> _makuraControllers = new List<MakuraController>();
     private List<PlayerController> _playerControllers = new List<PlayerController>();
@@ -23,15 +24,15 @@ public class GameManager : MonoBehaviour
     private MeteorEvent _meteorEvent;
     private TatamiEvent _tatamiEvent;
     private bool _isGameStart = false;
-    private bool _isPlayerSet = false;
+    private bool _isPlayerSet = true;
     private Vector3 initialPosition = new Vector3(-3.0f, 0.5f, 0.0f);
-
     private Event _event;
     private List<HappeningBall> _happeningBalls = new List<HappeningBall>();
 
     // Start is called before the first frame update
     private void Awake()
     {
+        _playerInputM = _playerInputManager.GetComponent<PlayerInputManager>();
         _event = GetComponent<Event>();
 
         if (_hutons != null)
@@ -43,10 +44,6 @@ public class GameManager : MonoBehaviour
                 _makuras.Add(Instantiate(_makuraPrefub, new Vector3(hutonPosition.x, hutonPosition.y + 0.1f, hutonPosition.z + 0.6f), hutonRotation));
             }
             _event.Makuras = _makuras;
-            if (_happeningBall != null)
-            {
-                StartCoroutine(HappeningBallGeneration());
-            }
         }
         if (_makuras != null)
         {
@@ -56,14 +53,7 @@ public class GameManager : MonoBehaviour
                 _makuraControllers.Add(makuraController);
             }
         }
-        if (_players != null)
-        {
-            foreach (var player in _players)
-            {
-                var playerController = player.GetComponent<PlayerController>();
-                _playerControllers.Add(playerController);
-            }
-        }
+
         if (_door != null)
         {
             _doorController = _door.GetComponent<DoorController>();
@@ -85,17 +75,53 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_happeningBalls != null)
+        if (_isGameStart)
         {
-            foreach (var happeningBall in _happeningBalls)
+            if (_isPlayerSet)
             {
-                if (happeningBall.Outbreak)
+                for (int i = 0; i < _players.Count; i++)
                 {
-                    _event.RandomEvent(happeningBall.Starter);
-                    happeningBall.Outbreak = false;
+                    var playerController = _players[i].GetComponent<PlayerController>();
+                    _playerControllers.Add(playerController);
+                    _isPlayerSet = false;
+                }
+            }
+            if (_happeningBalls != null)
+            {
+                foreach (var happeningBall in _happeningBalls)
+                {
+                    if (happeningBall.Outbreak)
+                    {
+                        _event.RandomEvent(happeningBall.Starter);
+                        happeningBall.Outbreak = false;
+                    }
+                }
+                if (_happeningBalls.Count > 10)
+                {
+                    HappeningBall happeningBall = _happeningBalls[0];
+                    _happeningBalls.RemoveAt(0);
+                    if (happeningBall != null)
+                    {
+                        Destroy(happeningBall.gameObject);
+                    }
                 }
             }
         }
+        else
+        {
+            _players = _playerInputM.Players;
+            _event.Players = _players;
+        }
+        if (_players.Count > 1 && Input.GetKeyDown(KeyCode.L))
+        {
+            _isGameStart = true;
+            _event.IsGameStart = true;
+            if (_happeningBall != null)
+            {
+                StartCoroutine(HappeningBallGeneration());
+            }
+        }
+
     }
 
     private void Init()

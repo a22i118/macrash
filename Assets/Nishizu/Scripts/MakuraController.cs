@@ -206,16 +206,17 @@ public class MakuraController : ColorChanger
             }
             if (collider.gameObject.CompareTag("Makura"))
             {
-                if (collider.gameObject.GetComponent<MakuraController>()._currentColorType == ColorType.Black)
+                if (collider.gameObject.GetComponent<MakuraController>()._currentColorType == ColorType.Black&& collider.gameObject.GetComponent<MakuraController>().Thrower!=_thrower)
                 {
                     StartCoroutine(BlackMakuraHit());
+                    Rigidbody rb = collider.gameObject.GetComponent<Rigidbody>();
+                    if (rb != null)
+                    {
+                        rb.useGravity = true;
+                        rb.velocity = Vector3.zero;
+                    }
                 }
-                Rigidbody rb = collider.gameObject.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    rb.useGravity = true;
-                    rb.velocity = Vector3.zero;
-                }
+
             }
         }
     }

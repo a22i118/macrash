@@ -18,8 +18,12 @@ public class Event : MonoBehaviour
     private TeacherShadowController _teacherEvent;
     private MeteorEvent _meteorEvent;
     private TatamiEvent _tatamiEvent;
-
+    private bool _isPlayerSet = true;
+    private bool _isGameStart = false;
     public List<GameObject> Makuras { get => _makuras; set => _makuras = value; }
+    public List<GameObject> Players { get => _players; set => _players = value; }
+    public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
+
     private bool _one = false;
     private int _lastEvent = -1;
 
@@ -34,14 +38,14 @@ public class Event : MonoBehaviour
                 _makuraControllers.Add(makuraController);
             }
         }
-        if (_players != null)
-        {
-            foreach (var player in _players)
-            {
-                var playerController = player.GetComponent<PlayerController>();
-                _playerControllers.Add(playerController);
-            }
-        }
+        // if (_players != null)
+        // {
+        //     foreach (var player in _players)
+        //     {
+        //         var playerController = player.GetComponent<PlayerController>();
+        //         _playerControllers.Add(playerController);
+        //     }
+        // }
 
         if (_teacher != null)
         {
@@ -60,10 +64,26 @@ public class Event : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_isGameStart)
+        {
+            if (_isPlayerSet)
+            {
+                for (int i = 0; i < _players.Count; i++)
+                {
+                    var playerController = _players[i].GetComponent<PlayerController>();
+                    _playerControllers.Add(playerController);
+                    _isPlayerSet = false;
+                }
+            }
+        }
         //デバッグ用
         if (Input.GetKeyDown(KeyCode.T))
         {
-            _teacherEvent.Init();
+            foreach (var player in _playerControllers)
+            {
+                player.IsCanSleep = true;
+            }
+            _teacherEvent.Init(_playerControllers);
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
@@ -125,7 +145,11 @@ public class Event : MonoBehaviour
             switch (randomNumber)
             {
                 case 0:
-                    _teacherEvent.Init();
+                    // foreach (var player in _playerControllers)
+                    // {
+                    //     player.IsCanSleep = true;
+                    // }
+                    // _teacherEvent.Init(_playerControllers);
                     break;
                 case 1:
                     _tatamiEvent.Init();

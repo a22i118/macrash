@@ -18,7 +18,6 @@ public class ThrowMakuraDemo : MonoBehaviour
     private float _vibrationTime = 0.3f;//振動する時間
     private bool _isVibrating = false;
     private bool _isHitCoolTime = false;
-    private bool _isHitStop = false;
 
     public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
 
@@ -305,14 +304,12 @@ public class ThrowMakuraDemo : MonoBehaviour
     {
 
         _rb.velocity = Vector3.zero;
-        _isHitStop = true;
 
         StartCoroutine(HitStopCoroutine());
     }
     private IEnumerator HitStopCoroutine()
     {
         yield return new WaitForSeconds(1.0f);
-        _isHitStop = false;
     }
 
     private IEnumerator ThrowMakuraNomal()

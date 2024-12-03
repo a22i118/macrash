@@ -6,7 +6,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static UnityEngine.InputSystem.InputAction;
+using TMPro;
 namespace Player
 {
     public partial class PlayerController : MonoBehaviour
@@ -33,8 +33,6 @@ namespace Player
         private bool _isJumping = false;//ジャンプ中か
         private bool _isChargeTime = false;//ため攻撃中か
         private bool _isCanCatch = false;//ジャストキャッチ可能か
-        private bool isKeyboardOperation = false;//キーボード操作かどうか
-        private Vector3 _beforeSleepPosition;//布団で寝る前の位置
         private Vector3 _targetPosition;//敵プレイヤーの位置
         private Quaternion _beforeSleepRotation;//布団で寝る前の向き
         private Quaternion _lastDirection;//移動入力の最後に向いている向き
@@ -63,14 +61,13 @@ namespace Player
         private Transform _huton;
         private Vector3 _movement;
         private int _playerIndex;
+        private bool _isPushed = false;
         [SerializeField] private GameObject _spGageUI;
-        private Slider _slider;
+
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
         public bool IsCanSleep { get => _isCanSleep; set => _isCanSleep = value; }
         public bool IsSleep { get => _isSleep; }
         public int PlayerIndex { get => _playerIndex; set => _playerIndex = value; }
-        private bool _isJumpCanceled = false;
-
         public enum ThrowType
         {
             Nomal,
@@ -93,17 +90,39 @@ namespace Player
             _groundLayers |= _wallLayer;
             _rb.useGravity = false;
 
-            _slider = _spGageUI.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
-            //_playerStatus.SpBar = _slider;
-
             Canvas canvas = FindObjectOfType<Canvas>();
             if (canvas != null)
             {
                 GameObject spGageInstance = Instantiate(_spGageUI, new Vector2(500.0f + 340.0f * _playerIndex, 150.0f), Quaternion.identity);
-
+                TextMeshProUGUI text = spGageInstance.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+                text.text = _playerIndex + 1 + " P";
+                Color color;
+                if (_playerIndex == 0)
+                {
+                    color = Color.red;
+                }
+                else if (_playerIndex == 1)
+                {
+                    color = Color.blue;
+                }
+                else if (_playerIndex == 2)
+                {
+                    color = Color.yellow;
+                }
+                else
+                {
+                    color = Color.green;
+                }
+                color.a = 0.5f;
+                spGageInstance.GetComponent<Image>().color = color;
                 spGageInstance.transform.SetParent(canvas.transform, false);
+
+                Slider _slider = spGageInstance.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
+                _playerStatus.SpBar = _slider;
+                _playerStatus.IsGameStart = true;
             }
         }
+
         void Update()
         {
             Jump();
@@ -123,7 +142,7 @@ namespace Player
             {
                 _currentMakuraDisplay.SetActive(false);
             }
-            if (IsHuton() || _isChargeTime)
+            if (IsHuton() || _isPushed)
             {
                 _speed = 2.0f;
             }
@@ -134,9 +153,8 @@ namespace Player
             if (!_isHitStop && !_isSleep)
             {
                 Move();
+                MakuraThrow();
             }
-
-            
         }
         private void OnSpecialAttack(InputValue value)
         {
@@ -149,7 +167,6 @@ namespace Player
                     _makuraController.CurrentScaleType = MakuraController.ScaleType.Second;
                 }
             }
-
         }
         private void OnSleep_WakeUp(InputValue value)
         {
@@ -165,9 +182,7 @@ namespace Player
                     transform.SetParent(_currentHuton);
                     Sleep();
                 }
-
             }
-
         }
         private void OnThrow(InputValue value)
         {
@@ -175,15 +190,30 @@ namespace Player
             {
                 if (value.isPressed)
                 {
-                    isKeyboardOperation = true;
-                    _keyHoldTime = Time.time;
-                    _isChargeTime = true;
+                    _isPushed = true;
                 }
                 else
                 {
-                    isKeyboardOperation = false;
-                    _isChargeTime = false;
+                    _isPushed = false;
+                }
+            }
+        }
+        private void MakuraThrow()
+        {
+            if (_currentMakura != null)
+            {
+                if (_isPushed)
+                {
+                    if (!_isChargeTime)
+                    {
+                        _keyHoldTime = Time.time;
+                        _isChargeTime = true;
+                    }
+                }
+                else if (_isChargeTime && !_isPushed)
+                {
                     float holdTime = Time.time - _keyHoldTime;
+
                     if (holdTime < _keyLongPressTime)
                     {
                         ThrowMakura(ThrowType.Nomal);
@@ -192,6 +222,8 @@ namespace Player
                     {
                         ThrowMakura(ThrowType.Charge);
                     }
+
+                    _isChargeTime = false;
                 }
             }
         }
@@ -214,7 +246,7 @@ namespace Player
             {
                 _rb.velocity = new Vector3(_movement.x * _speed, _rb.velocity.y, _movement.z * _speed);
 
-                if (_movement.magnitude > 0.1f)
+                if (_movement.magnitude > 0.5f)
                 {
                     _animator.SetBool("Walk", true);
                     transform.rotation = Quaternion.LookRotation(_movement);
@@ -717,6 +749,26 @@ namespace Player
         {
             yield return new WaitForSeconds(8.0f);
             _isHitStop = false;
+        }
+        private IEnumerator vib()
+        {
+            var gamepad = Gamepad.current;
+            if (gamepad == null)
+            {
+                Debug.Log("ゲームパッド未接続");
+                yield break;
+            }
+
+            // Debug.Log("左モーター振動");
+            // gamepad.SetMotorSpeeds(1.0f, 0.0f);
+            // yield return new WaitForSeconds(1.0f);
+
+            // Debug.Log("右モーター振動");
+            // gamepad.SetMotorSpeeds(0.0f, 1.0f);
+            // yield return new WaitForSeconds(1.0f);
+
+            Debug.Log("モーター停止");
+            gamepad.SetMotorSpeeds(0.0f, 0.0f);
         }
     }
 }
