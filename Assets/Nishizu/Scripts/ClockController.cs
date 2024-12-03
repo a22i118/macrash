@@ -6,34 +6,38 @@ public class ClockController : MonoBehaviour
 {
     [SerializeField] private GameObject _hourHand;
     [SerializeField] private GameObject _minuteHand;
-
+    private bool _isGameStart = false;
     private float _hour = 10.0f;//時
     private float _minute = 0.0f;//分
     private float _oneLap = 0.333333f;//3分で一周
 
     public float Hour { get => _hour; }
     public float Minute { get => _minute; }
+    public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
 
     // Start is called before the first frame update
     void Start()
     {
-
+        HandRotation();
     }
 
     // Update is called once per frame
     void Update()
     {
-        _minute += Time.deltaTime;
-        if (_minute >= 180.0f)
+        if (_isGameStart)
         {
-            _minute = 0.0f;
-            _hour++;
-            if (_hour >= 12.0f)
+            _minute += Time.deltaTime;
+            if (_minute >= 180.0f)
             {
-                _hour = 0.0f;
+                _minute = 0.0f;
+                _hour++;
+                if (_hour >= 12.0f)
+                {
+                    _hour = 0.0f;
+                }
             }
+            HandRotation();
         }
-        HandRotation();
     }
 
     private void HandRotation()

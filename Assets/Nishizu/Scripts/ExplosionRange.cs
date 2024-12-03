@@ -36,7 +36,6 @@ public class ExplosionRange : MonoBehaviour
                 }
                 else if (!playerController.IsHitCoolTime)
                 {
-                    // Debug.Log("爆発がヒットしたぜ！");
                     _scoreManager.UpdateScore(_thrower.name);
                 }
             }

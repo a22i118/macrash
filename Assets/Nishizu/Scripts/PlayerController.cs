@@ -63,19 +63,26 @@ namespace Player
         private int _playerIndex;
         private bool _isPushed = false;
         [SerializeField] private GameObject _spGageUI;
+        private bool _isGameStart = false;
+        private bool _isGameStartCheck = false;
+        private bool _isGameEnd = false;
 
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
         public bool IsCanSleep { get => _isCanSleep; set => _isCanSleep = value; }
         public bool IsSleep { get => _isSleep; }
         public int PlayerIndex { get => _playerIndex; set => _playerIndex = value; }
+        public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
+        public bool IsGameStartCheck { get => _isGameStartCheck; }
+        public ShowMakuraController ShowMakuraController { get => _showMakuraController; set => _showMakuraController = value; }
+        public GameObject CurrentMakuraDisplay { get => _currentMakuraDisplay; set => _currentMakuraDisplay = value; }
+        public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
+
         public enum ThrowType
         {
             Nomal,
             Charge
         }
-
-
-        void Start()
+        void Awake()
         {
             _rb = GetComponent<Rigidbody>();
             _animator = GetComponent<Animator>();
@@ -119,41 +126,59 @@ namespace Player
 
                 Slider _slider = spGageInstance.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
                 _playerStatus.SpBar = _slider;
-                _playerStatus.IsGameStart = true;
+
+                ScoreManager scoreManager = canvas.transform.GetChild(1).GetComponent<ScoreManager>();
+                scoreManager.Scores.Add(spGageInstance.transform.GetChild(1).GetComponent<TextMeshProUGUI>());
             }
         }
-
+        public void OnGameStartCheck(InputValue value)
+        {
+            if (value.isPressed)
+            {
+                _isGameStartCheck = true;
+            }
+            else
+            {
+                _isGameStartCheck = false;
+            }
+        }
         void Update()
         {
-            Jump();
-            IsCheckPlayer();
-            MakuraDisplayColorChange();
-            if (_isSleep)
+            if (!_isGameEnd)
             {
-                Vector3 offset = _huton.position - transform.position;
-                transform.position = new Vector3(transform.position.x, transform.position.y + offset.y, transform.position.z);
-            }
-            if (_currentMakura != null && !_isSleep)
-            {
-                RotateShowMakura();
-                _currentMakuraDisplay.SetActive(true);
-            }
-            else
-            {
-                _currentMakuraDisplay.SetActive(false);
-            }
-            if (IsHuton() || _isPushed)
-            {
-                _speed = 2.0f;
-            }
-            else
-            {
-                _speed = 4.0f;
-            }
-            if (!_isHitStop && !_isSleep)
-            {
-                Move();
-                MakuraThrow();
+                Jump();
+                IsCheckPlayer();
+                MakuraDisplayColorChange();
+                if (_isSleep)
+                {
+                    Vector3 offset = _huton.position - transform.position;
+                    transform.position = new Vector3(transform.position.x, transform.position.y + offset.y, transform.position.z);
+                }
+                if (_currentMakura != null && !_isSleep)
+                {
+                    RotateShowMakura();
+                    _currentMakuraDisplay.SetActive(true);
+                }
+                else
+                {
+                    _currentMakuraDisplay.SetActive(false);
+                }
+                if (IsHuton() || _isPushed)
+                {
+                    _speed = 2.0f;
+                }
+                else
+                {
+                    _speed = 4.0f;
+                }
+                if (!_isHitStop && !_isSleep)
+                {
+                    Move();
+                    if (_isGameStart)
+                    {
+                        MakuraThrow();
+                    }
+                }
             }
         }
         private void OnSpecialAttack(InputValue value)
@@ -172,12 +197,12 @@ namespace Player
         {
             if (value.isPressed)
             {
-                if (_isSleep && _isCanSleep)
+                if (_isSleep && _isCanSleep || !_isGameStart && _isSleep)
                 {
                     WakeUp();
                     transform.SetParent(null);
                 }
-                if (!_isSleep && !_isHitStop && _currentMakura != null && IsHuton() && _isCanSleep)
+                if (!_isSleep && !_isHitStop && _currentMakura != null && IsHuton() && _isCanSleep || !_isGameStart && !_isSleep && _currentMakura != null && IsHuton())
                 {
                     transform.SetParent(_currentHuton);
                     Sleep();
@@ -246,7 +271,7 @@ namespace Player
             {
                 _rb.velocity = new Vector3(_movement.x * _speed, _rb.velocity.y, _movement.z * _speed);
 
-                if (_movement.magnitude > 0.5f)
+                if (_movement.magnitude > 0.1f)
                 {
                     _animator.SetBool("Walk", true);
                     transform.rotation = Quaternion.LookRotation(_movement);
@@ -485,7 +510,7 @@ namespace Player
                 ExplosionRange explosionRangeScript = collider.GetComponent<ExplosionRange>();
                 if (explosionRangeScript.Thrower != gameObject)
                 {
-                    _isHitCoolTime = true;
+                    StartCoroutine(ExplosionHitCoolTimeDelay());
                     _animator.SetBool("Walk", false);
                     // Debug.Log("う、動けない！");
                     HitMotion(false);
@@ -712,6 +737,11 @@ namespace Player
         {
             yield return new WaitForSeconds(1.0f);
             _isHitStop = false;
+        }
+        private IEnumerator ExplosionHitCoolTimeDelay()
+        {
+            yield return new WaitForSeconds(0.1f);
+            _isHitCoolTime = true;
         }
 
         private IEnumerator CounterAttackCoroutine()

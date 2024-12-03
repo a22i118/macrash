@@ -13,7 +13,6 @@ public class MakuraController : ColorChanger
     private Collider _col;
     private ScaleType _currentScaleType = ScaleType.Nomal;//今の大きさ
     private bool _isThrow = false;//投げられているかどうか
-    private bool _isHitCoolTime = false;//当たった時のクールタイム
     private bool _isAlterEgo = false;//分身
     private bool _isTouching = false;//何かと接触しているか
     private Quaternion _initialRotation;//最初の向き
@@ -30,7 +29,6 @@ public class MakuraController : ColorChanger
     public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
     public bool IsAlterEgo { get => _isAlterEgo; set => _isAlterEgo = value; }
     public bool IsCharge { get => _isCharge; set => _isCharge = value; }
-    public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
     public bool IsCounterAttack { get => _isCounterAttack; set => _isCounterAttack = value; }
 
     public enum ScaleType
@@ -143,7 +141,11 @@ public class MakuraController : ColorChanger
                 transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
             }
         }
-
+        if (_isCharge)
+        {
+            HitSpawn();
+            _isCharge = false;
+        }
         if ((_groundLayer & (1 << collision.gameObject.layer)) != 0)
         {
             _isThrow = false;
@@ -157,11 +159,7 @@ public class MakuraController : ColorChanger
             _rb.isKinematic = true;
             _currentColorType = GetRandomColor();
         }
-        if (_isCharge)
-        {
-            HitSpawn();
-            _isCharge = false;
-        }
+
         if (_isAlterEgo)
         {
             Destroy(gameObject, 0.4f);
@@ -184,7 +182,7 @@ public class MakuraController : ColorChanger
     private void OnTriggerEnter(Collider collider)
     {
         _isTouching = true;
-        if (_col.isTrigger && _isThrow && !_isHitCoolTime && collider.gameObject != _thrower)
+        if (_col.isTrigger && _isThrow && collider.gameObject != _thrower)
         {
             if (collider.gameObject.CompareTag("Player") && collider is CapsuleCollider)
             {
@@ -206,7 +204,7 @@ public class MakuraController : ColorChanger
             }
             if (collider.gameObject.CompareTag("Makura"))
             {
-                if (collider.gameObject.GetComponent<MakuraController>()._currentColorType == ColorType.Black&& collider.gameObject.GetComponent<MakuraController>().Thrower!=_thrower)
+                if (collider.gameObject.GetComponent<MakuraController>()._currentColorType == ColorType.Black && collider.gameObject.GetComponent<MakuraController>().Thrower != _thrower)
                 {
                     StartCoroutine(BlackMakuraHit());
                     Rigidbody rb = collider.gameObject.GetComponent<Rigidbody>();
@@ -299,11 +297,8 @@ public class MakuraController : ColorChanger
     }
     private IEnumerator HitCoolTime()
     {
-        _isHitCoolTime = true;
-
         yield return new WaitForSeconds(1.0f);
         _isThrow = false;
-        _isHitCoolTime = false;
     }
     private IEnumerator ScaleChangeCoolTime()
     {
@@ -336,7 +331,6 @@ public class MakuraController : ColorChanger
 
         transform.position = hitPosition;
 
-        _isHitCoolTime = false;
         _isThrow = false;
     }
     private IEnumerator BlackMakuraHit()

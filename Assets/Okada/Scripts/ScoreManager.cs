@@ -5,53 +5,59 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-    private int[] Score = new int[4];
-    // スコアを表示するテキスト
-    [SerializeField] private TextMeshProUGUI _score1;
-    [SerializeField] private TextMeshProUGUI _score2;
-    [SerializeField] private TextMeshProUGUI _score3;
-    [SerializeField] private TextMeshProUGUI _score4;
+    private bool _isGameStart = false;
+    private bool _isPlayerSet = true;
+    private List<int> _scoreNum = new List<int>();
+    private List<TextMeshProUGUI> _scores = new List<TextMeshProUGUI>();
+    public List<TextMeshProUGUI> Scores { get => _scores; set => _scores = value; }
+    public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
 
     void Start()
     {
-        InitializeScore();
-    }
 
-    // Update is called once per frame
-    // スコアの初期化
+    }
+    void Update()
+    {
+        if (_isGameStart)
+        {
+            if (_isPlayerSet)
+            {
+                InitializeScore();
+                _isPlayerSet = false;
+            }
+        }
+    }
     private void InitializeScore()
     {
-        foreach (int i in Score)
+        for (int i = 0; i < _scores.Count; i++)
         {
-            Score[i] = 0;
+            _scoreNum.Add(0);
+            _scores[i].text = _scoreNum[i].ToString();
         }
-        _score1.text = $"{Score[0]}";
-        _score2.text = $"{Score[1]}";
-        _score3.text = $"{Score[2]}";
-        _score4.text = $"{Score[3]}";
     }
-
-    //スコアの加算
     public void UpdateScore(string player)
     {
+        int playerIndex = -1;
+
         switch (player)
         {
             case "Player (1)":
-                Score[0]++;
-                _score1.text = $"{Score[0]}";
+                playerIndex = 0;
                 break;
             case "Player (2)":
-                Score[1]++;
-                _score2.text = $"{Score[1]}";
+                playerIndex = 1;
                 break;
             case "Player (3)":
-                Score[2]++;
-                _score3.text = $"{Score[2]}";
+                playerIndex = 2;
                 break;
             case "Player (4)":
-                Score[3]++;
-                _score4.text = $"{Score[3]}";
+                playerIndex = 3;
                 break;
+        }
+        if (playerIndex >= 0 && playerIndex < _scoreNum.Count)
+        {
+            _scoreNum[playerIndex]++;
+            _scores[playerIndex].text = _scoreNum[playerIndex].ToString();
         }
     }
 }
