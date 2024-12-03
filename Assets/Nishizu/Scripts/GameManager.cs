@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Player;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
@@ -10,22 +11,22 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<GameObject> _hutons;
     [SerializeField] private GameObject _door;
     [SerializeField] private GameObject _teacher;
-    [SerializeField] private GameObject _meteor;
-    [SerializeField] private GameObject _tatami;
     [SerializeField] private GameObject _makuraPrefub;
     [SerializeField] private GameObject _happeningBall;
     [SerializeField] private GameObject _playerInputManager;
     [SerializeField] private GameObject _scoreManager;
+    [SerializeField] private GameObject _clock;
     private PlayerInputManager _playerInputM;
     private List<GameObject> _makuras = new List<GameObject>();
     private List<MakuraController> _makuraControllers = new List<MakuraController>();
     private List<PlayerController> _playerControllers = new List<PlayerController>();
     private DoorController _doorController;
     private TeacherShadowController _teacherEvent;
-    private MeteorEvent _meteorEvent;
-    private TatamiEvent _tatamiEvent;
+
     private bool _isGameStart = false;
     private bool _isPlayerSet = true;
+    private bool _isGameStartCheck = false;
+    private bool _isGameEnd = false;
     private Event _event;
     private List<HappeningBall> _happeningBalls = new List<HappeningBall>();
 
@@ -62,72 +63,76 @@ public class GameManager : MonoBehaviour
         {
             _teacherEvent = _teacher.GetComponent<TeacherShadowController>();
         }
-        if (_meteor != null)
-        {
-            _meteorEvent = _meteor.GetComponent<MeteorEvent>();
-        }
-        if (_tatami != null)
-        {
-            _tatamiEvent = _tatami.GetComponent<TatamiEvent>();
-        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (_isGameStart)
+        if (!_isGameEnd)
         {
-            if (_isPlayerSet)
+            if (_isGameStart)
             {
-                for (int i = 0; i < _players.Count; i++)
+                HappeningBallEvnt();
+                if (_isPlayerSet)
                 {
-                    var playerController = _players[i].GetComponent<PlayerController>();
-                    _playerControllers.Add(playerController);
+                    for (int i = 0; i < _players.Count; i++)
+                    {
+                        var playerController = _players[i].GetComponent<PlayerController>();
+                        playerController.WakeUp();
+                        _playerControllers.Add(playerController);
+
+                    }
                     _isPlayerSet = false;
                 }
             }
-            if (_happeningBalls != null)
+            else
             {
-                foreach (var happeningBall in _happeningBalls)
+                _players = _playerInputM.Players;
+                _event.Players = _players;
+                foreach (var player in _players)
                 {
-                    if (happeningBall.Outbreak)
+                    //_players.Count > 1 &&
+                    if (player.GetComponent<PlayerController>().IsGameStartCheck)
                     {
-                        _event.RandomEvent(happeningBall.Starter);
-                        happeningBall.Outbreak = false;
+                        _isGameStartCheck = true;
                     }
                 }
-                if (_happeningBalls.Count > 10)
-                {
-                    HappeningBall happeningBall = _happeningBalls[0];
-                    _happeningBalls.RemoveAt(0);
-                    if (happeningBall != null)
-                    {
-                        Destroy(happeningBall.gameObject);
-                    }
-                }
-            }
-        }
-        else
-        {
-            _players = _playerInputM.Players;
-            _event.Players = _players;
-        }
-        if (_players.Count == 4 || _players.Count > 1 && Input.GetKeyDown(KeyCode.L))
-        {
-            _isGameStart = true;
-            _event.IsGameStart = true;
-            _scoreManager.GetComponent<ScoreManager>().IsGameStart = true;
-            if (_happeningBall != null)
-            {
-                StartCoroutine(HappeningBallGeneration());
-            }
-        }
 
+                if (SleepCheck(_players) && (_players.Count == 4 || _isGameStartCheck))
+                {
+                    Init();
+                }
+            }
+        }
     }
-
     private void Init()
     {
-
+        _isGameStart = true;
+        _event.IsGameStart = true;
+        _scoreManager.GetComponent<ScoreManager>().IsGameStart = true;
+        _clock.GetComponent<ClockController>().IsGameStart = true;
+        foreach (var player in _players)
+        {
+            player.GetComponent<PlayerStatus>().IsGameStart = true;
+            player.GetComponent<PlayerController>().IsGameStart = true;
+        }
+        if (_happeningBall != null)
+        {
+            StartCoroutine(HappeningBallGeneration());
+        }
+        _playerInputManager.SetActive(false);
+        StartCoroutine(GameEnd());
+    }
+    private bool SleepCheck(List<GameObject> players)
+    {
+        foreach (var player in players)
+        {
+            if (!player.GetComponent<PlayerController>().IsSleep)
+            {
+                return false;
+            }
+        }
+        return true;
     }
     private Vector3 RandomPosition()
     {
@@ -142,12 +147,59 @@ public class GameManager : MonoBehaviour
 
         return new Vector3(randomX, y, randomZ);
     }
-
+    private void HappeningBallEvnt()
+    {
+        if (_happeningBalls != null)
+        {
+            foreach (var happeningBall in _happeningBalls)
+            {
+                if (happeningBall.Outbreak)
+                {
+                    _event.RandomEvent(happeningBall.Starter);
+                    happeningBall.Outbreak = false;
+                }
+            }
+            if (_happeningBalls.Count > 10)
+            {
+                HappeningBall happeningBall = _happeningBalls[0];
+                _happeningBalls.RemoveAt(0);
+                if (happeningBall != null)
+                {
+                    Destroy(happeningBall.gameObject);
+                }
+            }
+        }
+    }
     private IEnumerator HappeningBallGeneration()
     {
         GameObject happeningBall = Instantiate(_happeningBall, RandomPosition(), Quaternion.identity);
         _happeningBalls.Add(happeningBall.GetComponent<HappeningBall>());
         yield return new WaitForSeconds(10.0f);
-        StartCoroutine(HappeningBallGeneration());
+        if (_isGameStart)
+        {
+            StartCoroutine(HappeningBallGeneration());
+        }
+    }
+    private IEnumerator GameEnd()
+    {
+        yield return new WaitForSeconds(179.0f);//6分359.0f
+        _isGameStart = false;
+        _isGameStartCheck = false;
+        _event.IsGameStart = false;
+        _scoreManager.GetComponent<ScoreManager>().IsGameStart = false;
+        _clock.GetComponent<ClockController>().IsGameStart = false;
+        foreach (var player in _players)
+        {
+            player.GetComponent<PlayerStatus>().IsGameStart = false;
+            player.GetComponent<PlayerController>().IsGameStart = false;
+        }
+        foreach (var happeningBall in _happeningBalls)
+        {
+            Destroy(happeningBall.gameObject);
+        }
+        foreach (var playerController in _playerControllers)
+        {
+            playerController.CurrentMakuraDisplay.SetActive(false);
+        }
     }
 }

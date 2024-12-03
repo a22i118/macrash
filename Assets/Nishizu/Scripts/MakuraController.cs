@@ -30,7 +30,6 @@ public class MakuraController : ColorChanger
     public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
     public bool IsAlterEgo { get => _isAlterEgo; set => _isAlterEgo = value; }
     public bool IsCharge { get => _isCharge; set => _isCharge = value; }
-    public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
     public bool IsCounterAttack { get => _isCounterAttack; set => _isCounterAttack = value; }
 
     public enum ScaleType
@@ -184,7 +183,7 @@ public class MakuraController : ColorChanger
     private void OnTriggerEnter(Collider collider)
     {
         _isTouching = true;
-        if (_col.isTrigger && _isThrow && !_isHitCoolTime && collider.gameObject != _thrower)
+        if (_col.isTrigger && _isThrow && collider.gameObject != _thrower)
         {
             if (collider.gameObject.CompareTag("Player") && collider is CapsuleCollider)
             {
@@ -299,11 +298,8 @@ public class MakuraController : ColorChanger
     }
     private IEnumerator HitCoolTime()
     {
-        _isHitCoolTime = true;
-
         yield return new WaitForSeconds(1.0f);
         _isThrow = false;
-        _isHitCoolTime = false;
     }
     private IEnumerator ScaleChangeCoolTime()
     {
@@ -336,7 +332,6 @@ public class MakuraController : ColorChanger
 
         transform.position = hitPosition;
 
-        _isHitCoolTime = false;
         _isThrow = false;
     }
     private IEnumerator BlackMakuraHit()
