@@ -4,6 +4,7 @@ using Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +17,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _playerInputManager;
     [SerializeField] private GameObject _scoreManager;
     [SerializeField] private GameObject _clock;
+    [SerializeField] private Camera _resultCamera;
+    [SerializeField] private Camera _mainCamera;
+    [SerializeField] private GameObject _result;
+    private ResultManager _resultManager;
     private PlayerInputManager _playerInputM;
     private List<GameObject> _makuras = new List<GameObject>();
     private List<MakuraController> _makuraControllers = new List<MakuraController>();
@@ -33,6 +38,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
+        _mainCamera.enabled = true;
+        _resultCamera.enabled = false;
+        _resultManager = _result.GetComponent<ResultManager>();
         _playerInputM = _playerInputManager.GetComponent<PlayerInputManager>();
         _event = GetComponent<Event>();
 
@@ -182,7 +190,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator GameEnd()
     {
-        yield return new WaitForSeconds(30.0f);//6分359.0f
+        yield return new WaitForSeconds(120.0f);//6分360.0f
         _isGameStart = false;
         _isGameStartCheck = false;
         _event.IsGameStart = false;
@@ -192,10 +200,15 @@ public class GameManager : MonoBehaviour
         {
             player.GetComponent<PlayerStatus>().IsGameStart = false;
         }
+        int hutonIndex = 0;
         foreach (var playerController in _playerControllers)
         {
             playerController.IsGameStart = false;
             playerController.IsGameEnd = true;
+            playerController.CurrentMakuraDisplay.SetActive(false);
+            playerController.SpGageInstance.SetActive(false);
+            playerController.ResultSleep(_resultManager.ResultHutonControllers[hutonIndex]);
+            hutonIndex++;
         }
         for (int i = _happeningBalls.Count - 1; i >= 0; i--)
         {
@@ -208,5 +221,36 @@ public class GameManager : MonoBehaviour
                 _happeningBalls.RemoveAt(i);
             }
         }
+        yield return new WaitForSeconds(5.0f);
+        _mainCamera.enabled = false;
+        _resultCamera.enabled = true;
+        _resultManager.IsGameEnd = true;
+
+        // SortScores(_scoreManager.GetComponent<ScoreManager>().ScoreNum);
+        int scoretmp = -1;
+        int rank = -1;
+        int rankSkip = 0;
+        foreach (var score in SortScores(_scoreManager.GetComponent<ScoreManager>().ScoreNum))
+        {
+            Debug.Log($"Player {score.Key}: {score.Value}");
+
+            if (scoretmp != score.Value)
+            {
+                scoretmp = score.Value;
+                rank += 1 + rankSkip;
+                rankSkip = 0;
+            }
+            else
+            {
+                rankSkip++;
+            }
+            _resultManager.ResultHutonControllers[score.Key].Rank = rank;
+
+        }
+    }
+
+    public static List<KeyValuePair<int, int>> SortScores(Dictionary<int, int> scoreDic)
+    {
+        return scoreDic.OrderByDescending(entry => entry.Value).ToList();
     }
 }

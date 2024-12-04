@@ -63,6 +63,7 @@ namespace Player
         private int _playerIndex;
         private bool _isPushed = false;
         [SerializeField] private GameObject _spGageUI;
+        private GameObject _spGageInstance;
         private bool _isGameStart = false;
         private bool _isGameStartCheck = false;
         private bool _isGameEnd = false;
@@ -76,6 +77,7 @@ namespace Player
         public ShowMakuraController ShowMakuraController { get => _showMakuraController; set => _showMakuraController = value; }
         public GameObject CurrentMakuraDisplay { get => _currentMakuraDisplay; set => _currentMakuraDisplay = value; }
         public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
+        public GameObject SpGageInstance { get => _spGageInstance; set => _spGageInstance = value; }
 
         public enum ThrowType
         {
@@ -100,8 +102,8 @@ namespace Player
             Canvas canvas = FindObjectOfType<Canvas>();
             if (canvas != null)
             {
-                GameObject spGageInstance = Instantiate(_spGageUI, new Vector2(500.0f + 340.0f * _playerIndex, 150.0f), Quaternion.identity);
-                TextMeshProUGUI text = spGageInstance.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+                _spGageInstance = Instantiate(_spGageUI, new Vector2(500.0f + 340.0f * _playerIndex, 150.0f), Quaternion.identity);
+                TextMeshProUGUI text = _spGageInstance.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
                 text.text = _playerIndex + 1 + " P";
                 Color color;
                 if (_playerIndex == 0)
@@ -121,14 +123,14 @@ namespace Player
                     color = Color.green;
                 }
                 color.a = 0.5f;
-                spGageInstance.GetComponent<Image>().color = color;
-                spGageInstance.transform.SetParent(canvas.transform, false);
+                _spGageInstance.GetComponent<Image>().color = color;
+                _spGageInstance.transform.SetParent(canvas.transform, false);
 
-                Slider _slider = spGageInstance.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
+                Slider _slider = _spGageInstance.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
                 _playerStatus.SpBar = _slider;
 
                 ScoreManager scoreManager = canvas.transform.GetChild(1).GetComponent<ScoreManager>();
-                scoreManager.Scores.Add(spGageInstance.transform.GetChild(1).GetComponent<TextMeshProUGUI>());
+                scoreManager.Scores.Add(_spGageInstance.transform.GetChild(1).GetComponent<TextMeshProUGUI>());
             }
         }
         public void OnGameStartCheck(InputValue value)
@@ -185,8 +187,8 @@ namespace Player
         {
             if (value.isPressed)
             {
-                // if (_currentMakura != null && !_isSleep && _playerStatus.IsChargeMax)
-                if (_currentMakura != null && !_isSleep)//デバッグ用
+                if (_currentMakura != null && !_isSleep && _playerStatus.IsChargeMax)
+                // if (_currentMakura != null && !_isSleep)//デバッグ用
                 {
                     _playerStatus.CurrentSP = 0;
                     _makuraController.CurrentScaleType = MakuraController.ScaleType.Second;
@@ -558,7 +560,25 @@ namespace Player
 
             transform.rotation = _currentHutonController.GetRotation();
 
-            transform.rotation = Quaternion.Euler(-81.0f, transform.rotation.eulerAngles.y, 0.0f);
+            Quaternion additionalRotation = Quaternion.AngleAxis(-81.0f, transform.right);
+            transform.rotation = additionalRotation * transform.rotation;
+        }
+        public void ResultSleep(ResultHutonController resultHutonController)
+        {
+            _animator.SetBool("Walk", false);
+            _rb.isKinematic = true;
+
+            transform.rotation = resultHutonController.GetRotation();
+            float offset = 0;
+            if (transform.rotation.y == 0.0f)
+            {
+                offset = 1.5f;
+            }
+            Vector3 hutonPosition = resultHutonController.GetCenterPosition();
+            transform.position = new Vector3(hutonPosition.x, hutonPosition.y, hutonPosition.z - 0.75f + offset);
+
+            Quaternion additionalRotation = Quaternion.AngleAxis(-81.0f, transform.right);
+            transform.rotation = additionalRotation * transform.rotation;
         }
         /// <summary>
         /// 布団から起きる
@@ -737,6 +757,7 @@ namespace Player
         {
             yield return new WaitForSeconds(1.0f);
             _isHitStop = false;
+            _isHitCoolTime = false;
         }
         private IEnumerator ExplosionHitCoolTimeDelay()
         {
