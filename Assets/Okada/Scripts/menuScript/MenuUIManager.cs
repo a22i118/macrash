@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class MenuUIManager : MonoBehaviour
 {
@@ -11,16 +12,20 @@ public class MenuUIManager : MonoBehaviour
         Config,
         Exit,
         Local,
-        Internet
+        Internet,
+        Null
 
     }
 
     Animator anim;
     UItype _currenttype;
     [SerializeField] private GameObject _makura;
-    [SerializeField] private GameObject VSmenu;
-    [SerializeField] private GameObject Firstmenu;
-    [SerializeField] private GameObject LocalVSmenu;
+    [SerializeField] private GameObject _VSmenu;
+    [SerializeField] private GameObject _Firstmenu;
+    [SerializeField] private GameObject _LocalVSmenu;
+    [SerializeField] private GameObject _Configmenu;
+    [SerializeField] private TextMeshProUGUI _uitext;
+    LayerMask _uilayer;
     Rigidbody _rb;
     [SerializeField] float _throwforce;
     Vector3 _throwposition;
@@ -30,6 +35,7 @@ public class MenuUIManager : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         _throwposition = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y - 1, Camera.main.transform.position.z);
+        _uilayer = LayerMask.GetMask("UI");
     }
 
     private void Update()
@@ -38,17 +44,22 @@ public class MenuUIManager : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 30, ~5))
+            if (Physics.Raycast(ray, out hit, 30, _uilayer))
             {
 
                 CurrentUI(hit.collider.gameObject.name);
-
+                UIText();
                 if (Input.GetMouseButtonDown(0))
                 {
                     ThrowMakura(hit.collider.gameObject.transform.position);
                     StartCoroutine(MoveMenu());
                     _isray = false;
                 }
+            }
+            else
+            {
+                CurrentUI("Null");
+                UIText();
             }
             
         }
@@ -80,7 +91,7 @@ public class MenuUIManager : MonoBehaviour
                 _currenttype = UItype.VS;
                 break;
 
-            case "PracticeSymbol":
+            case "TutorialSymbol":
                 _currenttype= UItype.Practice;
                 break;
 
@@ -98,6 +109,10 @@ public class MenuUIManager : MonoBehaviour
 
             case "Internet":
                 _currenttype = UItype.Internet;
+                break;
+
+            case "Null":
+                _currenttype = UItype.Null;
                 break;
         }
     }
@@ -125,14 +140,16 @@ public class MenuUIManager : MonoBehaviour
         switch (_currenttype)
         {
             case UItype.VS:
-                VSmenu.SetActive(true);
-                Firstmenu.SetActive(false);
+                _VSmenu.SetActive(true);
+                _Firstmenu.SetActive(false);
                 break;
 
             case UItype.Practice:
                 break;
 
             case UItype.Config:
+                _Configmenu.SetActive(true);
+                _Firstmenu.SetActive(false);
                 break;
 
            
@@ -141,19 +158,33 @@ public class MenuUIManager : MonoBehaviour
         }
     }
 
-    private void OnUI()
+    private void UIText()
     {
+        GameObject _uiPanel = _uitext.transform.parent.gameObject;
+        
         switch (_currenttype)
         {
+            
             case UItype.VS:
-                
+                _uiPanel.SetActive(true);
+                _uitext.text = "対戦モード";
                 break;
 
             case UItype.Practice:
+                _uiPanel.SetActive(true);
+                _uitext.text = "チュートリアルモード";
                 break;
 
             case UItype.Config:
+                _uiPanel.SetActive(true);
+                _uitext.text = "設定画面";
                 break;
+
+            case UItype.Null:
+                _uiPanel.SetActive(false);
+                _uitext.text = "";
+                break;
+
 
 
 
@@ -162,7 +193,7 @@ public class MenuUIManager : MonoBehaviour
     }
     public void LocalVSMenu()
     {
-        LocalVSmenu.SetActive(true);
-        VSmenu.SetActive(false);
+        _LocalVSmenu.SetActive(true);
+        _VSmenu.SetActive(false);
     }
 }
