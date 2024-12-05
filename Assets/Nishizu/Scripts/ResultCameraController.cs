@@ -5,14 +5,17 @@ using UnityEngine;
 public class ResultCameraController : MonoBehaviour
 {
     [SerializeField] private Camera _resultCamera;
+    private bool _isGameEnd = false;
+    private bool _isCameraSet = true;
+    private bool _isCanMove = false;
+    private bool _isUISet = false;
     private float _rotationSpeed = 75.0f;
     private float _moveSpeed = 0.035f;
     private float _targetPosition = 2.2f;
     private float _targetRotation = 180f;
-    private bool _isGameEnd = false;
-    private bool _isCameraSet = true;
-    private bool _isCanMove = false;
+
     public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
+    public bool IsUISet { get => _isUISet; set => _isUISet = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -28,15 +31,16 @@ public class ResultCameraController : MonoBehaviour
             if (_isCameraSet)
             {
                 _isCameraSet = false;
-
                 StartCoroutine(CameraSetDerey());
-
             }
             if (_isCanMove)
             {
                 MoveCamera();
                 RotateCamera();
-
+            }
+            if (_resultCamera.transform.position.y == 2.2f)
+            {
+                StartCoroutine(UISetDerey());
             }
         }
     }
@@ -59,5 +63,10 @@ public class ResultCameraController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         _isCanMove = true;
+    }
+    private IEnumerator UISetDerey()
+    {
+        yield return new WaitForSeconds(1.0f);
+        _isUISet = true;
     }
 }

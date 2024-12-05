@@ -16,15 +16,18 @@ namespace Player
         [SerializeField] private LayerMask _wallLayer;
         [SerializeField] private GameObject _showMakura;
         [SerializeField] private GameObject _alterEgoMakura;
+        [SerializeField] private GameObject _playerTagUI;
 
         private GameObject _currentMakuraDisplay;
+        private GameObject _playerTagUIInstance;
+        private Transform _playerTransform;
         private Rigidbody _rb;
         private Animator _animator;
         private CapsuleCollider _col;
         private float _speed = 5.0f;//プレイヤーの移動速度
         private float _groundCheckRadius = 0.01f;//足元が地面か判定する球の半径
         private float _pickUpDistance = 1.0f;//まくらを拾うことができる距離
-        private float _playerSerchDistance = 3.0f;//敵プレイヤーの捜索範囲
+        private float _playerSerchDistance = 5.0f;//敵プレイヤーの捜索範囲
         private GameObject _currentMakura;//手持ちのまくら
         private GameObject _thrownMakura;//投げられたまくら
         private bool _isSleep = false;//寝ているか
@@ -55,8 +58,8 @@ namespace Player
 
         private float _jumpHoldTime = 0f;//ジャンプキーが押されている時間
         private float _maxJumpHoldTime = 0.2f;//最大ジャンプの押す時間
-        [SerializeField] private float _minJumpForce = 6.5f;//最小ジャンプ力
-        [SerializeField] private float _maxJumpForce = 9.0f;//最大ジャンプ力
+        private float _minJumpForce = 6.5f;//最小ジャンプ力
+        private float _maxJumpForce = 9.0f;//最大ジャンプ力
         private const float _gravity = -25.0f;
         private Transform _huton;
         private Vector3 _movement;
@@ -78,6 +81,7 @@ namespace Player
         public GameObject CurrentMakuraDisplay { get => _currentMakuraDisplay; set => _currentMakuraDisplay = value; }
         public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
         public GameObject SpGageInstance { get => _spGageInstance; set => _spGageInstance = value; }
+        public GameObject PlayerTagUIInstance { get => _playerTagUIInstance; set => _playerTagUIInstance = value; }
 
         public enum ThrowType
         {
@@ -99,38 +103,58 @@ namespace Player
             _groundLayers |= _wallLayer;
             _rb.useGravity = false;
 
-            Canvas canvas = FindObjectOfType<Canvas>();
-            if (canvas != null)
+            Canvas[] canvases = FindObjectsOfType<Canvas>();
+            Color color;
+            if (_playerIndex == 0)
             {
-                _spGageInstance = Instantiate(_spGageUI, new Vector2(500.0f + 340.0f * _playerIndex, 150.0f), Quaternion.identity);
-                TextMeshProUGUI text = _spGageInstance.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
-                text.text = _playerIndex + 1 + " P";
-                Color color;
-                if (_playerIndex == 0)
+                color = Color.red;
+            }
+            else if (_playerIndex == 1)
+            {
+                color = Color.blue;
+            }
+            else if (_playerIndex == 2)
+            {
+                color = Color.yellow;
+            }
+            else
+            {
+                color = Color.green;
+            }
+            color.a = 0.5f;
+            foreach (var canvas in canvases)
+            {
+                if (canvas.renderMode == RenderMode.WorldSpace)
                 {
-                    color = Color.red;
-                }
-                else if (_playerIndex == 1)
-                {
-                    color = Color.blue;
-                }
-                else if (_playerIndex == 2)
-                {
-                    color = Color.yellow;
+                    _playerTransform = transform;
+                    _playerTagUIInstance = Instantiate(_playerTagUI, _playerTransform.position, Quaternion.identity);
+                    TextMeshProUGUI text = _playerTagUIInstance.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+                    text.text = _playerIndex + 1 + " P";
+
+                    _playerTagUIInstance.transform.GetChild(0).GetComponent<Image>().color = color;
+                    _playerTagUIInstance.transform.SetParent(_playerTransform);
+
+                    Vector3 directionToCamera = Camera.main.transform.position - _playerTagUIInstance.transform.position;
+                    directionToCamera.y = 0;
+                    _playerTagUIInstance.transform.rotation = Quaternion.LookRotation(directionToCamera);
+                    _playerTagUIInstance.transform.Rotate(0, 180, 0);
+                    _playerTagUIInstance.transform.SetParent(canvas.transform, false);
                 }
                 else
                 {
-                    color = Color.green;
+                    _spGageInstance = Instantiate(_spGageUI, new Vector2(500.0f + 340.0f * _playerIndex, 150.0f), Quaternion.identity);
+                    TextMeshProUGUI text = _spGageInstance.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+                    text.text = _playerIndex + 1 + " P";
+
+                    _spGageInstance.GetComponent<Image>().color = color;
+                    _spGageInstance.transform.SetParent(canvas.transform, false);
+
+                    Slider _slider = _spGageInstance.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
+                    _playerStatus.SpBar = _slider;
+
+                    ScoreManager scoreManager = canvas.transform.GetChild(1).GetComponent<ScoreManager>();
+                    scoreManager.Scores.Add(_spGageInstance.transform.GetChild(1).GetComponent<TextMeshProUGUI>());
                 }
-                color.a = 0.5f;
-                _spGageInstance.GetComponent<Image>().color = color;
-                _spGageInstance.transform.SetParent(canvas.transform, false);
-
-                Slider _slider = _spGageInstance.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
-                _playerStatus.SpBar = _slider;
-
-                ScoreManager scoreManager = canvas.transform.GetChild(1).GetComponent<ScoreManager>();
-                scoreManager.Scores.Add(_spGageInstance.transform.GetChild(1).GetComponent<TextMeshProUGUI>());
             }
         }
         public void OnGameStartCheck(InputValue value)
@@ -146,6 +170,10 @@ namespace Player
         }
         void Update()
         {
+            if (_playerTagUIInstance != null)
+            {
+                _playerTagUIInstance.transform.position = _playerTransform.position + new Vector3(-1.25f, 1.5f, -0.2f);
+            }
             if (!_isGameEnd)
             {
                 Jump();
@@ -512,7 +540,7 @@ namespace Player
                 ExplosionRange explosionRangeScript = collider.GetComponent<ExplosionRange>();
                 if (explosionRangeScript.Thrower != gameObject)
                 {
-                    StartCoroutine(ExplosionHitCoolTimeDelay());
+                    StartCoroutine(HitCoolTimeDelay());
                     _animator.SetBool("Walk", false);
                     // Debug.Log("う、動けない！");
                     HitMotion(false);
@@ -671,7 +699,7 @@ namespace Player
             if (makuraController != null && collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject && makuraController.IsThrow && !_isHitCoolTime)
             {
                 _isCanCatch = false;
-                _isHitCoolTime = true;
+                StartCoroutine(HitCoolTimeDelay());
                 _animator.SetBool("Walk", false);
                 HitMotion(false);
                 if (!_isVibrating)
@@ -755,13 +783,12 @@ namespace Player
         /// <returns>1秒後に解除</returns>
         private IEnumerator HitStopCoroutine()
         {
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(0.5f);
             _isHitStop = false;
-            _isHitCoolTime = false;
         }
-        private IEnumerator ExplosionHitCoolTimeDelay()
+        private IEnumerator HitCoolTimeDelay()
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
             _isHitCoolTime = true;
         }
 

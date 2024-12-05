@@ -8,7 +8,6 @@ using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
-    private List<GameObject> _players;
     [SerializeField] private List<GameObject> _hutons;
     [SerializeField] private GameObject _door;
     [SerializeField] private GameObject _teacher;
@@ -20,19 +19,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Camera _resultCamera;
     [SerializeField] private Camera _mainCamera;
     [SerializeField] private GameObject _result;
-    private ResultManager _resultManager;
-    private PlayerInputManager _playerInputM;
-    private List<GameObject> _makuras = new List<GameObject>();
-    private List<MakuraController> _makuraControllers = new List<MakuraController>();
-    private List<PlayerController> _playerControllers = new List<PlayerController>();
-    private DoorController _doorController;
-    private TeacherShadowController _teacherEvent;
-
     private bool _isGameStart = false;
     private bool _isPlayerSet = true;
     private bool _isGameStartCheck = false;
     private bool _isGameEnd = false;
+    private ResultManager _resultManager;
+    private PlayerInputManager _playerInputM;
+    private DoorController _doorController;
+    private TeacherShadowController _teacherEvent;
     private Event _event;
+    private List<GameObject> _players;
+    private List<GameObject> _makuras = new List<GameObject>();
+    private List<MakuraController> _makuraControllers = new List<MakuraController>();
+    private List<PlayerController> _playerControllers = new List<PlayerController>();
     private List<HappeningBall> _happeningBalls = new List<HappeningBall>();
 
     // Start is called before the first frame update
@@ -124,6 +123,10 @@ public class GameManager : MonoBehaviour
             player.GetComponent<PlayerStatus>().IsGameStart = true;
             player.GetComponent<PlayerController>().IsGameStart = true;
         }
+        foreach (var makura in _makuraControllers)
+        {
+            makura.IsGameStart = true;
+        }
         if (_happeningBall != null)
         {
             StartCoroutine(HappeningBallGeneration());
@@ -190,7 +193,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator GameEnd()
     {
-        yield return new WaitForSeconds(120.0f);//6分360.0f
+        yield return new WaitForSeconds(30.0f);//6分360.0f
         _isGameStart = false;
         _isGameStartCheck = false;
         _event.IsGameStart = false;
@@ -207,6 +210,7 @@ public class GameManager : MonoBehaviour
             playerController.IsGameEnd = true;
             playerController.CurrentMakuraDisplay.SetActive(false);
             playerController.SpGageInstance.SetActive(false);
+            playerController.PlayerTagUIInstance.SetActive(false);
             playerController.ResultSleep(_resultManager.ResultHutonControllers[hutonIndex]);
             hutonIndex++;
         }
@@ -224,16 +228,12 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(5.0f);
         _mainCamera.enabled = false;
         _resultCamera.enabled = true;
-        _resultManager.IsGameEnd = true;
 
-        // SortScores(_scoreManager.GetComponent<ScoreManager>().ScoreNum);
         int scoretmp = -1;
         int rank = -1;
         int rankSkip = 0;
         foreach (var score in SortScores(_scoreManager.GetComponent<ScoreManager>().ScoreNum))
         {
-            Debug.Log($"Player {score.Key}: {score.Value}");
-
             if (scoretmp != score.Value)
             {
                 scoretmp = score.Value;
@@ -245,8 +245,9 @@ public class GameManager : MonoBehaviour
                 rankSkip++;
             }
             _resultManager.ResultHutonControllers[score.Key].Rank = rank;
-
         }
+        _resultManager.ScoreDic = _scoreManager.GetComponent<ScoreManager>().ScoreNum;
+        _resultManager.IsGameEnd = true;
     }
 
     public static List<KeyValuePair<int, int>> SortScores(Dictionary<int, int> scoreDic)

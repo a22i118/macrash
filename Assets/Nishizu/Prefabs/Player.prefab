@@ -1054,6 +1054,7 @@ MonoBehaviour:
     m_Bits: 512
   _showMakura: {fileID: 4078454099847178617, guid: 297f5d6bc80feed4ba08d89f2b273f83, type: 3}
   _alterEgoMakura: {fileID: 3835372720629781789, guid: e64e57ef704ef6e419c2f11671845d58, type: 3}
+  _playerTagUI: {fileID: 178494667209682853, guid: 3f85e66084671824d95ba07ae44d1c0f, type: 3}
   _minJumpForce: 6.5
   _maxJumpForce: 9
   _spGageUI: {fileID: 1004370396224887417, guid: 87f346e8796ca7f439b6bfdb7e48cc63, type: 3}

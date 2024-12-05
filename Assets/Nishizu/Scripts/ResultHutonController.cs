@@ -28,17 +28,31 @@ public class ResultHutonController : MonoBehaviour
         if (_childRenderer != null)
         {
             Color color = _defaultColor;
+            Material material = new Material(Shader.Find("Standard"));
+
             if (_rank == 0)
             {
                 color = new Color(1.0f, 0.843f, 0.0f);
+                material.SetColor("_Color", color);
+                material.SetFloat("_Metallic", 1f);
+                material.SetFloat("_Smoothness", 0.9f);
+                _childRenderer.material = material;
             }
             else if (_rank == 1)
             {
                 color = new Color(0.75f, 0.75f, 0.75f);
+                material.SetColor("_Color", color);
+                material.SetFloat("_Metallic", 1f);
+                material.SetFloat("_Smoothness", 0.9f);
+                _childRenderer.material = material;
             }
             else if (_rank == 2)
             {
                 color = new Color(0.72f, 0.45f, 0.2f);
+                material.SetColor("_Color", color);
+                material.SetFloat("_Metallic", 1f);
+                material.SetFloat("_Smoothness", 0.9f);
+                _childRenderer.material = material;
             }
             _childRenderer.material.color = color;
             // Color(1.0f, 0.843f, 0.0f)//金
