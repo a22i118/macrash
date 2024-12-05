@@ -379,14 +379,14 @@ namespace Player
                 float jumpForce = Mathf.Lerp(_minJumpForce, _maxJumpForce, _jumpHoldTime / _maxJumpHoldTime);
                 _rb.velocity = new Vector3(_rb.velocity.x, jumpForce, _rb.velocity.z);
             }
-            if (!IsGround())
-            {
-                _animator.SetBool("Jump", true);
-            }
-            else
-            {
-                _animator.SetBool("Jump", false);
-            }
+            // if (!IsGround())
+            // {
+            //     _animator.SetBool("Jump", true);
+            // }
+            // else
+            // {
+            //     _animator.SetBool("Jump", false);
+            // }
         }
         private void RotateShowMakura()
         {
@@ -579,7 +579,7 @@ namespace Player
             _isSleep = true;
 
             Vector3 hutonPosition = _currentHutonController.GetCenterPosition();
-            transform.position = new Vector3(hutonPosition.x, hutonPosition.y, hutonPosition.z - 0.75f);
+            transform.position = new Vector3(hutonPosition.x, hutonPosition.y, hutonPosition.z - 0.8f);
             _huton = _currentHutonController.transform;
             if (_currentHutonController != null)
             {
@@ -603,7 +603,7 @@ namespace Player
                 offset = 1.5f;
             }
             Vector3 hutonPosition = resultHutonController.GetCenterPosition();
-            transform.position = new Vector3(hutonPosition.x, hutonPosition.y, hutonPosition.z - 0.75f + offset);
+            transform.position = new Vector3(hutonPosition.x, hutonPosition.y, hutonPosition.z - 0.8f + offset);
 
             Quaternion additionalRotation = Quaternion.AngleAxis(-81.0f, transform.right);
             transform.rotation = additionalRotation * transform.rotation;
