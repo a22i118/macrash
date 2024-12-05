@@ -103,6 +103,10 @@ public class GameManager : MonoBehaviour
                     {
                         _isGameStartCheck = true;
                     }
+                    else
+                    {
+                        _isGameStartCheck = false;
+                    }
                 }
 
                 if (SleepCheck(_players) && (_players.Count == 4 || _isGameStartCheck))

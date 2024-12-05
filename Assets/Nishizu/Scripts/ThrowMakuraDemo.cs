@@ -4,21 +4,18 @@ using UnityEngine;
 
 public class ThrowMakuraDemo : MonoBehaviour
 {
-    private float _pickUpDistance = 3.0f;
-    private GameObject _currentMakura = null;
-
-    private Rigidbody _rb;
-    private Vector3 _targetPosition;
-    private bool _isPickUpCoolTime = false;
-    private bool _isExecuteOnce = false;
-    private MakuraController _makuraController;
     [SerializeField] private GameObject _alterEgoMakura;
-
-    private float _vibrationStrength = 0.3f;//振動の強さ
-    private float _vibrationTime = 0.3f;//振動する時間
     private bool _isVibrating = false;
     private bool _isHitCoolTime = false;
-
+    private bool _isPickUpCoolTime = false;
+    private bool _isExecuteOnce = false;
+    private float _pickUpDistance = 3.0f;
+    private float _vibrationStrength = 0.3f;//振動の強さ
+    private float _vibrationTime = 0.3f;//振動する時間
+    private GameObject _currentMakura = null;
+    private Rigidbody _rb;
+    private Vector3 _targetPosition;
+    private MakuraController _makuraController;
     public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
 
     public enum ThrowType

@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class HappeningBall : MonoBehaviour
 {
+    private bool _isOutbreak = false;
+    private float hue;
     private Renderer _renderer;
     private GameObject _starter = null;
-    private float hue;
-    private bool _outbreak = false;
+    public bool Outbreak { get => _isOutbreak; set => _isOutbreak = value; }
     public GameObject Starter { get => _starter; set => _starter = value; }
-    public bool Outbreak { get => _outbreak; set => _outbreak = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -23,7 +23,7 @@ public class HappeningBall : MonoBehaviour
         ColorChange();
         if (_starter != null)
         {
-            _outbreak = true;
+            _isOutbreak = true;
             Destroy(gameObject);
         }
     }

@@ -6,7 +6,7 @@ public class ResultHutonController : MonoBehaviour
 {
     private int _rank = -1;
     private Color _defaultColor;
-    Renderer _childRenderer;
+    private Renderer _childRenderer;
     public int Rank { get => _rank; set => _rank = value; }
 
     // Start is called before the first frame update

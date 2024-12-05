@@ -5,10 +5,7 @@ using UnityEngine;
 public class HutonController : MonoBehaviour
 {
     private GameObject _makura;
-
     public GameObject Makura { get => _makura; set => _makura = value; }
-
-
     public Vector3 GetCenterPosition()
     {
         return GetComponent<Collider>().bounds.center;
@@ -34,8 +31,6 @@ public class HutonController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Makura") || collision.gameObject.CompareTag("Obstacles"))
         {
-
-            // 布団に触れたプレイヤー以外のオブジェクトを子に設定
             collision.transform.SetParent(transform.parent);
         }
     }

@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class DoorController : MonoBehaviour
 {
-    private List<GameObject> _door = new List<GameObject>();
+    private bool _isOpen = false;//ドアが開いているかどうか
+    private float _openSpeed = 3.0f;
     private Vector3[] _closedPosition = new Vector3[2];
     private Vector3[] _openPosition = new Vector3[2];
-    private float _openSpeed = 3.0f;
-    private bool _isOpen = false;//ドアが開いているかどうか
-
+    private List<GameObject> _door = new List<GameObject>();
     public bool IsOpen { get => _isOpen; set => _isOpen = value; }
 
     // Start is called before the first frame update

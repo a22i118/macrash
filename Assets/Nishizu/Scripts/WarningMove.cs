@@ -9,10 +9,7 @@ public class WarningMove : MonoBehaviour
     private float _speed = 500.0f;
     private float _destroyPosition_x = -1320.0f;
     private float _startAlpha;
-
     private RectTransform rectTransform;
-    // private Renderer _warningRenderer;
-
     private Image _image;
     public bool Direction { get => _isDirection; set => _isDirection = value; }
     public bool IsTransparent { get => _isTransparent; set => _isTransparent = value; }

@@ -10,9 +10,6 @@ public class ClockController : MonoBehaviour
     private float _hour = 10.0f;//時
     private float _minute = 0.0f;//分
     private float _oneLap = 0.333333f;//3分で一周
-
-    public float Hour { get => _hour; }
-    public float Minute { get => _minute; }
     public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
 
     // Start is called before the first frame update

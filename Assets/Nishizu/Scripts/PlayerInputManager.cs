@@ -7,9 +7,7 @@ using UnityEngine.InputSystem;
 public class PlayerInputManager : MonoBehaviour
 {
     private int playerCount = 0;
-
     private List<GameObject> _players = new List<GameObject>();
-
     public List<GameObject> Players { get => _players; set => _players = value; }
     public void OnPlayerJoined(PlayerInput playerInput)
     {

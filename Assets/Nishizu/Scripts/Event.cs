@@ -12,20 +12,19 @@ public class Event : MonoBehaviour
     [SerializeField] private GameObject _meteor;
     [SerializeField] private GameObject _tatami;
     [SerializeField] private GameObject _makuraPrefub;
-    private List<GameObject> _makuras = new List<GameObject>();
-    private List<MakuraController> _makuraControllers = new List<MakuraController>();
-    private List<PlayerController> _playerControllers = new List<PlayerController>();
+    private bool _isPlayerSet = true;
+    private bool _isGameStart = false;
+    private bool _one = false;
+    private int _lastEvent = -1;
     private TeacherShadowController _teacherEvent;
     private MeteorEvent _meteorEvent;
     private TatamiEvent _tatamiEvent;
-    private bool _isPlayerSet = true;
-    private bool _isGameStart = false;
+    private List<GameObject> _makuras = new List<GameObject>();
+    private List<MakuraController> _makuraControllers = new List<MakuraController>();
+    private List<PlayerController> _playerControllers = new List<PlayerController>();
+    public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
     public List<GameObject> Makuras { get => _makuras; set => _makuras = value; }
     public List<GameObject> Players { get => _players; set => _players = value; }
-    public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
-
-    private bool _one = false;
-    private int _lastEvent = -1;
 
     // Start is called before the first frame update
     void Start()

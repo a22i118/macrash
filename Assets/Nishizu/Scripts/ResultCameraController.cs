@@ -13,7 +13,6 @@ public class ResultCameraController : MonoBehaviour
     private float _moveSpeed = 0.035f;
     private float _targetPosition = 2.2f;
     private float _targetRotation = 180f;
-
     public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
     public bool IsUISet { get => _isUISet; set => _isUISet = value; }
 
