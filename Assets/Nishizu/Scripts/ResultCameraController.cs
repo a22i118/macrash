@@ -4,10 +4,19 @@ using UnityEngine;
 
 public class ResultCameraController : MonoBehaviour
 {
-    public Camera resultCamera;  // ResultCameraをインスペクタで設定
-    public float rotationSpeed = 20f;  // 回転速度（調整可能）
-    public float targetYPosition = 4f; // 最終的に高さ4にする
-    public float targetRotationY = 90f;
+    [SerializeField] private Camera _resultCamera;
+    private bool _isGameEnd = false;
+    private bool _isCameraSet = true;
+    private bool _isCanMove = false;
+    private bool _isUISet = false;
+    private float _rotationSpeed = 75.0f;
+    private float _moveSpeed = 0.035f;
+    private float _targetPosition = 2.2f;
+    private float _targetRotation = 180f;
+
+    public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
+    public bool IsUISet { get => _isUISet; set => _isUISet = value; }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -17,30 +26,47 @@ public class ResultCameraController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        // まず移動させ、次に回転
-        MoveCameraToTargetPosition();
-        RotateCameraToTarget();
+        if (_isGameEnd)
+        {
+            if (_isCameraSet)
+            {
+                _isCameraSet = false;
+                StartCoroutine(CameraSetDerey());
+            }
+            if (_isCanMove)
+            {
+                MoveCamera();
+                RotateCamera();
+            }
+            if (_resultCamera.transform.position.y == 2.2f)
+            {
+                StartCoroutine(UISetDerey());
+            }
+        }
     }
 
-    private void MoveCameraToTargetPosition()
+    private void MoveCamera()
     {
-        // 現在のカメラ位置を取得
-        Vector3 currentPosition = resultCamera.transform.position;
-
-        // 指定の位置までスムーズに移動（補間）
-        float step = 0.05f;  // 移動スピード（調整可能）
-        resultCamera.transform.position = Vector3.MoveTowards(currentPosition, new Vector3(currentPosition.x, targetYPosition, currentPosition.z), step);
+        Vector3 currentPosition = _resultCamera.transform.position;
+        _resultCamera.transform.position = Vector3.MoveTowards(_resultCamera.transform.position, new Vector3(currentPosition.x, _targetPosition, currentPosition.z), _moveSpeed);
     }
 
-    private void RotateCameraToTarget()
+    private void RotateCamera()
     {
-        // 現在の回転を取得
-        Quaternion currentRotation = resultCamera.transform.rotation;
+        Quaternion currentRotation = _resultCamera.transform.rotation;
 
-        // 目標回転（目標角度をQuaternionに変換）
-        Quaternion targetRotation = Quaternion.Euler(90, targetRotationY, 0); // x軸90度、y軸目標回転、z軸0度
+        Quaternion targetRotation = Quaternion.Euler(90, _targetRotation, 0);
 
-        // 回転を目標角度に向けて補間
-        resultCamera.transform.rotation = Quaternion.RotateTowards(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
+        _resultCamera.transform.rotation = Quaternion.RotateTowards(currentRotation, targetRotation, _rotationSpeed * Time.deltaTime);
+    }
+    private IEnumerator CameraSetDerey()
+    {
+        yield return new WaitForSeconds(0.5f);
+        _isCanMove = true;
+    }
+    private IEnumerator UISetDerey()
+    {
+        yield return new WaitForSeconds(1.0f);
+        _isUISet = true;
     }
 }

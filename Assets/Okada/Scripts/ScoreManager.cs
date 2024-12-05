@@ -1,16 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
-
 public class ScoreManager : MonoBehaviour
 {
     private bool _isGameStart = false;
+    private bool _isGameEnd = false;
     private bool _isPlayerSet = true;
-    private List<int> _scoreNum = new List<int>();
+    private Dictionary<int, int> _scoreNum = new Dictionary<int, int>();
     private List<TextMeshProUGUI> _scores = new List<TextMeshProUGUI>();
     public List<TextMeshProUGUI> Scores { get => _scores; set => _scores = value; }
     public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
+    public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
+    public Dictionary<int, int> ScoreNum { get => _scoreNum; set => _scoreNum = value; }
 
     void Start()
     {
@@ -31,7 +34,7 @@ public class ScoreManager : MonoBehaviour
     {
         for (int i = 0; i < _scores.Count; i++)
         {
-            _scoreNum.Add(0);
+            _scoreNum.Add(i, 0);
             _scores[i].text = _scoreNum[i].ToString();
         }
     }
@@ -56,8 +59,12 @@ public class ScoreManager : MonoBehaviour
         }
         if (playerIndex >= 0 && playerIndex < _scoreNum.Count)
         {
-            _scoreNum[playerIndex]++;
-            _scores[playerIndex].text = _scoreNum[playerIndex].ToString();
+            if (_scoreNum.ContainsKey(playerIndex))
+            {
+                _scoreNum[playerIndex]++;
+                _scores[playerIndex].text = _scoreNum[playerIndex].ToString();
+            }
         }
     }
+
 }

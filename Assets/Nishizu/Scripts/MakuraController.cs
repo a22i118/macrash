@@ -9,27 +9,30 @@ public class MakuraController : ColorChanger
 {
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private LayerMask _hutonLayer;
-    private Rigidbody _rb;
-    private Collider _col;
-    private ScaleType _currentScaleType = ScaleType.Nomal;//今の大きさ
-    private bool _isThrow = false;//投げられているかどうか
-    private bool _isAlterEgo = false;//分身
-    private bool _isTouching = false;//何かと接触しているか
-    private Quaternion _initialRotation;//最初の向き
-    private GameObject _thrower;//投げたプレイヤー
-    private float _vibrationStrength = 0.05f;//振動の強さ
-    private float _vibrationTime = 0.2f;//振動する時間
     [SerializeField] private GameObject _explosionRange;
-    private ExplosionRange _explosionRangeScript;
+    private bool _isThrow = false;
+    private bool _isAlterEgo = false;
+    private bool _isTouching = false;
+    private bool _isGameStart = false;
     private bool _isCharge = false;
     private bool _isCounterAttack = false;
+    private bool _isHitCoolTimeOne = false;
+    private float _vibrationStrength = 0.05f;
+    private float _vibrationTime = 0.2f;
+    private Rigidbody _rb;
+    private Collider _col;
+    private Quaternion _initialRotation;
+    private GameObject _thrower;
+    private ExplosionRange _explosionRangeScript;
     private ScoreManager _scoreManager;
+    private ScaleType _currentScaleType = ScaleType.Nomal;
     public bool IsThrow { get => _isThrow; set => _isThrow = value; }
-    public GameObject Thrower { get => _thrower; set => _thrower = value; }
-    public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
     public bool IsAlterEgo { get => _isAlterEgo; set => _isAlterEgo = value; }
     public bool IsCharge { get => _isCharge; set => _isCharge = value; }
     public bool IsCounterAttack { get => _isCounterAttack; set => _isCounterAttack = value; }
+    public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
+    public GameObject Thrower { get => _thrower; set => _thrower = value; }
+    public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
 
     public enum ScaleType
     {
@@ -47,8 +50,11 @@ public class MakuraController : ColorChanger
     }
     void Update()
     {
+        if (_isGameStart)
+        {
+            ColorChange(_currentColorType);
+        }
         ScaleChange(_currentScaleType);
-        ColorChange(_currentColorType);
         BlackMakuraPositionUpdate();
         if (_isThrow)
         {
@@ -97,11 +103,7 @@ public class MakuraController : ColorChanger
                     _rb.velocity = Vector3.zero;
                 }
             }
-            else if (collision.gameObject.CompareTag("Player"))
-            {
-                _rb.useGravity = true;
-                _rb.velocity = Vector3.zero;
-            }
+
             if (collision.gameObject.CompareTag("Player") && _isThrow && collision.gameObject != _thrower)
             {
                 PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
@@ -120,8 +122,10 @@ public class MakuraController : ColorChanger
                         _scoreManager.UpdateScore(_thrower.name);
                     }
                 }
-                else if (!playerController.IsHitCoolTime)
+                else if (!playerController.IsHitCoolTime && !_isHitCoolTimeOne)
                 {
+                    _isHitCoolTimeOne = true;
+                    StartCoroutine(HitCoolTimeDelay());
                     _currentScaleType = ScaleType.Nomal;
                     _rb.useGravity = true;
                     _rb.isKinematic = true;
@@ -343,5 +347,10 @@ public class MakuraController : ColorChanger
         _rb.isKinematic = true;
         _rb.isKinematic = false;
         StartCoroutine(HitStopVibration());
+    }
+    private IEnumerator HitCoolTimeDelay()
+    {
+        yield return new WaitForSeconds(0.01f);
+        _isHitCoolTimeOne = false;
     }
 }
