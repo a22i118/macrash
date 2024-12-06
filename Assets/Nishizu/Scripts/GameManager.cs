@@ -5,12 +5,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using System.Linq;
-
+using TMPro;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _hutons;
     [SerializeField] private GameObject _door;
-    [SerializeField] private GameObject _teacher;
+    [SerializeField] private GameObject _teacherObj;
     [SerializeField] private GameObject _makuraPrefub;
     [SerializeField] private GameObject _happeningBall;
     [SerializeField] private GameObject _playerInputManager;
@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Camera _resultCamera;
     [SerializeField] private Camera _mainCamera;
     [SerializeField] private GameObject _result;
+    [SerializeField] private GameObject _guide;
+    [SerializeField] private GameObject _teacherGuide;
     private bool _isGameStart = false;
     private bool _isPlayerSet = true;
     private bool _isGameStartCheck = false;
@@ -26,8 +28,9 @@ public class GameManager : MonoBehaviour
     private ResultManager _resultManager;
     private PlayerInputManager _playerInputM;
     private DoorController _doorController;
-    private TeacherShadowController _teacherEvent;
+    private Teacher _teacher;
     private Event _event;
+    private TextMeshProUGUI _teacherComent;
     private List<GameObject> _players;
     private List<GameObject> _makuras = new List<GameObject>();
     private List<MakuraController> _makuraControllers = new List<MakuraController>();
@@ -66,10 +69,16 @@ public class GameManager : MonoBehaviour
         {
             _doorController = _door.GetComponent<DoorController>();
         }
-        if (_teacher != null)
+        if (_teacherObj != null)
         {
-            _teacherEvent = _teacher.GetComponent<TeacherShadowController>();
+            _teacher = _teacherObj.GetComponent<Teacher>();
         }
+    }
+    private void Start()
+    {
+        _doorController.OpenDoors();
+        _teacherComent = _teacherGuide.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        _teacherComent.text = "就寝時間だぞ";
     }
 
     // Update is called once per frame
@@ -82,13 +91,7 @@ public class GameManager : MonoBehaviour
                 HappeningBallEvnt();
                 if (_isPlayerSet)
                 {
-                    for (int i = 0; i < _players.Count; i++)
-                    {
-                        var playerController = _players[i].GetComponent<PlayerController>();
-                        playerController.WakeUp();
-                        _playerControllers.Add(playerController);
-
-                    }
+                    StartCoroutine(StartDerey());
                     _isPlayerSet = false;
                 }
             }
@@ -96,16 +99,14 @@ public class GameManager : MonoBehaviour
             {
                 _players = _playerInputM.Players;
                 _event.Players = _players;
+                _guide.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "コントローラーの接続を待っています... ( " + _players.Count + " / 4 )";
+
                 foreach (var player in _players)
                 {
-                    //_players.Count > 1 &&
-                    if (player.GetComponent<PlayerController>().IsGameStartCheck)
+                    //
+                    if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
                     {
                         _isGameStartCheck = true;
-                    }
-                    else
-                    {
-                        _isGameStartCheck = false;
                     }
                 }
 
@@ -252,6 +253,24 @@ public class GameManager : MonoBehaviour
         }
         _resultManager.ScoreDic = _scoreManager.GetComponent<ScoreManager>().ScoreNum;
         _resultManager.IsGameEnd = true;
+    }
+    private IEnumerator StartDerey()
+    {
+        _guide.SetActive(false);
+        _teacherComent.text = "よし。";
+        yield return new WaitForSeconds(3.0f);
+        _teacherGuide.SetActive(false);
+        _teacher.IsGameStart = true;
+        yield return new WaitForSeconds(2.0f);
+        _doorController.IsGameStart = true;
+
+        yield return new WaitForSeconds(1.0f);
+        for (int i = 0; i < _players.Count; i++)
+        {
+            var playerController = _players[i].GetComponent<PlayerController>();
+            playerController.WakeUp();
+            _playerControllers.Add(playerController);
+        }
     }
 
     public static List<KeyValuePair<int, int>> SortScores(Dictionary<int, int> scoreDic)

@@ -368,10 +368,7 @@ namespace Player
                 JumpForce();
             }
         }
-        /// <summary>
-        /// プレイヤーに上向きの力を加える
-        /// </summary>
-        /// <param name="jump">ジャンプ入力</param>
+
         private void JumpForce()
         {
             if (_isJumping)
