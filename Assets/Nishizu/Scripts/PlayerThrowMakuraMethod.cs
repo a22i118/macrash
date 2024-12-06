@@ -38,9 +38,7 @@ namespace Player
                 }
                 else
                 {
-
                     throwDirection = transform.forward;
-                    Debug.Log("投げるとき" + throwDirection);
                 }
                 float forwardForce = 0.0f;
                 float upwardForce = 0.0f;
@@ -55,7 +53,6 @@ namespace Player
                             upwardForce = 200.0f;
                             throwDistance = 1.3f;
                             throwHeight = 1.0f;
-                            // Debug.Log("通常");
                             break;
                         case ThrowType.Charge:
                             forwardForce = 300.0f;
@@ -63,7 +60,6 @@ namespace Player
                             throwDistance = 0.5f;
                             throwHeight = 2.0f;
                             _makuraController.IsCharge = true;
-                            // Debug.Log("くらえ！爆発まくら");
                             break;
                     }
                 }
@@ -132,7 +128,6 @@ namespace Player
                 _makuraController.IsThrow = true;
                 _makuraController.IsCounterAttack = _isCounterAttackTime ? true : false;
                 _makuraController.Thrower = gameObject;
-                _makuraController.IsHitCoolTime = false;
 
                 rb.AddForce(throwDirection * forwardForce + Vector3.up * upwardForce);
                 rb.maxAngularVelocity = 100;
@@ -161,7 +156,6 @@ namespace Player
                 cloneMC.IsThrow = true;
                 cloneMC.IsCounterAttack = _isCounterAttackTime ? true : false;
                 cloneMC.Thrower = gameObject;
-                cloneMC.IsHitCoolTime = false;
                 cloneRb.useGravity = false;
 
                 cloneRb.AddForce(angle.normalized * forwardForce);

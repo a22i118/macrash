@@ -6,12 +6,12 @@ public class WarningUI : MonoBehaviour
 {
     [SerializeField] GameObject _warningPrefab;
     [SerializeField] private float _generationTimeInterval = 1.285f;
-    private float _timer = 0.0f;
-    private Vector2 _spawnPosition = new Vector2(1320f, 500f);
-    private float _generationInterval;
     private bool _isWarning = false;
     private bool _isNearingEnd = false;
     private bool _isExecuteOnce = false;//一回だけ実行する
+    private float _timer = 0.0f;
+    private float _generationInterval;
+    private Vector2 _spawnPosition = new Vector2(1320f, 500f);
 
     // Start is called before the first frame update
     void Start()

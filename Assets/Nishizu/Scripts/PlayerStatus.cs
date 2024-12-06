@@ -7,20 +7,19 @@ namespace Player
 {
     public class PlayerStatus : MonoBehaviour
     {
+        private bool _IsChargeMax = false;
+        private bool _isGameStart = false;
+        private bool _isPlayerSet = true;
+        private const int _maxSP = 100000;
+        private int _currentSP = 0;
         private Slider _spBar;
         private Image _fillImage;
         private Color _normalColor;
         private Color _maxColor = Color.red;
-        private const int _maxSP = 100000;
-        private int _currentSP = 0;
-        private bool _IsChargeMax = false;
-        private bool _isGameStart = false;
-        private bool _isPlayerSet = true;
-
-        public int CurrentSP { get => _currentSP; set => _currentSP = value; }
         public bool IsChargeMax { get => _IsChargeMax; set => _IsChargeMax = value; }
-        public Slider SpBar { get => _spBar; set => _spBar = value; }
         public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
+        public int CurrentSP { get => _currentSP; set => _currentSP = value; }
+        public Slider SpBar { get => _spBar; set => _spBar = value; }
 
         private void Start()
         {

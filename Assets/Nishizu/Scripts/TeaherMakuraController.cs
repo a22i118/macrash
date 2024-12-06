@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class TeaherMakuraController : MonoBehaviour
 {
-    private Transform _target;
     private float _speed = 10f;
     private float _rotationSpeed = 5f;
+    private Transform _target;
     private GameObject _targetPlayer;
     public Transform Target { get => _target; set => _target = value; }
     public GameObject TargetPlayer { get => _targetPlayer; set => _targetPlayer = value; }
-
 
     // Start is called before the first frame update
     void Start()

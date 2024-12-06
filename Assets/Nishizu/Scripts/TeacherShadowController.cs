@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class TeacherShadowController : MonoBehaviour
 {
+    [SerializeField] private DoorController _doorController;
+    [SerializeField] private GameObject _warningController;
+    [SerializeField] private GameObject _tensionSprite;
+    [SerializeField] private GameObject _teacherObj;
     private bool _isCanRotated = false;
     private bool _isMove = false;
     private bool _isExecuteOnce = false;//一回だけ実行する
@@ -22,12 +26,8 @@ public class TeacherShadowController : MonoBehaviour
     private float _teacherEventTime = 5.0f;
     private Vector3 _startPosition;
     private Renderer _teacherRenderer;
-    private List<PlayerController> _playerControllers = new List<PlayerController>();
-    [SerializeField] private DoorController _doorController;
-    [SerializeField] private GameObject _warningController;
-    [SerializeField] private GameObject _tensionSprite;
-    [SerializeField] private GameObject _teacherObj;
     private Teacher _teacher;
+    private List<PlayerController> _playerControllers = new List<PlayerController>();
     // Start is called before the first frame update
     private void Start()
     {
@@ -140,7 +140,7 @@ public class TeacherShadowController : MonoBehaviour
     private IEnumerator MovePauseCoroutine()
     {
         yield return new WaitForSeconds(4.0f);
-        _tensionSprite.GetComponent<TensionSpriteManager>().Loop = false;
+        _tensionSprite.GetComponent<TensionSpriteManager>().IsLoop = false;
         yield return new WaitForSeconds(2.0f);
         _isMove = false;
         _doorController.IsOpen = true;

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ShowMakuraController : ColorChanger
 {
-
     // Start is called before the first frame update
     void Start()
     {
@@ -16,5 +15,4 @@ public class ShowMakuraController : ColorChanger
     {
         ColorChange(_currentColorType);
     }
-
 }

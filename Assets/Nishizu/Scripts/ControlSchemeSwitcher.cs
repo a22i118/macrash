@@ -7,13 +7,11 @@ public class ControlSchemeSwitcher : MonoBehaviour
 
     void Start()
     {
-        // 初期状態ではKeyboard & Mouseを使用
         SwitchControlScheme(DeviceType.KeyboardAndMouse);
     }
 
     void Update()
     {
-        // 現在接続されているデバイスに基づいてコントロールスキームを切り替える
         if (Keyboard.current != null)
         {
             SwitchControlScheme(DeviceType.KeyboardAndMouse);
@@ -35,8 +33,6 @@ public class ControlSchemeSwitcher : MonoBehaviour
             playerInput.SwitchCurrentControlScheme("Gamepad");
         }
     }
-
-    // デバイスの種類を示すための列挙型
     enum DeviceType
     {
         KeyboardAndMouse,

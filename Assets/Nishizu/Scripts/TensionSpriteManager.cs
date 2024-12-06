@@ -7,16 +7,12 @@ using UnityEngine.UI;
 public class TensionSpriteManager : MonoBehaviour
 {
     private bool _isHeartBeat = false;
+    private bool _isLoop = false;
     private float _startAlpha;
-    private bool _loop = false;
-
-    // private Renderer _warningRenderer;
-    private float[] _alphaValues = { 0.0f, 1.0f, 0.6f, 1.0f, 0.0f };
-
     private float _changeDuration = 0.1f;
+    private float[] _alphaValues = { 0.0f, 1.0f, 0.6f, 1.0f, 0.0f };
     private Image _image;
-
-    public bool Loop { get => _loop; set => _loop = value; }
+    public bool IsLoop { get => _isLoop; set => _isLoop = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -33,7 +29,6 @@ public class TensionSpriteManager : MonoBehaviour
             _isHeartBeat = false;
             StartCoroutine(ChangeAlpha());
         }
-
     }
     private IEnumerator ChangeAlpha()
     {
@@ -59,7 +54,7 @@ public class TensionSpriteManager : MonoBehaviour
             yield return new WaitForSeconds(_changeDuration);
         }
         yield return new WaitForSeconds(1.0f);
-        if (_loop)
+        if (_isLoop)
         {
             StartCoroutine(ChangeAlpha());
         }
@@ -67,7 +62,7 @@ public class TensionSpriteManager : MonoBehaviour
     }
     public void Init()
     {
-        _loop = true;
+        _isLoop = true;
         _isHeartBeat = true;
     }
 }

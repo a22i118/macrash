@@ -948,7 +948,7 @@ Transform:
   m_GameObject: {fileID: 726391145253949625}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.82, y: 0.61, z: 1.7}
+  m_LocalPosition: {x: 0, y: 10, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -971,7 +971,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 8f0565f23a2b58541a475bd3c1393052, type: 3}
   m_Controller: {fileID: 9100000, guid: dd5c5ba2356c6ad4fb85b2ac0c7090bb, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -1054,6 +1054,7 @@ MonoBehaviour:
     m_Bits: 512
   _showMakura: {fileID: 4078454099847178617, guid: 297f5d6bc80feed4ba08d89f2b273f83, type: 3}
   _alterEgoMakura: {fileID: 3835372720629781789, guid: e64e57ef704ef6e419c2f11671845d58, type: 3}
+  _playerTagUI: {fileID: 178494667209682853, guid: 3f85e66084671824d95ba07ae44d1c0f, type: 3}
   _minJumpForce: 6.5
   _maxJumpForce: 9
   _spGageUI: {fileID: 1004370396224887417, guid: 87f346e8796ca7f439b6bfdb7e48cc63, type: 3}

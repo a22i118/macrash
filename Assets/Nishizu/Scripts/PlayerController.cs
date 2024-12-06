@@ -16,23 +16,47 @@ namespace Player
         [SerializeField] private LayerMask _wallLayer;
         [SerializeField] private GameObject _showMakura;
         [SerializeField] private GameObject _alterEgoMakura;
+        [SerializeField] private GameObject _playerTagUI;
+        [SerializeField] private GameObject _spGageUI;
 
-        private GameObject _currentMakuraDisplay;
-        private Rigidbody _rb;
-        private Animator _animator;
-        private CapsuleCollider _col;
-        private float _speed = 5.0f;//プレイヤーの移動速度
-        private float _groundCheckRadius = 0.01f;//足元が地面か判定する球の半径
-        private float _pickUpDistance = 1.0f;//まくらを拾うことができる距離
-        private float _playerSerchDistance = 3.0f;//敵プレイヤーの捜索範囲
-        private GameObject _currentMakura;//手持ちのまくら
-        private GameObject _thrownMakura;//投げられたまくら
         private bool _isSleep = false;//寝ているか
         private bool _isCanSleep = false;
         private bool _isHitStop = false;//止まっているか
         private bool _isJumping = false;//ジャンプ中か
         private bool _isChargeTime = false;//ため攻撃中か
         private bool _isCanCatch = false;//ジャストキャッチ可能か
+        private bool _isVibrating = false;
+        private bool _isHitCoolTime = false;
+        private bool _isCounterAttackTime = false;
+        private bool _isPushed = false;
+        private bool _isGameStart = false;
+        private bool _isGameStartCheck = false;
+        private bool _isGameEnd = false;
+        private int _playerIndex;
+        private const float _gravity = -25.0f;
+        private float _speed = 5.0f;//プレイヤーの移動速度
+        private float _groundCheckRadius = 0.01f;//足元が地面か判定する球の半径
+        private float _pickUpDistance = 1.0f;//まくらを拾うことができる距離
+        private float _playerSerchDistance = 5.0f;//敵プレイヤーの捜索範囲
+        private float _keyHoldTime;//長押ししている時間
+        private float _keyLongPressTime = 0.5f;//ため攻撃にかかる時間
+        private float _rotationSpeed = 200.0f;//持っているまくらの回転速度
+        private float _showRadius = 0.6f;//プレイヤーからのまくらの距離
+        private float _rotationAngle;
+        private float _vibrationStrength = 0.3f;//振動の強さ
+        private float _vibrationTime = 0.3f;//振動する時間
+        private float _jumpHoldTime = 0f;//ジャンプキーが押されている時間
+        private float _maxJumpHoldTime = 0.2f;//最大ジャンプの押す時間
+        private float _minJumpForce = 6.5f;//最小ジャンプ力
+        private float _maxJumpForce = 9.0f;//最大ジャンプ力
+        private GameObject _currentMakuraDisplay;
+        private GameObject _playerTagUIInstance;
+        private Transform _playerTransform;
+        private Rigidbody _rb;
+        private Animator _animator;
+        private CapsuleCollider _col;
+        private GameObject _currentMakura;//手持ちのまくら
+        private GameObject _thrownMakura;//投げられたまくら
         private Vector3 _targetPosition;//敵プレイヤーの位置
         private Quaternion _beforeSleepRotation;//布団で寝る前の向き
         private Quaternion _lastDirection;//移動入力の最後に向いている向き
@@ -40,42 +64,85 @@ namespace Player
         private Transform _currentHuton;
         private MakuraController _makuraController;//まくらのスクリプト
         private PlayerStatus _playerStatus;//プレイヤーのスクリプト
-        private float _keyHoldTime;//長押ししている時間
-        private float _keyLongPressTime = 0.5f;//ため攻撃にかかる時間
-
-        private float _rotationSpeed = 200.0f;//持っているまくらの回転速度
-        private float _showRadius = 0.6f;//プレイヤーからのまくらの距離
-        private float _rotationAngle;
         private ShowMakuraController _showMakuraController;
-        private float _vibrationStrength = 0.3f;//振動の強さ
-        private float _vibrationTime = 0.3f;//振動する時間
-        private bool _isVibrating = false;
-        private bool _isHitCoolTime = false;
-        private bool _isCounterAttackTime = false;
-
-        private float _jumpHoldTime = 0f;//ジャンプキーが押されている時間
-        private float _maxJumpHoldTime = 0.2f;//最大ジャンプの押す時間
-        [SerializeField] private float _minJumpForce = 6.5f;//最小ジャンプ力
-        [SerializeField] private float _maxJumpForce = 9.0f;//最大ジャンプ力
-        private const float _gravity = -25.0f;
         private Transform _huton;
         private Vector3 _movement;
-        private int _playerIndex;
-        private bool _isPushed = false;
-        [SerializeField] private GameObject _spGageUI;
-
+        private GameObject _spGageInstance;
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
         public bool IsCanSleep { get => _isCanSleep; set => _isCanSleep = value; }
         public bool IsSleep { get => _isSleep; }
+        public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
+        public bool IsGameStartCheck { get => _isGameStartCheck; }
+        public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
         public int PlayerIndex { get => _playerIndex; set => _playerIndex = value; }
+        public GameObject CurrentMakuraDisplay { get => _currentMakuraDisplay; set => _currentMakuraDisplay = value; }
+        public GameObject SpGageInstance { get => _spGageInstance; set => _spGageInstance = value; }
+        public GameObject PlayerTagUIInstance { get => _playerTagUIInstance; set => _playerTagUIInstance = value; }
+
         public enum ThrowType
         {
             Nomal,
             Charge
         }
-
-
-        void Start()
+        void Awake()
+        {
+            Init();
+        }
+        public void OnGameStartCheck(InputValue value)
+        {
+            if (value.isPressed)
+            {
+                _isGameStartCheck = true;
+            }
+            else
+            {
+                _isGameStartCheck = false;
+            }
+        }
+        void Update()
+        {
+            if (_playerTagUIInstance != null)
+            {
+                _playerTagUIInstance.transform.position = _playerTransform.position + new Vector3(-1.375f, 1.5f, -0.3f);
+            }
+            if (!_isGameEnd)
+            {
+                Jump();
+                IsCheckPlayer();
+                MakuraDisplayColorChange();
+                if (_isSleep)
+                {
+                    Vector3 offset = _huton.position - transform.position;
+                    transform.position = new Vector3(transform.position.x, transform.position.y + offset.y, transform.position.z);
+                }
+                if (_currentMakura != null && !_isSleep)
+                {
+                    RotateShowMakura();
+                    _currentMakuraDisplay.SetActive(true);
+                }
+                else
+                {
+                    _currentMakuraDisplay.SetActive(false);
+                }
+                if (IsHuton() || _isPushed)
+                {
+                    _speed = 2.0f;
+                }
+                else
+                {
+                    _speed = 4.0f;
+                }
+                if (!_isHitStop && !_isSleep)
+                {
+                    Move();
+                    if (_isGameStart)
+                    {
+                        MakuraThrow();
+                    }
+                }
+            }
+        }
+        private void Init()
         {
             _rb = GetComponent<Rigidbody>();
             _animator = GetComponent<Animator>();
@@ -90,78 +157,66 @@ namespace Player
             _groundLayers |= _wallLayer;
             _rb.useGravity = false;
 
-            Canvas canvas = FindObjectOfType<Canvas>();
-            if (canvas != null)
+            Canvas[] canvases = FindObjectsOfType<Canvas>();
+            Color color;
+            if (_playerIndex == 0)
             {
-                GameObject spGageInstance = Instantiate(_spGageUI, new Vector2(500.0f + 340.0f * _playerIndex, 150.0f), Quaternion.identity);
-                TextMeshProUGUI text = spGageInstance.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
-                text.text = _playerIndex + 1 + " P";
-                Color color;
-                if (_playerIndex == 0)
+                color = Color.red;
+            }
+            else if (_playerIndex == 1)
+            {
+                color = Color.blue;
+            }
+            else if (_playerIndex == 2)
+            {
+                color = Color.yellow;
+            }
+            else
+            {
+                color = Color.green;
+            }
+            color.a = 0.5f;
+            foreach (var canvas in canvases)
+            {
+                if (canvas.renderMode == RenderMode.WorldSpace)
                 {
-                    color = Color.red;
-                }
-                else if (_playerIndex == 1)
-                {
-                    color = Color.blue;
-                }
-                else if (_playerIndex == 2)
-                {
-                    color = Color.yellow;
+                    _playerTransform = transform;
+                    _playerTagUIInstance = Instantiate(_playerTagUI, _playerTransform.position, Quaternion.identity);
+                    TextMeshProUGUI text = _playerTagUIInstance.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+                    text.text = _playerIndex + 1 + " P";
+
+                    _playerTagUIInstance.transform.GetChild(0).GetComponent<Image>().color = color;
+                    _playerTagUIInstance.transform.SetParent(_playerTransform);
+
+                    Vector3 directionToCamera = Camera.main.transform.position - _playerTagUIInstance.transform.position;
+                    directionToCamera.y = 0;
+                    _playerTagUIInstance.transform.rotation = Quaternion.LookRotation(directionToCamera);
+                    _playerTagUIInstance.transform.Rotate(0, 180, 0);
+                    _playerTagUIInstance.transform.SetParent(canvas.transform, false);
                 }
                 else
                 {
-                    color = Color.green;
+                    _spGageInstance = Instantiate(_spGageUI, new Vector2(500.0f + 340.0f * _playerIndex, 150.0f), Quaternion.identity);
+                    TextMeshProUGUI text = _spGageInstance.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+                    text.text = _playerIndex + 1 + " P";
+
+                    _spGageInstance.GetComponent<Image>().color = color;
+                    _spGageInstance.transform.SetParent(canvas.transform, false);
+
+                    Slider _slider = _spGageInstance.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
+                    _playerStatus.SpBar = _slider;
+
+                    ScoreManager scoreManager = canvas.transform.GetChild(1).GetComponent<ScoreManager>();
+                    scoreManager.Scores.Add(_spGageInstance.transform.GetChild(1).GetComponent<TextMeshProUGUI>());
                 }
-                color.a = 0.5f;
-                spGageInstance.GetComponent<Image>().color = color;
-                spGageInstance.transform.SetParent(canvas.transform, false);
-
-                Slider _slider = spGageInstance.transform.GetChild(0).gameObject.transform.GetChild(0).GetComponent<Slider>();
-                _playerStatus.SpBar = _slider;
-                _playerStatus.IsGameStart = true;
-            }
-        }
-
-        void Update()
-        {
-            Jump();
-            IsCheckPlayer();
-            MakuraDisplayColorChange();
-            if (_isSleep)
-            {
-                Vector3 offset = _huton.position - transform.position;
-                transform.position = new Vector3(transform.position.x, transform.position.y + offset.y, transform.position.z);
-            }
-            if (_currentMakura != null && !_isSleep)
-            {
-                RotateShowMakura();
-                _currentMakuraDisplay.SetActive(true);
-            }
-            else
-            {
-                _currentMakuraDisplay.SetActive(false);
-            }
-            if (IsHuton() || _isPushed)
-            {
-                _speed = 2.0f;
-            }
-            else
-            {
-                _speed = 4.0f;
-            }
-            if (!_isHitStop && !_isSleep)
-            {
-                Move();
-                MakuraThrow();
             }
         }
         private void OnSpecialAttack(InputValue value)
         {
             if (value.isPressed)
             {
-                // if (_currentMakura != null && !_isSleep && _playerStatus.IsChargeMax)
-                if (_currentMakura != null && !_isSleep)//デバッグ用
+                if (_currentMakura != null && !_isSleep && _playerStatus.IsChargeMax)
+                // if (_currentMakura != null && !_isSleep)//デバッグ用
                 {
                     _playerStatus.CurrentSP = 0;
                     _makuraController.CurrentScaleType = MakuraController.ScaleType.Second;
@@ -172,12 +227,12 @@ namespace Player
         {
             if (value.isPressed)
             {
-                if (_isSleep && _isCanSleep)
+                if (_isSleep && _isCanSleep || !_isGameStart && _isSleep)
                 {
                     WakeUp();
                     transform.SetParent(null);
                 }
-                if (!_isSleep && !_isHitStop && _currentMakura != null && IsHuton() && _isCanSleep)
+                if (!_isSleep && !_isHitStop && _currentMakura != null && IsHuton() && _isCanSleep || !_isGameStart && !_isSleep && _currentMakura != null && IsHuton())
                 {
                     transform.SetParent(_currentHuton);
                     Sleep();
@@ -246,7 +301,7 @@ namespace Player
             {
                 _rb.velocity = new Vector3(_movement.x * _speed, _rb.velocity.y, _movement.z * _speed);
 
-                if (_movement.magnitude > 0.5f)
+                if (_movement.magnitude > 0.1f)
                 {
                     _animator.SetBool("Walk", true);
                     transform.rotation = Quaternion.LookRotation(_movement);
@@ -324,14 +379,14 @@ namespace Player
                 float jumpForce = Mathf.Lerp(_minJumpForce, _maxJumpForce, _jumpHoldTime / _maxJumpHoldTime);
                 _rb.velocity = new Vector3(_rb.velocity.x, jumpForce, _rb.velocity.z);
             }
-            if (!IsGround())
-            {
-                _animator.SetBool("Jump", true);
-            }
-            else
-            {
-                _animator.SetBool("Jump", false);
-            }
+            // if (!IsGround())
+            // {
+            //     _animator.SetBool("Jump", true);
+            // }
+            // else
+            // {
+            //     _animator.SetBool("Jump", false);
+            // }
         }
         private void RotateShowMakura()
         {
@@ -485,7 +540,7 @@ namespace Player
                 ExplosionRange explosionRangeScript = collider.GetComponent<ExplosionRange>();
                 if (explosionRangeScript.Thrower != gameObject)
                 {
-                    _isHitCoolTime = true;
+                    StartCoroutine(HitCoolTimeDelay());
                     _animator.SetBool("Walk", false);
                     // Debug.Log("う、動けない！");
                     HitMotion(false);
@@ -524,7 +579,7 @@ namespace Player
             _isSleep = true;
 
             Vector3 hutonPosition = _currentHutonController.GetCenterPosition();
-            transform.position = new Vector3(hutonPosition.x, hutonPosition.y, hutonPosition.z - 0.75f);
+            transform.position = new Vector3(hutonPosition.x, hutonPosition.y, hutonPosition.z - 0.8f);
             _huton = _currentHutonController.transform;
             if (_currentHutonController != null)
             {
@@ -533,7 +588,25 @@ namespace Player
 
             transform.rotation = _currentHutonController.GetRotation();
 
-            transform.rotation = Quaternion.Euler(-81.0f, transform.rotation.eulerAngles.y, 0.0f);
+            Quaternion additionalRotation = Quaternion.AngleAxis(-81.0f, transform.right);
+            transform.rotation = additionalRotation * transform.rotation;
+        }
+        public void ResultSleep(ResultHutonController resultHutonController)
+        {
+            _animator.SetBool("Walk", false);
+            _rb.isKinematic = true;
+
+            transform.rotation = resultHutonController.GetRotation();
+            float offset = 0;
+            if (transform.rotation.y == 0.0f)
+            {
+                offset = 1.5f;
+            }
+            Vector3 hutonPosition = resultHutonController.GetCenterPosition();
+            transform.position = new Vector3(hutonPosition.x, hutonPosition.y, hutonPosition.z - 0.8f + offset);
+
+            Quaternion additionalRotation = Quaternion.AngleAxis(-81.0f, transform.right);
+            transform.rotation = additionalRotation * transform.rotation;
         }
         /// <summary>
         /// 布団から起きる
@@ -626,7 +699,7 @@ namespace Player
             if (makuraController != null && collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject && makuraController.IsThrow && !_isHitCoolTime)
             {
                 _isCanCatch = false;
-                _isHitCoolTime = true;
+                StartCoroutine(HitCoolTimeDelay());
                 _animator.SetBool("Walk", false);
                 HitMotion(false);
                 if (!_isVibrating)
@@ -710,8 +783,13 @@ namespace Player
         /// <returns>1秒後に解除</returns>
         private IEnumerator HitStopCoroutine()
         {
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(0.5f);
             _isHitStop = false;
+        }
+        private IEnumerator HitCoolTimeDelay()
+        {
+            yield return new WaitForSeconds(0.01f);
+            _isHitCoolTime = true;
         }
 
         private IEnumerator CounterAttackCoroutine()
