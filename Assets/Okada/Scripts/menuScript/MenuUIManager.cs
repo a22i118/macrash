@@ -51,9 +51,10 @@ public class MenuUIManager : MonoBehaviour
                 UIText();
                 if (Input.GetMouseButtonDown(0))
                 {
-                    ThrowMakura(hit.collider.gameObject.transform.position);
+                    StartCoroutine(ThrowMakura(hit.collider.gameObject.transform.position));
                     _isray = false;
                     StartCoroutine(MoveMenu());
+
                     
                 }
             }
@@ -120,7 +121,7 @@ public class MenuUIManager : MonoBehaviour
 
     
 
-    private void ThrowMakura(Vector3 position)
+    private IEnumerator ThrowMakura(Vector3 position)
     {
         Vector3 _throwdirection = position - _throwposition;
         _throwdirection.Normalize();
@@ -133,6 +134,8 @@ public class MenuUIManager : MonoBehaviour
             _rb.AddForce(_throwdirection * _throwforce, ForceMode.VelocityChange);
             
         }
+        yield return new WaitForSeconds(1.7f);
+        Destroy(_throwmakura);
     }
 
     private IEnumerator MoveMenu()
