@@ -21,6 +21,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _result;
     [SerializeField] private GameObject _guide;
     [SerializeField] private GameObject _teacherGuide;
+    [SerializeField] private GameObject _ready;
+    [SerializeField] private GameObject _go;
+    [SerializeField] private GameObject _finish;
     private bool _isGameStart = false;
     private bool _isPlayerSet = true;
     private bool _isGameStartCheck = false;
@@ -79,6 +82,9 @@ public class GameManager : MonoBehaviour
         _doorController.OpenDoors();
         _teacherComent = _teacherGuide.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
         _teacherComent.text = "就寝時間だぞ";
+        _ready.SetActive(false);
+        _go.SetActive(false);
+        _finish.SetActive(false);
     }
 
     // Update is called once per frame
@@ -131,10 +137,6 @@ public class GameManager : MonoBehaviour
         foreach (var makura in _makuraControllers)
         {
             makura.IsGameStart = true;
-        }
-        if (_happeningBall != null)
-        {
-            StartCoroutine(HappeningBallGeneration());
         }
         _playerInputManager.SetActive(false);
         StartCoroutine(GameEnd());
@@ -196,9 +198,18 @@ public class GameManager : MonoBehaviour
             StartCoroutine(HappeningBallGeneration());
         }
     }
+    private IEnumerator TeacherEvent()
+    {
+        if (_isGameStart)
+        {
+            yield return new WaitForSeconds(90.0f);
+            _event.TeacherEvent.Init(_playerControllers);
+            StartCoroutine(TeacherEvent());
+        }
+    }
     private IEnumerator GameEnd()
     {
-        yield return new WaitForSeconds(30.0f);//6分360.0f
+        yield return new WaitForSeconds(180.0f);//6分360.0f
         _isGameStart = false;
         _isGameStartCheck = false;
         _event.IsGameStart = false;
@@ -208,16 +219,15 @@ public class GameManager : MonoBehaviour
         {
             player.GetComponent<PlayerStatus>().IsGameStart = false;
         }
-        int hutonIndex = 0;
-        foreach (var playerController in _playerControllers)
+        for (int i = 0; i < _playerControllers.Count; i++)
         {
+            var playerController = _playerControllers[i];
             playerController.IsGameStart = false;
             playerController.IsGameEnd = true;
             playerController.CurrentMakuraDisplay.SetActive(false);
             playerController.SpGageInstance.SetActive(false);
             playerController.PlayerTagUIInstance.SetActive(false);
-            playerController.ResultSleep(_resultManager.ResultHutonControllers[hutonIndex]);
-            hutonIndex++;
+            playerController.ResultSleep(_resultManager.ResultHutonControllers[i]);
         }
         for (int i = _happeningBalls.Count - 1; i >= 0; i--)
         {
@@ -258,19 +268,33 @@ public class GameManager : MonoBehaviour
     {
         _guide.SetActive(false);
         _teacherComent.text = "よし。";
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(2.0f);
         _teacherGuide.SetActive(false);
         _teacher.IsGameStart = true;
-        yield return new WaitForSeconds(2.0f);
-        _doorController.IsGameStart = true;
-
         yield return new WaitForSeconds(1.0f);
+        _ready.SetActive(true);
+        yield return new WaitForSeconds(1.0f);
+        _doorController.IsGameStart = true;
+        yield return new WaitForSeconds(2.0f);
+        _ready.SetActive(false);
+
+        _go.SetActive(true);
+
         for (int i = 0; i < _players.Count; i++)
         {
             var playerController = _players[i].GetComponent<PlayerController>();
             playerController.WakeUp();
             _playerControllers.Add(playerController);
         }
+        StartCoroutine(TeacherEvent());
+        if (_happeningBall != null)
+        {
+            StartCoroutine(HappeningBallGeneration());
+        }
+        yield return new WaitForSeconds(1.0f);
+
+        _go.SetActive(false);
+
     }
 
     public static List<KeyValuePair<int, int>> SortScores(Dictionary<int, int> scoreDic)

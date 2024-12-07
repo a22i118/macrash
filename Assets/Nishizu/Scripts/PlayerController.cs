@@ -215,8 +215,8 @@ namespace Player
         {
             if (value.isPressed)
             {
-                if (_currentMakura != null && !_isSleep && _playerStatus.IsChargeMax)
-                // if (_currentMakura != null && !_isSleep)//デバッグ用
+                // if (_currentMakura != null && !_isSleep && _playerStatus.IsChargeMax)
+                if (_currentMakura != null && !_isSleep)//デバッグ用
                 {
                     _playerStatus.CurrentSP = 0;
                     _makuraController.CurrentScaleType = MakuraController.ScaleType.Second;
