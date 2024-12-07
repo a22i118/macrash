@@ -119,6 +119,10 @@ namespace Player
                     {
                         throwHeight = 0.5f;
                     }
+                    if (_makuraController.CurrentColorType == ColorChanger.ColorType.Blue)
+                    {
+                        throwHeight = 1.0f;
+                    }
                 }
                 Vector3 throwPosition = transform.position + throwDirection * throwDistance + Vector3.up * throwHeight;
 
