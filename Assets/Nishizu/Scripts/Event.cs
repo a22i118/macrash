@@ -25,7 +25,6 @@ public class Event : MonoBehaviour
     public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
     public List<GameObject> Makuras { get => _makuras; set => _makuras = value; }
     public List<GameObject> Players { get => _players; set => _players = value; }
-    public TeacherShadowController TeacherEvent { get => _teacherEvent; set => _teacherEvent = value; }
 
     // Start is called before the first frame update
     void Start()

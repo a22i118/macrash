@@ -9,7 +9,7 @@ public class ResultCameraController : MonoBehaviour
     private bool _isCameraSet = true;
     private bool _isCanMove = false;
     private bool _isUISet = false;
-    private float _rotationSpeed = 70.0f;
+    private float _rotationSpeed = 75.0f;
     private float _moveSpeed = 0.035f;
     private float _targetPosition = 2.2f;
     private float _targetRotation = 180f;

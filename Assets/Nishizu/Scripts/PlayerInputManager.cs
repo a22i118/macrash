@@ -15,6 +15,9 @@ public class PlayerInputManager : MonoBehaviour
 
         GameObject playerObject = playerInput.gameObject;
 
+        // Vector3 initialPosition = new Vector3(-3.0f * playerCount - 1, 0.5f, 0.0f);
+        // playerObject.transform.position = initialPosition;
+
         playerObject.name = $"Player ({playerCount})";
         playerObject.GetComponent<PlayerController>().PlayerIndex = playerCount - 1;
         _players.Add(playerObject);

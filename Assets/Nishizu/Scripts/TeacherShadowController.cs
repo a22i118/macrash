@@ -76,10 +76,6 @@ public class TeacherShadowController : MonoBehaviour
     public void Init(List<PlayerController> playerControllers)
     {
         _playerControllers = playerControllers;
-        foreach (var player in _playerControllers)
-        {
-            player.IsCanSleep = true;
-        }
         if (!_isDuringEvent)
         {
             _isDuringEvent = true;
