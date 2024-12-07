@@ -21,7 +21,6 @@ public class ConfigUIButton : MonoBehaviour
     [SerializeField] private GameObject _loadmenu;
     [SerializeField] private GameObject _keymenu;
     [SerializeField] private GameObject _configmask;
-    [SerializeField] private GameObject _returnbutton;
 
     private void Awake()
     {
@@ -45,6 +44,35 @@ public class ConfigUIButton : MonoBehaviour
 
     public void LoadConfig(int i)
     {
+
+        //if (_manager.LoadSaveData(i) != null)
+        //{
+        //    _saveData = _manager.LoadSaveData(i);
+        //    _slot = i;
+        //    _saveData = _manager.LoadSaveData(i);
+        //    _actions[0] = _saveData.Throw;
+        //    _actions[1] = _saveData.Catch;
+        //    _actions[2] = _saveData.SpecialAttack;
+        //    _actions[3] = _saveData.Jump;
+        //    _actions[4] = _saveData.Sleep;
+
+        //    for (int j = 0; j < _actionRefs.Count; j++)
+        //    {
+        //        RefreshDisplay(j);
+        //    }
+        //}
+
+        //_actions[0] = _saveData.Throw;
+        //_actions[1] = _saveData.Catch;
+        //_actions[2] = _saveData.SpecialAttack;
+        //_actions[3] = _saveData.Jump;
+        //_actions[4] = _saveData.Sleep;
+
+        //_loadmenu.SetActive(false);
+        //_keymenu.SetActive(true);
+        //_configmask.SetActive(true);
+
+        
         if (_saveData != null)
         {
             _slot = i;
@@ -77,7 +105,6 @@ public class ConfigUIButton : MonoBehaviour
         _loadmenu.SetActive(false);
         _keymenu.SetActive(true);
         _configmask.SetActive(true);
-        _returnbutton.SetActive(false);
     }
 
     private void OnDestroy()
@@ -179,6 +206,5 @@ public class ConfigUIButton : MonoBehaviour
         _loadmenu.SetActive(true);
         _keymenu.SetActive(false);
         _configmask.SetActive(false);
-        _returnbutton.SetActive(true);
     }
 }
