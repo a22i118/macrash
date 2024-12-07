@@ -119,7 +119,7 @@ public class MakuraController : ColorChanger
                         _rb.velocity = Vector3.zero;
                         StartCoroutine(HitStopVibration());
                         StartCoroutine(HitCoolTime());
-                        _scoreManager.UpdateScore(_thrower.name, collision.gameObject.name);
+                        _scoreManager.UpdateScore(_thrower.name);
                     }
                 }
                 else if (!playerController.IsHitCoolTime && !_isHitCoolTimeOne)
@@ -133,7 +133,7 @@ public class MakuraController : ColorChanger
                     _rb.velocity = Vector3.zero;
                     StartCoroutine(HitStopVibration());
                     StartCoroutine(HitCoolTime());
-                    _scoreManager.UpdateScore(_thrower.name, collision.gameObject.name);
+                    _scoreManager.UpdateScore(_thrower.name);
                 }
             }
             if (collision.gameObject.CompareTag("Makura"))

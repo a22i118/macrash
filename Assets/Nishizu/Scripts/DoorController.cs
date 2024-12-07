@@ -5,13 +5,11 @@ using UnityEngine;
 public class DoorController : MonoBehaviour
 {
     private bool _isOpen = false;//ドアが開いているかどうか
-    private bool _isGameStart = false;
     private float _openSpeed = 3.0f;
     private Vector3[] _closedPosition = new Vector3[2];
     private Vector3[] _openPosition = new Vector3[2];
     private List<GameObject> _door = new List<GameObject>();
     public bool IsOpen { get => _isOpen; set => _isOpen = value; }
-    public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -32,10 +30,7 @@ public class DoorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_isGameStart)
-        {
-            MoveDoors(_isOpen);
-        }
+        MoveDoors(_isOpen);
     }
 
     private void MoveDoors(bool isOpen)
@@ -45,11 +40,5 @@ public class DoorController : MonoBehaviour
 
         _door[0].transform.position = Vector3.Lerp(_door[0].transform.position, targetPositionLeft, _openSpeed * Time.deltaTime);
         _door[1].transform.position = Vector3.Lerp(_door[1].transform.position, targetPositionRight, _openSpeed * Time.deltaTime);
-    }
-    public void OpenDoors()
-    {
-        _door[0].transform.position = new Vector3(_door[0].transform.position.x - 0.6f, _door[0].transform.position.y, _door[0].transform.position.z);
-        _door[1].transform.position = new Vector3(_door[1].transform.position.x + 0.6f, _door[1].transform.position.y, _door[1].transform.position.z);
-
     }
 }

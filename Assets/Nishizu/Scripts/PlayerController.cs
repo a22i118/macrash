@@ -139,7 +139,7 @@ namespace Player
                 {
                     _currentMakuraDisplay.SetActive(false);
                 }
-                if (IsHuton() || _currentMakura != null && _isPushed && _currentMakura.GetComponent<MakuraController>().CurrentColorType == ColorChanger.ColorType.Nomal)
+                if (IsHuton() || _isPushed)
                 {
                     _speed = 2.0f;
                 }
@@ -230,8 +230,8 @@ namespace Player
         {
             if (value.isPressed)
             {
-                // if (_currentMakura != null && !_isSleep && _playerStatus.IsChargeMax)
-                if (_currentMakura != null && !_isSleep)//デバッグ用
+                if (_currentMakura != null && !_isSleep && _playerStatus.IsChargeMax)
+                // if (_currentMakura != null && !_isSleep)//デバッグ用
                 {
                     _playerStatus.CurrentSP = 0;
                     _makuraController.CurrentScaleType = MakuraController.ScaleType.Second;
@@ -383,7 +383,10 @@ namespace Player
                 JumpForce();
             }
         }
-
+        /// <summary>
+        /// プレイヤーに上向きの力を加える
+        /// </summary>
+        /// <param name="jump">ジャンプ入力</param>
         private void JumpForce()
         {
             if (_isJumping)
