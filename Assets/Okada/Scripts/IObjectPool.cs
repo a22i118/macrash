@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -25,7 +24,7 @@ public class IObjectPool<T> : MonoBehaviour where T : MonoBehaviour
 
     protected virtual void OnGetFromPool(T obj)
     {
-        
+
         obj.gameObject.SetActive(true);
     }
 
