@@ -53,12 +53,6 @@ public class ConfigSaveManager:MonoBehaviour
 
     public SaveData LoadSaveData(int slot)
     {
-        //string path = GetSavePath(slot);
-        //StreamReader rd = new StreamReader(path);
-        //string json = rd.ReadToEnd();
-        //rd.Close();
-
-        //return JsonUtility.FromJson<SaveData>(json);
 
         string path = GetSavePath(slot);
 
