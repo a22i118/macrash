@@ -217,7 +217,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator GameEnd()
     {
-        yield return new WaitForSeconds(10.0f);//6分360.0f
+        yield return new WaitForSeconds(180.0f);//6分360.0f
         _isGameStart = false;
         _isGameStartCheck = false;
         _event.IsGameStart = false;
