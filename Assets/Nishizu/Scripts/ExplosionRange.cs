@@ -31,12 +31,12 @@ public class ExplosionRange : MonoBehaviour
                     ThrowMakuraDemo throwMakuraDemo = collider.GetComponent<ThrowMakuraDemo>();
                     if (!throwMakuraDemo.IsHitCoolTime)
                     {
-                        _scoreManager.UpdateScore(_thrower.name);
+                        _scoreManager.UpdateScore(_thrower.name, collider.gameObject.name);
                     }
                 }
                 else if (!playerController.IsHitCoolTime)
                 {
-                    _scoreManager.UpdateScore(_thrower.name);
+                    _scoreManager.UpdateScore(_thrower.name, collider.gameObject.name);
                 }
             }
             if (collider.gameObject.CompareTag("Makura"))
