@@ -24,6 +24,7 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private GameObject _Firstmenu;
     [SerializeField] private GameObject _LocalVSmenu;
     [SerializeField] private GameObject _Configmenu;
+    [SerializeField] private GameObject _Exitmenu;
     [SerializeField] private TextMeshProUGUI _uitext;
     LayerMask _uilayer;
     Rigidbody _rb;
@@ -51,9 +52,10 @@ public class MenuUIManager : MonoBehaviour
                 UIText();
                 if (Input.GetMouseButtonDown(0))
                 {
-                    ThrowMakura(hit.collider.gameObject.transform.position);
-                    StartCoroutine(MoveMenu());
+                    StartCoroutine(ThrowMakura(hit.collider.gameObject.transform.position));
                     _isray = false;
+                    StartCoroutine(MoveMenu());
+
                 }
             }
             else
@@ -61,27 +63,12 @@ public class MenuUIManager : MonoBehaviour
                 CurrentUI("Null");
                 UIText();
             }
-            
+
         }
-        
 
-        
+
+
     }
-    // Start is called before the first frame update
-    //void OnMouseEnter()
-    //{
-    //    // マウスがオブジェクト上に乗ったとき
-    //    //Debug.Log($"{gameObject.name} にマウスが乗りました");
-    //    anim.SetBool("_isBig", true);
-    //}
-
-    //void OnMouseExit()
-    //{
-    //    // マウスがオブジェクトから離れたとき
-    //    //Debug.Log($"{gameObject.name} からマウスが離れました");
-    //    anim.SetBool("_isBig", false);
-    //}
-    
 
     private void CurrentUI(string UIname)
     {
@@ -92,11 +79,11 @@ public class MenuUIManager : MonoBehaviour
                 break;
 
             case "TutorialSymbol":
-                _currenttype= UItype.Practice;
+                _currenttype = UItype.Practice;
                 break;
 
             case "ConfigSymbol":
-                _currenttype= UItype.Config;
+                _currenttype = UItype.Config;
                 break;
 
             case "ExitSymbol":
@@ -117,26 +104,29 @@ public class MenuUIManager : MonoBehaviour
         }
     }
 
-    
 
-    private void ThrowMakura(Vector3 position)
+
+    private IEnumerator ThrowMakura(Vector3 position)
     {
         Vector3 _throwdirection = position - _throwposition;
         _throwdirection.Normalize();
 
         GameObject _throwmakura = Instantiate(_makura, _throwposition, Quaternion.identity);
         _rb = _throwmakura.GetComponent<Rigidbody>();
-        
+
         if (_rb != null)
         {
             _rb.AddForce(_throwdirection * _throwforce, ForceMode.VelocityChange);
-            
+
         }
+
+        yield return new WaitForSeconds(1.7f);
+        Destroy(_throwmakura);
     }
 
     private IEnumerator MoveMenu()
     {
-        yield return null;
+        yield return new WaitForSeconds(1.5f);
         switch (_currenttype)
         {
             case UItype.VS:
@@ -152,19 +142,21 @@ public class MenuUIManager : MonoBehaviour
                 _Firstmenu.SetActive(false);
                 break;
 
-           
-
-            
+            case UItype.Exit:
+                _Exitmenu.SetActive(true);
+                _Firstmenu.SetActive(false);
+                break;
         }
+        _isray = true;
     }
 
     private void UIText()
     {
         GameObject _uiPanel = _uitext.transform.parent.gameObject;
-        
+
         switch (_currenttype)
         {
-            
+
             case UItype.VS:
                 _uiPanel.SetActive(true);
                 _uitext.text = "対戦モード";
@@ -180,15 +172,15 @@ public class MenuUIManager : MonoBehaviour
                 _uitext.text = "設定画面";
                 break;
 
+            case UItype.Exit:
+                _uiPanel.SetActive(true);
+                _uitext.text = "ゲーム終了";
+                break;
+
             case UItype.Null:
                 _uiPanel.SetActive(false);
                 _uitext.text = "";
                 break;
-
-
-
-
-
         }
     }
     public void LocalVSMenu()

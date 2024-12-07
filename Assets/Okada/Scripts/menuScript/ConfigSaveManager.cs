@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using UnityEngine.InputSystem;
+
 [System.Serializable]
 public class SaveData
 {
@@ -9,24 +11,26 @@ public class SaveData
     public string Name;
     public string Throw;
     public string Catch;
-    public string Sleep;
+    public string SpecialAttack;
     public string Jump;
+    public string Sleep;
 }
 
-public class ConfigSaveManager:MonoBehaviour
+public class ConfigSaveManager : MonoBehaviour
 {
-    private string folderName = "save";
+    private string folderName;
     private void Awake()
     {
+        folderName = "save";
         string _savefolderPath = Application.dataPath + "/" + folderName;
         if (!Directory.Exists(_savefolderPath))
         {
             Directory.CreateDirectory(_savefolderPath);
         }
 
-        for(int i = 1; i <= 6; i++)
+        for (int i = 1; i <= 6; i++)
         {
-            if(!File.Exists(_savefolderPath + "/" + $"saveslot{i}.json"))
+            if (!File.Exists(_savefolderPath + "/" + $"saveslot{i}.json"))
             {
 
             }
@@ -34,7 +38,7 @@ public class ConfigSaveManager:MonoBehaviour
     }
     private string GetSavePath(int path)
     {
-        return Application.dataPath + "/" + folderName + $"saveslot{path}.json";
+        return Application.dataPath + "/" + folderName + "/" + $"saveslot{path}.json";
     }
 
     public void KeyConfigSave(SaveData data, int slot)
@@ -49,15 +53,25 @@ public class ConfigSaveManager:MonoBehaviour
 
     public SaveData LoadSaveData(int slot)
     {
+
         string path = GetSavePath(slot);
-        StreamReader rd = new StreamReader(path);
-        string json = rd.ReadToEnd();
-        rd.Close();
+
+        if (!File.Exists(path))
+        {
+            return new SaveData();
+        }
+
+        string json = File.ReadAllText(path);
+
+        if (string.IsNullOrEmpty(json))
+        {
+            return new SaveData();
+        }
 
         return JsonUtility.FromJson<SaveData>(json);
     }
 
-    
+
     public void DeleteSave(int slot)
     {
         string path = GetSavePath(slot);
