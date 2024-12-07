@@ -124,7 +124,7 @@ namespace Player
                 {
                     _currentMakuraDisplay.SetActive(false);
                 }
-                if (IsHuton() || _isPushed)
+                if (IsHuton() || _currentMakura != null && _isPushed && _currentMakura.GetComponent<MakuraController>().CurrentColorType == ColorChanger.ColorType.Nomal)
                 {
                     _speed = 2.0f;
                 }

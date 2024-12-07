@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using System.Linq;
 using TMPro;
+using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _hutons;
@@ -28,6 +29,8 @@ public class GameManager : MonoBehaviour
     private bool _isPlayerSet = true;
     private bool _isGameStartCheck = false;
     private bool _isGameEnd = false;
+    private bool _isGuideKind = true;
+    private bool _isCoroutineSet = false;
     private ResultManager _resultManager;
     private PlayerInputManager _playerInputM;
     private DoorController _doorController;
@@ -105,7 +108,11 @@ public class GameManager : MonoBehaviour
             {
                 _players = _playerInputM.Players;
                 _event.Players = _players;
-                _guide.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "コントローラーの接続を待っています... ( " + _players.Count + " / 4 )";
+                if (!_isCoroutineSet && _players != null)
+                {
+                    _isCoroutineSet = true;
+                    StartCoroutine(StartGuideCoroutine());
+                }
 
                 foreach (var player in _players)
                 {
@@ -200,12 +207,13 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator TeacherEvent()
     {
+        yield return new WaitForSeconds(90.0f);
         if (_isGameStart)
         {
-            yield return new WaitForSeconds(90.0f);
             _event.TeacherEvent.Init(_playerControllers);
             StartCoroutine(TeacherEvent());
         }
+
     }
     private IEnumerator GameEnd()
     {
@@ -240,6 +248,8 @@ public class GameManager : MonoBehaviour
                 _happeningBalls.RemoveAt(i);
             }
         }
+        yield return new WaitForSeconds(0.5f);
+        _finish.SetActive(true);
         yield return new WaitForSeconds(5.0f);
         _mainCamera.enabled = false;
         _resultCamera.enabled = true;
@@ -294,8 +304,29 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
 
         _go.SetActive(false);
+    }
+    private IEnumerator StartGuideCoroutine()
+    {
+        TextMeshProUGUI text = _guide.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        if (_players.Count == 4)
+        {
+            _isGuideKind = false;
+        }
+        if (_isGuideKind)
+        {
+            _isGuideKind = false;
+            text.text = "コントローラーの接続を待っています... ( " + _players.Count + " / 4 )";
+        }
+        else
+        {
+            _isGuideKind = true;
+            text.text = "始めるには、全員が寝た状態で ZR + ZL 同時押し... ( " + _players.Count + " / 4 )";
+        }
+        yield return new WaitForSeconds(8.0f);
+        StartCoroutine(StartGuideCoroutine());
 
     }
+
 
     public static List<KeyValuePair<int, int>> SortScores(Dictionary<int, int> scoreDic)
     {

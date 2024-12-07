@@ -66,5 +66,4 @@ public class ScoreManager : MonoBehaviour
             }
         }
     }
-
 }
