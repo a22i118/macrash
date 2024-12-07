@@ -9,12 +9,10 @@ public class ResultCameraController : MonoBehaviour
     private bool _isCameraSet = true;
     private bool _isCanMove = false;
     private bool _isUISet = false;
+    private float _rotationSpeed = 75.0f;
+    private float _moveSpeed = 0.035f;
     private float _targetPosition = 2.2f;
     private float _targetRotation = 180f;
-    private float _transitionTime = 2.0f;
-    private float _elapsedTime = 0.0f;
-
-    private bool _isMoving = false;
     public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
     public bool IsUISet { get => _isUISet; set => _isUISet = value; }
 
@@ -34,10 +32,10 @@ public class ResultCameraController : MonoBehaviour
                 _isCameraSet = false;
                 StartCoroutine(CameraSetDerey());
             }
-            if (_isCanMove && !_isMoving)
+            if (_isCanMove)
             {
-                _isMoving = true;
-                StartCoroutine(MoveAndRotateCamera());
+                MoveCamera();
+                RotateCamera();
             }
             if (_resultCamera.transform.position.y == 2.2f)
             {
@@ -45,33 +43,20 @@ public class ResultCameraController : MonoBehaviour
             }
         }
     }
-    private IEnumerator MoveAndRotateCamera()
+
+    private void MoveCamera()
     {
-        Vector3 startPosition = _resultCamera.transform.position;
-        Quaternion startRotation = _resultCamera.transform.rotation;
+        Vector3 currentPosition = _resultCamera.transform.position;
+        _resultCamera.transform.position = Vector3.MoveTowards(_resultCamera.transform.position, new Vector3(currentPosition.x, _targetPosition, currentPosition.z), _moveSpeed);
+    }
 
-        float startPosition_Y = startPosition.y;
-        float startRotation_Y = startRotation.eulerAngles.y;
+    private void RotateCamera()
+    {
+        Quaternion currentRotation = _resultCamera.transform.rotation;
 
-        while (_elapsedTime < _transitionTime)
-        {
-            _elapsedTime += Time.deltaTime;
+        Quaternion targetRotation = Quaternion.Euler(90, _targetRotation, 0);
 
-            float time = Mathf.Clamp01(_elapsedTime / _transitionTime);
-            float current_Y = Mathf.Lerp(startPosition_Y, _targetPosition, time);
-            _resultCamera.transform.position = new Vector3(startPosition.x, current_Y, startPosition.z);
-
-            float currentRotation_Y = Mathf.LerpAngle(startRotation_Y, -_targetRotation, time);
-            _resultCamera.transform.rotation = Quaternion.Euler(90f, currentRotation_Y, 0.0f);
-
-            yield return null;
-        }
-
-        _resultCamera.transform.position = new Vector3(startPosition.x, _targetPosition, startPosition.z);
-        _resultCamera.transform.rotation = Quaternion.Euler(90.0f, _targetRotation, 0.0f);
-
-        _elapsedTime = 0.0f;
-        _isMoving = false;
+        _resultCamera.transform.rotation = Quaternion.RotateTowards(currentRotation, targetRotation, _rotationSpeed * Time.deltaTime);
     }
     private IEnumerator CameraSetDerey()
     {

@@ -52,8 +52,9 @@ public class MenuUIManager : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     ThrowMakura(hit.collider.gameObject.transform.position);
-                    StartCoroutine(MoveMenu());
                     _isray = false;
+                    StartCoroutine(MoveMenu());
+                    
                 }
             }
             else
@@ -136,7 +137,7 @@ public class MenuUIManager : MonoBehaviour
 
     private IEnumerator MoveMenu()
     {
-        yield return null;
+        yield return new WaitForSeconds(1.5f);
         switch (_currenttype)
         {
             case UItype.VS:
@@ -151,11 +152,8 @@ public class MenuUIManager : MonoBehaviour
                 _Configmenu.SetActive(true);
                 _Firstmenu.SetActive(false);
                 break;
-
-           
-
-            
         }
+        _isray = true;
     }
 
     private void UIText()
