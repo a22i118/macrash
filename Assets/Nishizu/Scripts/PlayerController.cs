@@ -32,8 +32,6 @@ namespace Player
         private bool _isGameStart = false;
         private bool _isGameStartCheck = false;
         private bool _isGameEnd = false;
-        private bool _isResultEnd = false;
-        private bool _isGameEndCheck = false;
         private int _playerIndex;
         private const float _gravity = -25.0f;
         private float _speed = 5.0f;//プレイヤーの移動速度
@@ -76,8 +74,6 @@ namespace Player
         public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
         public bool IsGameStartCheck { get => _isGameStartCheck; }
         public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
-        public bool IsResultEnd { get => _isResultEnd; set => _isResultEnd = value; }
-        public bool IsGameEndCheck { get => _isGameEndCheck; set => _isGameEndCheck = value; }
         public int PlayerIndex { get => _playerIndex; set => _playerIndex = value; }
         public GameObject CurrentMakuraDisplay { get => _currentMakuraDisplay; set => _currentMakuraDisplay = value; }
         public GameObject SpGageInstance { get => _spGageInstance; set => _spGageInstance = value; }
@@ -101,17 +97,6 @@ namespace Player
             else
             {
                 _isGameStartCheck = false;
-            }
-        }
-        public void OnResultEnd(InputValue value)
-        {
-            if (_isResultEnd && value.isPressed)
-            {
-                _isGameEndCheck = true;
-            }
-            else
-            {
-                _isGameEndCheck = false;
             }
         }
         void Update()

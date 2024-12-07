@@ -5,13 +5,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using System.Linq;
-using TMPro;
-using UnityEngine.UI;
+
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _hutons;
     [SerializeField] private GameObject _door;
-    [SerializeField] private GameObject _teacherObj;
+    [SerializeField] private GameObject _teacher;
     [SerializeField] private GameObject _makuraPrefub;
     [SerializeField] private GameObject _happeningBall;
     [SerializeField] private GameObject _playerInputManager;
@@ -20,23 +19,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Camera _resultCamera;
     [SerializeField] private Camera _mainCamera;
     [SerializeField] private GameObject _result;
-    [SerializeField] private GameObject _guide;
-    [SerializeField] private GameObject _teacherGuide;
-    [SerializeField] private GameObject _ready;
-    [SerializeField] private GameObject _go;
-    [SerializeField] private GameObject _finish;
     private bool _isGameStart = false;
     private bool _isPlayerSet = true;
     private bool _isGameStartCheck = false;
     private bool _isGameEnd = false;
-    private bool _isGuideKind = true;
-    private bool _isCoroutineSet = false;
     private ResultManager _resultManager;
     private PlayerInputManager _playerInputM;
     private DoorController _doorController;
-    private Teacher _teacher;
+    private TeacherShadowController _teacherEvent;
     private Event _event;
-    private TextMeshProUGUI _teacherComent;
     private List<GameObject> _players;
     private List<GameObject> _makuras = new List<GameObject>();
     private List<MakuraController> _makuraControllers = new List<MakuraController>();
@@ -75,19 +66,10 @@ public class GameManager : MonoBehaviour
         {
             _doorController = _door.GetComponent<DoorController>();
         }
-        if (_teacherObj != null)
+        if (_teacher != null)
         {
-            _teacher = _teacherObj.GetComponent<Teacher>();
+            _teacherEvent = _teacher.GetComponent<TeacherShadowController>();
         }
-    }
-    private void Start()
-    {
-        _doorController.OpenDoors();
-        _teacherComent = _teacherGuide.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
-        _teacherComent.text = "就寝時間だぞ";
-        _ready.SetActive(false);
-        _go.SetActive(false);
-        _finish.SetActive(false);
     }
 
     // Update is called once per frame
@@ -100,7 +82,13 @@ public class GameManager : MonoBehaviour
                 HappeningBallEvnt();
                 if (_isPlayerSet)
                 {
-                    StartCoroutine(StartDerey());
+                    for (int i = 0; i < _players.Count; i++)
+                    {
+                        var playerController = _players[i].GetComponent<PlayerController>();
+                        playerController.WakeUp();
+                        _playerControllers.Add(playerController);
+
+                    }
                     _isPlayerSet = false;
                 }
             }
@@ -108,18 +96,16 @@ public class GameManager : MonoBehaviour
             {
                 _players = _playerInputM.Players;
                 _event.Players = _players;
-                if (!_isCoroutineSet && _players != null)
-                {
-                    _isCoroutineSet = true;
-                    StartCoroutine(StartGuideCoroutine());
-                }
-
                 foreach (var player in _players)
                 {
-                    //
-                    if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
+                    //_players.Count > 1 &&
+                    if (player.GetComponent<PlayerController>().IsGameStartCheck)
                     {
                         _isGameStartCheck = true;
+                    }
+                    else
+                    {
+                        _isGameStartCheck = false;
                     }
                 }
 
@@ -144,6 +130,10 @@ public class GameManager : MonoBehaviour
         foreach (var makura in _makuraControllers)
         {
             makura.IsGameStart = true;
+        }
+        if (_happeningBall != null)
+        {
+            StartCoroutine(HappeningBallGeneration());
         }
         _playerInputManager.SetActive(false);
         StartCoroutine(GameEnd());
@@ -205,19 +195,9 @@ public class GameManager : MonoBehaviour
             StartCoroutine(HappeningBallGeneration());
         }
     }
-    private IEnumerator TeacherEvent()
-    {
-        yield return new WaitForSeconds(60.0f);
-        if (_isGameStart)
-        {
-            _event.TeacherEvent.Init(_playerControllers);
-            StartCoroutine(TeacherEvent());
-        }
-
-    }
     private IEnumerator GameEnd()
     {
-        yield return new WaitForSeconds(10.0f);//6分360.0f
+        yield return new WaitForSeconds(30.0f);//6分360.0f
         _isGameStart = false;
         _isGameStartCheck = false;
         _event.IsGameStart = false;
@@ -227,15 +207,16 @@ public class GameManager : MonoBehaviour
         {
             player.GetComponent<PlayerStatus>().IsGameStart = false;
         }
-        for (int i = 0; i < _playerControllers.Count; i++)
+        int hutonIndex = 0;
+        foreach (var playerController in _playerControllers)
         {
-            var playerController = _playerControllers[i];
             playerController.IsGameStart = false;
             playerController.IsGameEnd = true;
             playerController.CurrentMakuraDisplay.SetActive(false);
             playerController.SpGageInstance.SetActive(false);
             playerController.PlayerTagUIInstance.SetActive(false);
-            playerController.ResultSleep(_resultManager.ResultHutonControllers[i]);
+            playerController.ResultSleep(_resultManager.ResultHutonControllers[hutonIndex]);
+            hutonIndex++;
         }
         for (int i = _happeningBalls.Count - 1; i >= 0; i--)
         {
@@ -248,12 +229,9 @@ public class GameManager : MonoBehaviour
                 _happeningBalls.RemoveAt(i);
             }
         }
-        yield return new WaitForSeconds(0.5f);
-        _finish.SetActive(true);
         yield return new WaitForSeconds(5.0f);
         _mainCamera.enabled = false;
         _resultCamera.enabled = true;
-        _finish.SetActive(false);
 
         int scoretmp = -1;
         int rank = -1;
@@ -274,61 +252,7 @@ public class GameManager : MonoBehaviour
         }
         _resultManager.ScoreDic = _scoreManager.GetComponent<ScoreManager>().ScoreNum;
         _resultManager.IsGameEnd = true;
-        _resultManager.PlayerControllers = _playerControllers;
     }
-    private IEnumerator StartDerey()
-    {
-        _guide.SetActive(false);
-        _teacherComent.text = "よし。";
-        yield return new WaitForSeconds(2.0f);
-        _teacherGuide.SetActive(false);
-        _teacher.IsGameStart = true;
-        yield return new WaitForSeconds(1.0f);
-        _ready.SetActive(true);
-        yield return new WaitForSeconds(1.0f);
-        _doorController.IsGameStart = true;
-        yield return new WaitForSeconds(2.0f);
-        _ready.SetActive(false);
-
-        _go.SetActive(true);
-
-        for (int i = 0; i < _players.Count; i++)
-        {
-            var playerController = _players[i].GetComponent<PlayerController>();
-            playerController.WakeUp();
-            _playerControllers.Add(playerController);
-        }
-        StartCoroutine(TeacherEvent());
-        if (_happeningBall != null)
-        {
-            StartCoroutine(HappeningBallGeneration());
-        }
-        yield return new WaitForSeconds(1.0f);
-
-        _go.SetActive(false);
-    }
-    private IEnumerator StartGuideCoroutine()
-    {
-        TextMeshProUGUI text = _guide.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-        if (_players.Count == 4)
-        {
-            _isGuideKind = false;
-        }
-        if (_isGuideKind)
-        {
-            _isGuideKind = false;
-            text.text = "コントローラーの接続を待っています... ( " + _players.Count + " / 4 )";
-        }
-        else
-        {
-            _isGuideKind = true;
-            text.text = "始めるには、全員が寝た状態で ZR + ZL 同時押し... ( " + _players.Count + " / 4 )";
-        }
-        yield return new WaitForSeconds(8.0f);
-        StartCoroutine(StartGuideCoroutine());
-
-    }
-
 
     public static List<KeyValuePair<int, int>> SortScores(Dictionary<int, int> scoreDic)
     {
