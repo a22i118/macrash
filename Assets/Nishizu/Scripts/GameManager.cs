@@ -207,7 +207,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator TeacherEvent()
     {
-        yield return new WaitForSeconds(90.0f);
+        yield return new WaitForSeconds(60.0f);
         if (_isGameStart)
         {
             _event.TeacherEvent.Init(_playerControllers);
@@ -217,7 +217,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator GameEnd()
     {
-        yield return new WaitForSeconds(180.0f);//6分360.0f
+        yield return new WaitForSeconds(10.0f);//6分360.0f
         _isGameStart = false;
         _isGameStartCheck = false;
         _event.IsGameStart = false;
@@ -253,6 +253,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(5.0f);
         _mainCamera.enabled = false;
         _resultCamera.enabled = true;
+        _finish.SetActive(false);
 
         int scoretmp = -1;
         int rank = -1;
@@ -273,6 +274,7 @@ public class GameManager : MonoBehaviour
         }
         _resultManager.ScoreDic = _scoreManager.GetComponent<ScoreManager>().ScoreNum;
         _resultManager.IsGameEnd = true;
+        _resultManager.PlayerControllers = _playerControllers;
     }
     private IEnumerator StartDerey()
     {
