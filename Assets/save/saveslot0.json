@@ -1,1 +1,1 @@
-{"Controllertype":"Gamepad","Name":"player","Throw":"<Gamepad>/rightShoulder","Catch":"<Gamepad>/leftTrigger","SpecialAttack":"<Gamepad>/buttonNorth","Jump":"<Gamepad>/buttonEast","Sleep":"<Gamepad>/buttonWest"}
+{"Controllertype":"Gamepad","Name":"player","Throw":"<Gamepad>/rightTrigger","Catch":"<Gamepad>/leftTrigger","SpecialAttack":"<Gamepad>/buttonNorth","Jump":"<Gamepad>/buttonEast","Sleep":"<Gamepad>/buttonWest"}

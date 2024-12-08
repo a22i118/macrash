@@ -6,10 +6,18 @@ public class HutonController : MonoBehaviour
 {
     private GameObject _makura;
     public GameObject Makura { get => _makura; set => _makura = value; }
+    /// <summary>
+    /// 布団のポジションを返す（自分自身）
+    /// </summary>
+    /// <returns></returns>
     public Vector3 GetCenterPosition()
     {
         return GetComponent<Collider>().bounds.center;
     }
+    /// <summary>
+    /// 布団の向きを返す（自分自身）
+    /// </summary>
+    /// <returns></returns>
     public Quaternion GetRotation()
     {
         return transform.rotation;

@@ -27,6 +27,9 @@ public class HappeningBall : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    /// <summary>
+    /// 虹色に光らせる
+    /// </summary>
     private void ColorChange()
     {
         hue = Mathf.Repeat(Time.time, 0.5f);

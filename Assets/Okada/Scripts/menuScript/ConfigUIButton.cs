@@ -21,6 +21,7 @@ public class ConfigUIButton : MonoBehaviour
     [SerializeField] private GameObject _loadmenu;
     [SerializeField] private GameObject _keymenu;
     [SerializeField] private GameObject _configmask;
+    [SerializeField] private GameObject _returnbutton;
 
     private void Awake()
     {
@@ -44,42 +45,13 @@ public class ConfigUIButton : MonoBehaviour
 
     public void LoadConfig(int i)
     {
-
-        //if (_manager.LoadSaveData(i) != null)
-        //{
-        //    _saveData = _manager.LoadSaveData(i);
-        //    _slot = i;
-        //    _saveData = _manager.LoadSaveData(i);
-        //    _actions[0] = _saveData.Throw;
-        //    _actions[1] = _saveData.Catch;
-        //    _actions[2] = _saveData.SpecialAttack;
-        //    _actions[3] = _saveData.Jump;
-        //    _actions[4] = _saveData.Sleep;
-
-        //    for (int j = 0; j < _actionRefs.Count; j++)
-        //    {
-        //        RefreshDisplay(j);
-        //    }
-        //}
-
-        //_actions[0] = _saveData.Throw;
-        //_actions[1] = _saveData.Catch;
-        //_actions[2] = _saveData.SpecialAttack;
-        //_actions[3] = _saveData.Jump;
-        //_actions[4] = _saveData.Sleep;
-
-        //_loadmenu.SetActive(false);
-        //_keymenu.SetActive(true);
-        //_configmask.SetActive(true);
-
-        
         if (_saveData != null)
         {
             _slot = i;
             _saveData = _manager.LoadSaveData(i);
-            
-            _actions[0].RemoveAllBindingOverrides(); 
-            _actions[0].ApplyBindingOverride(_saveData.Throw); 
+
+            _actions[0].RemoveAllBindingOverrides();
+            _actions[0].ApplyBindingOverride(_saveData.Throw);
 
             _actions[1].RemoveAllBindingOverrides();
             _actions[1].ApplyBindingOverride(_saveData.Catch);
@@ -93,18 +65,16 @@ public class ConfigUIButton : MonoBehaviour
             _actions[4].RemoveAllBindingOverrides();
             _actions[4].ApplyBindingOverride(_saveData.Sleep);
 
-
-            // 表示の更新
             for (int j = 0; j < _actionRefs.Count; j++)
             {
                 RefreshDisplay(j);
             }
         }
 
-        // メニューの切り替え
         _loadmenu.SetActive(false);
         _keymenu.SetActive(true);
         _configmask.SetActive(true);
+        _returnbutton.SetActive(false);
     }
 
     private void OnDestroy()
@@ -187,7 +157,7 @@ public class ConfigUIButton : MonoBehaviour
         _slot = i;
     }
 
-    public void KeyConfigSave() 
+    public void KeyConfigSave()
     {
         if (_actions == null || _actions.Count < 5 || _actions.Any(action => action == null))
         {
@@ -206,5 +176,6 @@ public class ConfigUIButton : MonoBehaviour
         _loadmenu.SetActive(true);
         _keymenu.SetActive(false);
         _configmask.SetActive(false);
+        _returnbutton.SetActive(true);
     }
 }

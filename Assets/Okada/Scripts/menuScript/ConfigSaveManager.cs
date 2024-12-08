@@ -16,7 +16,7 @@ public class SaveData
     public string Sleep;
 }
 
-public class ConfigSaveManager:MonoBehaviour
+public class ConfigSaveManager : MonoBehaviour
 {
     private string folderName;
     private void Awake()
@@ -28,9 +28,9 @@ public class ConfigSaveManager:MonoBehaviour
             Directory.CreateDirectory(_savefolderPath);
         }
 
-        for(int i = 1; i <= 6; i++)
+        for (int i = 1; i <= 6; i++)
         {
-            if(!File.Exists(_savefolderPath + "/" + $"saveslot{i}.json"))
+            if (!File.Exists(_savefolderPath + "/" + $"saveslot{i}.json"))
             {
 
             }
@@ -53,12 +53,6 @@ public class ConfigSaveManager:MonoBehaviour
 
     public SaveData LoadSaveData(int slot)
     {
-        //string path = GetSavePath(slot);
-        //StreamReader rd = new StreamReader(path);
-        //string json = rd.ReadToEnd();
-        //rd.Close();
-
-        //return JsonUtility.FromJson<SaveData>(json);
 
         string path = GetSavePath(slot);
 
@@ -77,7 +71,7 @@ public class ConfigSaveManager:MonoBehaviour
         return JsonUtility.FromJson<SaveData>(json);
     }
 
-    
+
     public void DeleteSave(int slot)
     {
         string path = GetSavePath(slot);

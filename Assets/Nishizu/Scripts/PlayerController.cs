@@ -32,6 +32,9 @@ namespace Player
         private bool _isGameStart = false;
         private bool _isGameStartCheck = false;
         private bool _isGameEnd = false;
+        private bool _isResultEnd = false;
+        private bool _isGameEndCheck = false;
+        private bool _isSpeedUp = false;
         private int _playerIndex;
         private const float _gravity = -25.0f;
         private float _speed = 5.0f;//プレイヤーの移動速度
@@ -74,6 +77,8 @@ namespace Player
         public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
         public bool IsGameStartCheck { get => _isGameStartCheck; }
         public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
+        public bool IsResultEnd { get => _isResultEnd; set => _isResultEnd = value; }
+        public bool IsGameEndCheck { get => _isGameEndCheck; set => _isGameEndCheck = value; }
         public int PlayerIndex { get => _playerIndex; set => _playerIndex = value; }
         public GameObject CurrentMakuraDisplay { get => _currentMakuraDisplay; set => _currentMakuraDisplay = value; }
         public GameObject SpGageInstance { get => _spGageInstance; set => _spGageInstance = value; }
@@ -97,6 +102,17 @@ namespace Player
             else
             {
                 _isGameStartCheck = false;
+            }
+        }
+        public void OnResultEnd(InputValue value)
+        {
+            if (_isResultEnd && value.isPressed)
+            {
+                _isGameEndCheck = true;
+            }
+            else
+            {
+                _isGameEndCheck = false;
             }
         }
         void Update()
@@ -124,13 +140,28 @@ namespace Player
                 {
                     _currentMakuraDisplay.SetActive(false);
                 }
-                if (IsHuton() || _isPushed)
+                if (IsHuton() || _currentMakura != null && _isPushed && _currentMakura.GetComponent<MakuraController>().CurrentColorType == ColorChanger.ColorType.Nomal)
                 {
-                    _speed = 2.0f;
+                    if (_isSpeedUp)
+                    {
+                        _speed = 4.0f;
+                    }
+                    else
+                    {
+                        _speed = 2.0f;
+
+                    }
                 }
                 else
                 {
-                    _speed = 4.0f;
+                    if (_isSpeedUp)
+                    {
+                        _speed = 6.0f;
+                    }
+                    else
+                    {
+                        _speed = 4.0f;
+                    }
                 }
                 if (!_isHitStop && !_isSleep)
                 {
@@ -368,10 +399,7 @@ namespace Player
                 JumpForce();
             }
         }
-        /// <summary>
-        /// プレイヤーに上向きの力を加える
-        /// </summary>
-        /// <param name="jump">ジャンプ入力</param>
+
         private void JumpForce()
         {
             if (_isJumping)
@@ -656,7 +684,6 @@ namespace Player
                 if (collider.CompareTag("Player") && collider.gameObject != gameObject)
                 {
                     _targetPosition = collider.gameObject.transform.position;
-                    // Debug.Log("Playerを発見したぜ");
                     foundOpponent = true;
                     return true;
                 }
@@ -785,6 +812,7 @@ namespace Player
         {
             yield return new WaitForSeconds(0.5f);
             _isHitStop = false;
+            _isHitCoolTime = false;
         }
         private IEnumerator HitCoolTimeDelay()
         {
@@ -828,25 +856,12 @@ namespace Player
             yield return new WaitForSeconds(8.0f);
             _isHitStop = false;
         }
-        private IEnumerator vib()
+
+        public IEnumerator SpeedUpCoroutine()
         {
-            var gamepad = Gamepad.current;
-            if (gamepad == null)
-            {
-                Debug.Log("ゲームパッド未接続");
-                yield break;
-            }
-
-            // Debug.Log("左モーター振動");
-            // gamepad.SetMotorSpeeds(1.0f, 0.0f);
-            // yield return new WaitForSeconds(1.0f);
-
-            // Debug.Log("右モーター振動");
-            // gamepad.SetMotorSpeeds(0.0f, 1.0f);
-            // yield return new WaitForSeconds(1.0f);
-
-            Debug.Log("モーター停止");
-            gamepad.SetMotorSpeeds(0.0f, 0.0f);
+            _isSpeedUp = true;
+            yield return new WaitForSeconds(8.0f);
+            _isSpeedUp = false;
         }
     }
 }

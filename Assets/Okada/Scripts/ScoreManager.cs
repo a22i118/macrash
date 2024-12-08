@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Linq;
 public class ScoreManager : MonoBehaviour
 {
     private bool _isGameStart = false;
@@ -38,10 +39,10 @@ public class ScoreManager : MonoBehaviour
             _scores[i].text = _scoreNum[i].ToString();
         }
     }
-    public void UpdateScore(string player)
+    public void UpdateScore(string player, string hitPlayer)
     {
         int playerIndex = -1;
-
+        int hitPlayerIndex = -1;
         switch (player)
         {
             case "Player (1)":
@@ -57,14 +58,50 @@ public class ScoreManager : MonoBehaviour
                 playerIndex = 3;
                 break;
         }
+        switch (hitPlayer)
+        {
+            case "Player (1)":
+                hitPlayerIndex = 0;
+                break;
+            case "Player (2)":
+                hitPlayerIndex = 1;
+                break;
+            case "Player (3)":
+                hitPlayerIndex = 2;
+                break;
+            case "Player (4)":
+                hitPlayerIndex = 3;
+                break;
+        }
         if (playerIndex >= 0 && playerIndex < _scoreNum.Count)
         {
             if (_scoreNum.ContainsKey(playerIndex))
             {
-                _scoreNum[playerIndex]++;
+                if (IsValueMax(hitPlayerIndex))
+                {
+                    _scoreNum[playerIndex] += 2;
+                }
+                else
+                {
+                    _scoreNum[playerIndex]++;
+                }
                 _scores[playerIndex].text = _scoreNum[playerIndex].ToString();
             }
         }
     }
+    private bool IsValueMax(int key)
+    {
+        if (_scoreNum.ContainsKey(key))
+        {
+            int value = _scoreNum[key];
+            int maxValue = _scoreNum.Values.Max();
+            if (maxValue == 0)
+            {
+                return false;
+            }
+            return value == maxValue;
+        }
 
+        return false;
+    }
 }
