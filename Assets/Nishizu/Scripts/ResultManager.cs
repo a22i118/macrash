@@ -65,8 +65,8 @@ public class ResultManager : MonoBehaviour
                     playerController.IsResultEnd = true;
                     if (playerController.IsGameEndCheck)
                     {
-                        SceneManager.LoadScene("TitleScene");
-                        Debug.Log("切り替わるはずや");
+                        SceneManager.LoadScene("MenuScene");
+                        // Debug.Log("切り替わるはずや");
                     }
                 }
             }
