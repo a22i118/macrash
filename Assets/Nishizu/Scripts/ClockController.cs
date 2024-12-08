@@ -36,7 +36,9 @@ public class ClockController : MonoBehaviour
             HandRotation();
         }
     }
-
+    /// <summary>
+    /// 時計の針を動かす
+    /// </summary>
     private void HandRotation()
     {
         float minuteRotation = _minute * _oneLap * 6.0f;

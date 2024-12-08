@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     private bool _isGameEnd = false;
     private bool _isGuideKind = true;
     private bool _isCoroutineSet = false;
+    private string _startGuide = "コントローラーの接続を待っています... ";
     private ResultManager _resultManager;
     private PlayerInputManager _playerInputM;
     private DoorController _doorController;
@@ -103,11 +104,14 @@ public class GameManager : MonoBehaviour
                     StartCoroutine(StartDerey());
                     _isPlayerSet = false;
                 }
+
             }
             else
             {
                 _players = _playerInputM.Players;
                 _event.Players = _players;
+                TextMeshProUGUI text = _guide.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+                text.text = _startGuide + "( " + _players.Count + " / 4 )";
                 if (!_isCoroutineSet && _players != null)
                 {
                     _isCoroutineSet = true;
@@ -130,6 +134,9 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    ///ゲームマネージャー初期化
+    /// </summary>
     private void Init()
     {
         _isGameStart = true;
@@ -148,6 +155,11 @@ public class GameManager : MonoBehaviour
         _playerInputManager.SetActive(false);
         StartCoroutine(GameEnd());
     }
+    /// <summary>
+    /// 接続されているプレイヤーが全員寝ているかどうかの判定
+    /// </summary>
+    /// <param name="players">は接続されているプレイヤー</param>
+    /// <returns>接続されているプレイヤーが全員寝ていればtrueを返す</returns>
     private bool SleepCheck(List<GameObject> players)
     {
         foreach (var player in players)
@@ -159,6 +171,10 @@ public class GameManager : MonoBehaviour
         }
         return true;
     }
+    /// <summary>
+    /// ハプニングボールの生成位置をランダムで取得
+    /// </summary>
+    /// <returns>ハプニングボールの生成位置をランダムで返す</returns>
     private Vector3 RandomPosition()
     {
         float xMin = -8.0f;
@@ -172,6 +188,9 @@ public class GameManager : MonoBehaviour
 
         return new Vector3(randomX, y, randomZ);
     }
+    /// <summary>
+    /// ハプニングボールが割れたときにランダムでイベントを発生させる
+    /// </summary>
     private void HappeningBallEvnt()
     {
         if (_happeningBalls != null)
@@ -195,6 +214,10 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// ハプニングボールを10秒に一回ランダムで生成
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator HappeningBallGeneration()
     {
         GameObject happeningBall = Instantiate(_happeningBall, RandomPosition(), Quaternion.identity);
@@ -205,6 +228,10 @@ public class GameManager : MonoBehaviour
             StartCoroutine(HappeningBallGeneration());
         }
     }
+    /// <summary>
+    /// 先生イベントを60秒に一回発生
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator TeacherEvent()
     {
         yield return new WaitForSeconds(60.0f);
@@ -215,6 +242,10 @@ public class GameManager : MonoBehaviour
         }
 
     }
+    /// <summary>
+    /// ゲーム終了時の処理
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator GameEnd()
     {
         yield return new WaitForSeconds(180.0f);//6分360.0f
@@ -276,6 +307,10 @@ public class GameManager : MonoBehaviour
         _resultManager.IsGameEnd = true;
         _resultManager.PlayerControllers = _playerControllers;
     }
+    /// <summary>
+    /// ゲーム開始時の処理
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator StartDerey()
     {
         _guide.SetActive(false);
@@ -307,9 +342,12 @@ public class GameManager : MonoBehaviour
 
         _go.SetActive(false);
     }
+    /// <summary>
+    /// ロビーでのガイド
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator StartGuideCoroutine()
     {
-        TextMeshProUGUI text = _guide.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         if (_players.Count == 4)
         {
             _isGuideKind = false;
@@ -317,19 +355,21 @@ public class GameManager : MonoBehaviour
         if (_isGuideKind)
         {
             _isGuideKind = false;
-            text.text = "コントローラーの接続を待っています... ( " + _players.Count + " / 4 )";
+            _startGuide = "コントローラーの接続を待っています... ";
         }
         else
         {
             _isGuideKind = true;
-            text.text = "始めるには、全員が寝た状態で ZR + ZL 同時押し... ( " + _players.Count + " / 4 )";
+            _startGuide = "始めるには、全員が寝た状態で ZR + ZL 同時押し... ";
         }
         yield return new WaitForSeconds(8.0f);
         StartCoroutine(StartGuideCoroutine());
-
     }
-
-
+    /// <summary>
+    /// スコアを高い順に並び変える
+    /// </summary>
+    /// <param name="scoreDic"></param>
+    /// <returns></returns>
     public static List<KeyValuePair<int, int>> SortScores(Dictionary<int, int> scoreDic)
     {
         return scoreDic.OrderByDescending(entry => entry.Value).ToList();

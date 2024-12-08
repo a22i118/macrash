@@ -72,6 +72,10 @@ public class MakuraController : ColorChanger
             }
         }
     }
+    /// <summary>
+    /// スケールを変える
+    /// </summary>
+    /// <param name="type"></param>
     private void ScaleChange(ScaleType type)
     {
         if (type == ScaleType.Second)
@@ -169,6 +173,9 @@ public class MakuraController : ColorChanger
             Destroy(gameObject, 0.4f);
         }
     }
+    /// <summary>
+    /// 爆発（の当たり判定）を生成する
+    /// </summary>
     private void HitSpawn()
     {
         GameObject spawnedObject = Instantiate(_explosionRange, transform.position, Quaternion.identity);
@@ -226,6 +233,9 @@ public class MakuraController : ColorChanger
     {
         _isTouching = false;
     }
+    /// <summary>
+    /// 黒枕があたったときの処理
+    /// </summary>
     private void BlackMakuraPositionUpdate()
     {
         float xMin = -9.0f;
@@ -268,6 +278,10 @@ public class MakuraController : ColorChanger
             transform.position = position;
         }
     }
+    /// <summary>
+    /// ランダムで色を変える
+    /// </summary>
+    /// <returns></returns>
     private ColorType GetRandomColor()
     {
         const int nomal = 30;
@@ -299,21 +313,37 @@ public class MakuraController : ColorChanger
             return ColorType.Black;
         }
     }
+    /// <summary>
+    /// ヒット時のクールタイム
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator HitCoolTime()
     {
         yield return new WaitForSeconds(1.0f);
         _isThrow = false;
     }
+    /// <summary>
+    /// スケールを変える際のクールタイム
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator ScaleChangeCoolTime()
     {
         yield return new WaitForSeconds(1.2f);
         _currentScaleType = ScaleType.Second;
     }
+    /// <summary>
+    /// 重力が自動でかかる時間
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator AutoUseGrabity()
     {
         yield return new WaitForSeconds(11.0f);
         _rb.useGravity = true;
     }
+    /// <summary>
+    /// 敵や枕に当たったときの揺れ
+    /// </summary>
+    /// <returns></returns>
     public IEnumerator HitStopVibration()
     {
         Vector3 hitPosition = transform.position;
@@ -337,6 +367,10 @@ public class MakuraController : ColorChanger
 
         _isThrow = false;
     }
+    /// <summary>
+    /// 黒枕が当たったときの処理
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator BlackMakuraHit()
     {
         yield return new WaitForSeconds(0.01f);
@@ -348,6 +382,10 @@ public class MakuraController : ColorChanger
         _rb.isKinematic = false;
         StartCoroutine(HitStopVibration());
     }
+    /// <summary>
+    /// ヒットクールを発動させるのに少し遅らせる
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator HitCoolTimeDelay()
     {
         yield return new WaitForSeconds(0.01f);

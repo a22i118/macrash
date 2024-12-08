@@ -37,7 +37,10 @@ public class DoorController : MonoBehaviour
             MoveDoors(_isOpen);
         }
     }
-
+    /// <summary>
+    /// ドアを動かす
+    /// </summary>
+    /// <param name="isOpen">に応じて、true開ける、folse閉じる</param>
     private void MoveDoors(bool isOpen)
     {
         Vector3 targetPositionLeft = isOpen ? _openPosition[0] : _closedPosition[0];
@@ -46,6 +49,9 @@ public class DoorController : MonoBehaviour
         _door[0].transform.position = Vector3.Lerp(_door[0].transform.position, targetPositionLeft, _openSpeed * Time.deltaTime);
         _door[1].transform.position = Vector3.Lerp(_door[1].transform.position, targetPositionRight, _openSpeed * Time.deltaTime);
     }
+    /// <summary>
+    /// ドアを開ける
+    /// </summary>
     public void OpenDoors()
     {
         _door[0].transform.position = new Vector3(_door[0].transform.position.x - 0.6f, _door[0].transform.position.y, _door[0].transform.position.z);

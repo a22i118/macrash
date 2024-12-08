@@ -21,7 +21,10 @@ public class ColorChanger : MonoBehaviour
         _renderer = GetComponent<Renderer>();
         ColorChange(_currentColorType);
     }
-
+    /// <summary>
+    /// 色を変える
+    /// </summary>
+    /// <param name="type">に応じて色を変える</param>
     protected void ColorChange(ColorType type)
     {
         if (_renderer != null)
@@ -52,6 +55,7 @@ public class ColorChanger : MonoBehaviour
             }
         }
     }
+
     public enum ColorType
     {
         Nomal,

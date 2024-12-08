@@ -38,14 +38,6 @@ public class Event : MonoBehaviour
                 _makuraControllers.Add(makuraController);
             }
         }
-        // if (_players != null)
-        // {
-        //     foreach (var player in _players)
-        //     {
-        //         var playerController = player.GetComponent<PlayerController>();
-        //         _playerControllers.Add(playerController);
-        //     }
-        // }
 
         if (_teacher != null)
         {
@@ -76,60 +68,63 @@ public class Event : MonoBehaviour
                 }
             }
         }
-        //デバッグ用
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            foreach (var player in _playerControllers)
-            {
-                player.IsCanSleep = true;
-            }
-            _teacherEvent.Init(_playerControllers);
-        }
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            _tatamiEvent.Init();
-        }
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            _meteorEvent.Init();
-        }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            foreach (var makura in _makuraControllers)
-            {
-                makura.CurrentColorType = ColorChanger.ColorType.Red;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            foreach (var makura in _makuraControllers)
-            {
-                makura.CurrentColorType = ColorChanger.ColorType.Green;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            foreach (var makura in _makuraControllers)
-            {
-                makura.CurrentColorType = ColorChanger.ColorType.Blue;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            foreach (var makura in _makuraControllers)
-            {
-                makura.CurrentColorType = ColorChanger.ColorType.Black;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            foreach (var makura in _makuraControllers)
-            {
-                makura.CurrentColorType = ColorChanger.ColorType.Nomal;
-            }
-        }
+        // //デバッグ用
+        // if (Input.GetKeyDown(KeyCode.T))
+        // {
+        //     foreach (var player in _playerControllers)
+        //     {
+        //         player.IsCanSleep = true;
+        //     }
+        //     _teacherEvent.Init(_playerControllers);
+        // }
+        // if (Input.GetKeyDown(KeyCode.F))
+        // {
+        //     _tatamiEvent.Init();
+        // }
+        // if (Input.GetKeyDown(KeyCode.M))
+        // {
+        //     _meteorEvent.Init();
+        // }
+        // if (Input.GetKeyDown(KeyCode.R))
+        // {
+        //     foreach (var makura in _makuraControllers)
+        //     {
+        //         makura.CurrentColorType = ColorChanger.ColorType.Red;
+        //     }
+        // }
+        // if (Input.GetKeyDown(KeyCode.G))
+        // {
+        //     foreach (var makura in _makuraControllers)
+        //     {
+        //         makura.CurrentColorType = ColorChanger.ColorType.Green;
+        //     }
+        // }
+        // if (Input.GetKeyDown(KeyCode.B))
+        // {
+        //     foreach (var makura in _makuraControllers)
+        //     {
+        //         makura.CurrentColorType = ColorChanger.ColorType.Blue;
+        //     }
+        // }
+        // if (Input.GetKeyDown(KeyCode.K))
+        // {
+        //     foreach (var makura in _makuraControllers)
+        //     {
+        //         makura.CurrentColorType = ColorChanger.ColorType.Black;
+        //     }
+        // }
+        // if (Input.GetKeyDown(KeyCode.N))
+        // {
+        //     foreach (var makura in _makuraControllers)
+        //     {
+        //         makura.CurrentColorType = ColorChanger.ColorType.Nomal;
+        //     }
+        // }
     }
-
+    /// <summary>
+    /// ランダムでイベントを発生
+    /// </summary>
+    /// <param name="starter">が発動した人</param>
     public void RandomEvent(GameObject starter)
     {
         if (!_one)
@@ -141,15 +136,10 @@ public class Event : MonoBehaviour
             {
                 randomNumber = Random.Range(0, 8);
             }
-            // Debug.Log(starter);
             switch (randomNumber)
             {
                 case 0:
-                    // foreach (var player in _playerControllers)
-                    // {
-                    //     player.IsCanSleep = true;
-                    // }
-                    // _teacherEvent.Init(_playerControllers);
+                    starter.GetComponent<PlayerController>().StartCoroutine(starter.GetComponent<PlayerController>().SpeedUpCoroutine());
                     break;
                 case 1:
                     _tatamiEvent.Init();

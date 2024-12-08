@@ -21,7 +21,10 @@ public class ControlSchemeSwitcher : MonoBehaviour
             SwitchControlScheme(DeviceType.Gamepad);
         }
     }
-
+    /// <summary>
+    /// デバイスを変える
+    /// </summary>
+    /// <param name="deviceType">に応じてデバイスを変える</param>
     void SwitchControlScheme(DeviceType deviceType)
     {
         if (deviceType == DeviceType.KeyboardAndMouse)
