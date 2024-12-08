@@ -65,15 +65,12 @@ public class ConfigUIButton : MonoBehaviour
             _actions[4].RemoveAllBindingOverrides();
             _actions[4].ApplyBindingOverride(_saveData.Sleep);
 
-
-            // 表示の更新
             for (int j = 0; j < _actionRefs.Count; j++)
             {
                 RefreshDisplay(j);
             }
         }
 
-        // メニューの切り替え
         _loadmenu.SetActive(false);
         _keymenu.SetActive(true);
         _configmask.SetActive(true);
