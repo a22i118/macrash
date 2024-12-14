@@ -17,6 +17,7 @@ public class MakuraController : ColorChanger
     private bool _isCharge = false;
     private bool _isCounterAttack = false;
     private bool _isHitCoolTimeOne = false;
+    // private bool _isOutStage = false;
     private float _vibrationStrength = 0.05f;
     private float _vibrationTime = 0.2f;
     private Rigidbody _rb;
@@ -70,6 +71,10 @@ public class MakuraController : ColorChanger
             {
                 _col.isTrigger = false;
             }
+        }
+        if (_currentColorType != ColorType.Black)
+        {
+            PositionReset();
         }
     }
     /// <summary>
@@ -276,6 +281,56 @@ public class MakuraController : ColorChanger
             }
 
             transform.position = position;
+        }
+    }
+    private void PositionReset()
+    {
+        float minX = -9.0f;
+        float maxX = 9.0f;
+        float minY = -0.5f;
+        float maxY = 6.0f;
+        float minZ = -4.0f;
+        float maxZ = 8.0f;
+        bool _isOutStage = false;
+        Vector3 currentPosition = transform.position;
+
+        if (currentPosition.x < minX)
+        {
+            currentPosition.x = minX + 2f;
+            _isOutStage = true;
+        }
+        else if (currentPosition.x > maxX)
+        {
+            currentPosition.x = maxX - 2f;
+            _isOutStage = true;
+        }
+        if (currentPosition.y < minY)
+        {
+            currentPosition.y = 5f;
+            _isOutStage = true;
+        }
+        else if (currentPosition.y > maxY)
+        {
+            currentPosition.y = 5f;
+            _isOutStage = true;
+        }
+        if (currentPosition.z < minZ)
+        {
+            currentPosition.z = minZ + 2f;
+            _isOutStage = true;
+        }
+        else if (currentPosition.z > maxZ)
+        {
+            currentPosition.z = maxZ - 2f;
+
+            _isOutStage = true;
+        }
+        if (!_rb.isKinematic && _isOutStage)
+        {
+            _rb.useGravity = true;
+            _rb.velocity = Vector3.zero;
+            _isThrow = false;
+            transform.position = currentPosition;
         }
     }
     /// <summary>
