@@ -19,6 +19,7 @@ public class MakuraController : ColorChanger
     private bool _isHitCoolTimeOne = false;
     private float _vibrationStrength = 0.05f;
     private float _vibrationTime = 0.2f;
+    private float _throwedTime = 3.0f;
     private Rigidbody _rb;
     private Collider _col;
     private Quaternion _initialRotation;
@@ -31,6 +32,7 @@ public class MakuraController : ColorChanger
     public bool IsCharge { get => _isCharge; set => _isCharge = value; }
     public bool IsCounterAttack { get => _isCounterAttack; set => _isCounterAttack = value; }
     public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
+    public float ThrowedTime { get => _throwedTime; set => _throwedTime = value; }
     public GameObject Thrower { get => _thrower; set => _thrower = value; }
     public ScaleType CurrentScaleType { get => _currentScaleType; set => _currentScaleType = value; }
 
@@ -59,6 +61,11 @@ public class MakuraController : ColorChanger
         if (_isThrow)
         {
             StartCoroutine(AutoUseGrabity());
+            _throwedTime -= Time.deltaTime;
+        }
+        else
+        {
+            _throwedTime = 3.0f;
         }
         if (transform.position.y >= 9.5f)
         {
