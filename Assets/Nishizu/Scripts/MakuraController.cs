@@ -17,7 +17,6 @@ public class MakuraController : ColorChanger
     private bool _isCharge = false;
     private bool _isCounterAttack = false;
     private bool _isHitCoolTimeOne = false;
-    // private bool _isOutStage = false;
     private float _vibrationStrength = 0.05f;
     private float _vibrationTime = 0.2f;
     private Rigidbody _rb;

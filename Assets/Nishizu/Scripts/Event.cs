@@ -132,10 +132,10 @@ public class Event : MonoBehaviour
         {
             _one = true;
 
-            int randomNumber = Random.Range(0, 9);
+            int randomNumber = Random.Range(0, 5);
             while (randomNumber == _lastEvent)
             {
-                randomNumber = Random.Range(0, 9);
+                randomNumber = Random.Range(0, 5);
             }
             switch (randomNumber)
             {
@@ -152,7 +152,8 @@ public class Event : MonoBehaviour
                     RandomColorChangeMakura();
                     break;
                 case 4:
-                    Instantiate(_makuraPrefub, RandomPosition(), Quaternion.identity);
+                    MakuraController makuraController = Instantiate(_makuraPrefub, RandomPosition(), Quaternion.identity).GetComponent<MakuraController>();
+                    makuraController.IsGameStart = true;
                     break;
             }
             _one = false;

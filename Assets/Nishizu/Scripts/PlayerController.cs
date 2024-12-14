@@ -830,7 +830,7 @@ namespace Player
 
         private IEnumerator TeacherMakuraHit()
         {
-            _isVibrating = true;
+            bool makuraHit = false;
             Vector3 hitPosition = new Vector3(transform.position.x, 0, transform.position.z);
 
             float elapsedTime = 0.0f;
@@ -848,14 +848,15 @@ namespace Player
                 elapsedTime += Time.deltaTime;
                 if (_isHitStop)
                 {
-                    _isVibrating = false;
+                    makuraHit = true;
                     break;
                 }
                 yield return null;
             }
-
-            transform.position = hitPosition;
-            _isVibrating = false;
+            if (!makuraHit)
+            {
+                transform.position = hitPosition;
+            }
         }
 
         public IEnumerator SpeedUpCoroutine()
