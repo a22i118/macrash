@@ -23,7 +23,7 @@ public class TeacherShadowController : MonoBehaviour
     private float _rotatedSpeed = 10.0f;
     private float _startAlpha;
     private float _secondsToDoor = 6.0f;
-    private float _teacherEventTime = 5.0f;
+    private float _teacherEventTime = 3.0f;
     private Vector3 _startPosition;
     private Renderer _teacherRenderer;
     private Teacher _teacher;
@@ -152,7 +152,7 @@ public class TeacherShadowController : MonoBehaviour
         yield return new WaitForSeconds(_teacherEventTime);//先生イベントの時間
         _doorController.IsOpen = false;
         _isMove = true;
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(1.0f);
         foreach (var player in _playerControllers)
         {
             if (player.IsSleep)

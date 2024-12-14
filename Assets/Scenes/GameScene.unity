@@ -3286,7 +3286,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.9180002
+      value: 0.07
       objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalPosition.y
@@ -6525,6 +6525,7 @@ Transform:
   - {fileID: 72650273}
   - {fileID: 1403030862}
   - {fileID: 699812123}
+  - {fileID: 1832000455}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1087051624 stripped
@@ -6802,7 +6803,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 613021598}
-  - {fileID: 1646460666}
   m_Father: {fileID: 397307633}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!64 &1128876196
@@ -6916,8 +6916,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6810371a7364fa64b8c9be17e1b7651d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _players:
-  - {fileID: 0}
   _hutons:
   - {fileID: 429273243}
   - {fileID: 568739720}
@@ -6927,7 +6925,7 @@ MonoBehaviour:
   _teacher: {fileID: 114574365}
   _meteor: {fileID: 1352615757}
   _tatami: {fileID: 815756654}
-  _makuraPrefub: {fileID: 0}
+  _makuraPrefub: {fileID: 3835372720629781789, guid: e64e57ef704ef6e419c2f11671845d58, type: 3}
 --- !u!1 &1130814869
 GameObject:
   m_ObjectHideFlags: 0
@@ -7552,7 +7550,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.484, z: 0.14166665}
   m_LocalScale: {x: 0.16666667, y: 0.16666667, z: 0.16666667}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1646460666}
   m_Father: {fileID: 1860273203}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1157899681
@@ -9932,7 +9931,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1128876195}
+    m_TransformParent: {fileID: 1157899680}
     m_Modifications:
     - target: {fileID: 1431385376716321406, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_Name
@@ -9956,15 +9955,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.4700003
+      value: -0.01
       objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.045999885
+      value: 0.046000063
       objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.14800023
+      value: -0.16
       objectReference: {fileID: 0}
     - target: {fileID: 7730095850230992830, guid: 84d32c49540c7114aaac6ff400f43aba, type: 3}
       propertyPath: m_LocalRotation.w
@@ -10951,11 +10950,11 @@ Transform:
   m_GameObject: {fileID: 1832000451}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.007453, z: 8.739998}
+  m_LocalPosition: {x: -0.6100006, y: -5.5925474, z: 22.96}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1053938359}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1832000456
 MonoBehaviour:
@@ -11826,8 +11825,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.8, y: 0.39999998, z: 0.9}
-  m_Center: {x: 0, y: 0.19999999, z: 0}
+  m_Size: {x: 1.8, y: 0.55, z: 0.9}
+  m_Center: {x: 0, y: 0.13, z: 0}
 --- !u!1001 &2023250372
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12365,4 +12364,3 @@ SceneRoots:
   - {fileID: 131623355}
   - {fileID: 2002152886}
   - {fileID: 1053938359}
-  - {fileID: 1832000455}

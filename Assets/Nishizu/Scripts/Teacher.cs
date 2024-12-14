@@ -28,7 +28,7 @@ public class Teacher : MonoBehaviour
     public void Angry(Transform targetTransform)
     {
         StartCoroutine(AngryText());
-        GameObject makura = Instantiate(_objMakura, transform.position, Quaternion.identity);
+        GameObject makura = Instantiate(_objMakura, transform.position + new Vector3(0.0f, 0.0f, -3.0f), Quaternion.identity);
         makura.GetComponent<TeaherMakuraController>().Target = targetTransform;
         makura.GetComponent<TeaherMakuraController>().TargetPlayer = targetTransform.gameObject;
     }
