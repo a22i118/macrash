@@ -579,7 +579,7 @@ namespace Player
                     HitMotion(false);
                     if (!_isVibrating)
                     {
-                        StartCoroutine(HitStopVibration(true, null));
+                        StartCoroutine(HitStopVibration(true, 0.0f, null));
                     }
                 }
             }
@@ -730,13 +730,14 @@ namespace Player
 
             if (makuraController != null && collision.gameObject.CompareTag("Makura") && makuraController.Thrower != gameObject && makuraController.IsThrow && !_isHitCoolTime)
             {
+                // Debug.Log(makuraController.ThrowedTime);
                 _isCanCatch = false;
                 StartCoroutine(HitCoolTimeDelay());
                 _animator.SetBool("Walk", false);
                 HitMotion(false);
                 if (!_isVibrating)
                 {
-                    StartCoroutine(HitStopVibration(makuraController.IsCounterAttack, collision.gameObject.transform));
+                    StartCoroutine(HitStopVibration(makuraController.IsCounterAttack, makuraController.ThrowedTime, collision.gameObject.transform));
                 }
             }
             if (collision.gameObject.CompareTag("Meteor"))
@@ -747,11 +748,11 @@ namespace Player
                 HitMotion(false);
                 if (!_isVibrating)
                 {
-                    StartCoroutine(HitStopVibration(false, null));
+                    StartCoroutine(HitStopVibration(false, 0.0f, null));
                 }
             }
         }
-        private IEnumerator HitStopVibration(bool isCounterAttack, Transform makuratransform)
+        private IEnumerator HitStopVibration(bool isCounterAttack, float throwedTime, Transform makuratransform)
         {
             _isVibrating = true;
             Vector3 hitPosition = transform.position;
@@ -782,9 +783,9 @@ namespace Player
                     direction = new Vector3(direction.x, -direction.y, direction.z);
                 }
                 float lerpPercentage = 1 - Mathf.InverseLerp(0.1f, 0.5f, direction.y);
-                float upForce = Mathf.Lerp(50, 100, lerpPercentage);
+                float upForce = Mathf.Lerp(20, 50, lerpPercentage);
 
-                _rb.AddForce(direction.normalized * 100 + Vector3.up * upForce, ForceMode.Impulse);
+                _rb.AddForce(direction.normalized * 100 + Vector3.up * upForce * throwedTime, ForceMode.Impulse);
             }
 
             yield return new WaitForSeconds(0.5f);
