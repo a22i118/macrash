@@ -23,7 +23,7 @@ public class TeacherShadowController : MonoBehaviour
     private float _rotatedSpeed = 10.0f;
     private float _startAlpha;
     private float _secondsToDoor = 6.0f;
-    private float _teacherEventTime = 5.0f;
+    private float _teacherEventTime = 2.0f;
     private Vector3 _startPosition;
     private Renderer _teacherRenderer;
     private Teacher _teacher;

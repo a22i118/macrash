@@ -7,7 +7,7 @@ public class Tatami : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Makura") || collision.gameObject.CompareTag("Obstacles"))
+        if (collision.gameObject.CompareTag("Makura") || collision.gameObject.CompareTag("Obstacles") || collision.gameObject.CompareTag("Player"))
         {
             // 畳に触れたオブジェクトを子に設定
             collision.transform.SetParent(transform);

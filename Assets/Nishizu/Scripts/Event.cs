@@ -68,58 +68,58 @@ public class Event : MonoBehaviour
                 }
             }
         }
-        // //デバッグ用
-        // if (Input.GetKeyDown(KeyCode.T))
-        // {
-        //     foreach (var player in _playerControllers)
-        //     {
-        //         player.IsCanSleep = true;
-        //     }
-        //     _teacherEvent.Init(_playerControllers);
-        // }
-        // if (Input.GetKeyDown(KeyCode.F))
-        // {
-        //     _tatamiEvent.Init();
-        // }
-        // if (Input.GetKeyDown(KeyCode.M))
-        // {
-        //     _meteorEvent.Init();
-        // }
-        // if (Input.GetKeyDown(KeyCode.R))
-        // {
-        //     foreach (var makura in _makuraControllers)
-        //     {
-        //         makura.CurrentColorType = ColorChanger.ColorType.Red;
-        //     }
-        // }
-        // if (Input.GetKeyDown(KeyCode.G))
-        // {
-        //     foreach (var makura in _makuraControllers)
-        //     {
-        //         makura.CurrentColorType = ColorChanger.ColorType.Green;
-        //     }
-        // }
-        // if (Input.GetKeyDown(KeyCode.B))
-        // {
-        //     foreach (var makura in _makuraControllers)
-        //     {
-        //         makura.CurrentColorType = ColorChanger.ColorType.Blue;
-        //     }
-        // }
-        // if (Input.GetKeyDown(KeyCode.K))
-        // {
-        //     foreach (var makura in _makuraControllers)
-        //     {
-        //         makura.CurrentColorType = ColorChanger.ColorType.Black;
-        //     }
-        // }
-        // if (Input.GetKeyDown(KeyCode.N))
-        // {
-        //     foreach (var makura in _makuraControllers)
-        //     {
-        //         makura.CurrentColorType = ColorChanger.ColorType.Nomal;
-        //     }
-        // }
+        //デバッグ用
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            foreach (var player in _playerControllers)
+            {
+                player.IsCanSleep = true;
+            }
+            _teacherEvent.Init(_playerControllers);
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            _tatamiEvent.Init();
+        }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            _meteorEvent.Init();
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            foreach (var makura in _makuraControllers)
+            {
+                makura.CurrentColorType = ColorChanger.ColorType.Red;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            foreach (var makura in _makuraControllers)
+            {
+                makura.CurrentColorType = ColorChanger.ColorType.Green;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            foreach (var makura in _makuraControllers)
+            {
+                makura.CurrentColorType = ColorChanger.ColorType.Blue;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            foreach (var makura in _makuraControllers)
+            {
+                makura.CurrentColorType = ColorChanger.ColorType.Black;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            foreach (var makura in _makuraControllers)
+            {
+                makura.CurrentColorType = ColorChanger.ColorType.Nomal;
+            }
+        }
     }
     /// <summary>
     /// ランダムでイベントを発生

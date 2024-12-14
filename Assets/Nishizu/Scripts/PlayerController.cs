@@ -131,6 +131,7 @@ namespace Player
                     Vector3 offset = _huton.position - transform.position;
                     transform.position = new Vector3(transform.position.x, transform.position.y + offset.y, transform.position.z);
                 }
+
                 if (_currentMakura != null && !_isSleep)
                 {
                     RotateShowMakura();
@@ -163,7 +164,7 @@ namespace Player
                         _speed = 4.0f;
                     }
                 }
-                if (!_isHitStop && !_isSleep)
+                if (!_isHitStop && !_isSleep && !_isVibrating)
                 {
                     Move();
                     if (_isGameStart)
@@ -368,19 +369,23 @@ namespace Player
         {
             if (value.isPressed)
             {
-                if (IsGround() && !_isHitStop)
+                if (!_isHitStop && !_isVibrating)
                 {
-                    _jumpHoldTime = 0f;
-                    _isJumping = true;
+                    if (IsGround())
+                    {
+                        _jumpHoldTime = 0f;
+                        _isJumping = true;
+                    }
+                }
+                else
+                {
+                    if (_isJumping)
+                    {
+                        _isJumping = false;
+                    }
                 }
             }
-            else
-            {
-                if (!_isHitStop && _isJumping)
-                {
-                    _isJumping = false;
-                }
-            }
+
         }
 
         private void Jump()
@@ -792,15 +797,11 @@ namespace Player
         private void HitMotion(bool teacher)
         {
             _rb.velocity = Vector3.zero;
-            _isHitStop = true;
-            _playerStatus.SpUp();
 
-            if (teacher)
+            if (!teacher)
             {
-                StartCoroutine(TeacherMakuraHitStopCoroutine());
-            }
-            else
-            {
+                _isHitStop = true;
+                _playerStatus.SpUp();
                 StartCoroutine(HitStopCoroutine());
             }
         }
@@ -830,7 +831,7 @@ namespace Player
         private IEnumerator TeacherMakuraHit()
         {
             _isVibrating = true;
-            Vector3 hitPosition = transform.position;
+            Vector3 hitPosition = new Vector3(transform.position.x, 0, transform.position.z);
 
             float elapsedTime = 0.0f;
 
@@ -838,23 +839,23 @@ namespace Player
             {
                 Vector3 randomOffset = new Vector3(
                     UnityEngine.Random.Range(-0.1f, 0.1f),
-                    IsGround() ? 0 : UnityEngine.Random.Range(-0.1f, 0.1f),
+                    0,
                     UnityEngine.Random.Range(-0.1f, 0.1f)
                 );
 
-                transform.position = Vector3.Lerp(transform.position, hitPosition + randomOffset, Time.deltaTime * 100);
+                transform.position = Vector3.Lerp(transform.position, new Vector3(hitPosition.x, transform.position.y, hitPosition.z) + randomOffset, Time.deltaTime * 100);
 
                 elapsedTime += Time.deltaTime;
+                if (_isHitStop)
+                {
+                    _isVibrating = false;
+                    break;
+                }
                 yield return null;
             }
 
             transform.position = hitPosition;
             _isVibrating = false;
-        }
-        private IEnumerator TeacherMakuraHitStopCoroutine()
-        {
-            yield return new WaitForSeconds(8.0f);
-            _isHitStop = false;
         }
 
         public IEnumerator SpeedUpCoroutine()
