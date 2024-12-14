@@ -6916,8 +6916,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6810371a7364fa64b8c9be17e1b7651d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _players:
-  - {fileID: 0}
   _hutons:
   - {fileID: 429273243}
   - {fileID: 568739720}
@@ -6927,7 +6925,7 @@ MonoBehaviour:
   _teacher: {fileID: 114574365}
   _meteor: {fileID: 1352615757}
   _tatami: {fileID: 815756654}
-  _makuraPrefub: {fileID: 0}
+  _makuraPrefub: {fileID: 3835372720629781789, guid: e64e57ef704ef6e419c2f11671845d58, type: 3}
 --- !u!1 &1130814869
 GameObject:
   m_ObjectHideFlags: 0
