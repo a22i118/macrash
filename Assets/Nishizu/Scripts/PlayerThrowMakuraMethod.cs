@@ -8,15 +8,15 @@ namespace Player
     {
         private void ThrowMakura(ThrowType throwType)
         {
-            if (_currentMakura != null)
+            if (_currentMakuras[0] != null)
             {
                 if (IsWallThrowCheck())
                 {
                     Debug.Log("壁が近いから投げられないぜ！");
                     return;
                 }
-                Rigidbody rb = _currentMakura.GetComponent<Rigidbody>();
-                _makuraController = _currentMakura.GetComponent<MakuraController>();
+                Rigidbody rb = _currentMakuras[0].GetComponent<Rigidbody>();
+                _makuraController = _currentMakuras[0].GetComponent<MakuraController>();
                 if (rb.velocity != Vector3.zero)
                 {
                     rb.velocity = Vector3.zero;
@@ -99,7 +99,7 @@ namespace Player
                 }
                 else if (_makuraController.CurrentColorType == ColorChanger.ColorType.Black)
                 {
-                    Collider col = _currentMakura.GetComponent<Collider>();
+                    Collider col = _currentMakuras[0].GetComponent<Collider>();
                     col.isTrigger = true;
                     rb.useGravity = false;
                     forwardForce = _isCounterAttackTime ? 1000.0f : 500.0f;
@@ -127,8 +127,8 @@ namespace Player
                 Vector3 throwPosition = transform.position + throwDirection * throwDistance + Vector3.up * throwHeight;
 
 
-                _currentMakura.transform.position = throwPosition;
-                _currentMakura.SetActive(true);
+                _currentMakuras[0].transform.position = throwPosition;
+                _currentMakuras[0].SetActive(true);
                 _makuraController.IsThrow = true;
                 _makuraController.IsCounterAttack = _isCounterAttackTime ? true : false;
                 _makuraController.Thrower = gameObject;
@@ -137,7 +137,7 @@ namespace Player
                 rb.maxAngularVelocity = 100;
                 rb.AddTorque(Vector3.up * 120.0f);
 
-                _currentMakura = null;
+                _currentMakuras.RemoveAt(0);
             }
         }
         private void CloneMakuraSpawn(ColorChanger.ColorType colorType, Vector3[] throwAngles, float forwardForce, float throwDistance, float throwHeight)

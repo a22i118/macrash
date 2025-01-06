@@ -20,13 +20,16 @@ public class MakuraController : ColorChanger
     private float _vibrationStrength = 0.05f;
     private float _vibrationTime = 0.2f;
     private float _throwedTime = 3.0f;
+    private float _trailRate = 2.0f;
     private Rigidbody _rb;
     private Collider _col;
+    private Vector3 _trailPos;
     private Quaternion _initialRotation;
     private GameObject _thrower;
     private ExplosionRange _explosionRangeScript;
     private ScoreManager _scoreManager;
     private ScaleType _currentScaleType = ScaleType.Nomal;
+    private static readonly int PROPERTY_TRAIL_DIR = Shader.PropertyToID("_TrailDir");
     public bool IsThrow { get => _isThrow; set => _isThrow = value; }
     public bool IsAlterEgo { get => _isAlterEgo; set => _isAlterEgo = value; }
     public bool IsCharge { get => _isCharge; set => _isCharge = value; }
@@ -45,6 +48,8 @@ public class MakuraController : ColorChanger
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
+
+        _trailPos = transform.position;
         _col = GetComponent<Collider>();
         _initialRotation = transform.rotation;
         _scoreManager = FindObjectOfType<ScoreManager>();
@@ -52,6 +57,10 @@ public class MakuraController : ColorChanger
     }
     void Update()
     {
+        // _trailPos = Vector3.Lerp(_trailPos, transform.position, Mathf.Clamp01(Time.deltaTime * _trailRate));
+        _trailPos = Vector3.Lerp(_trailPos, transform.position, Time.deltaTime);
+        Vector3 direction = transform.InverseTransformDirection(_trailPos - transform.position);
+        _blurMaterial.SetVector(PROPERTY_TRAIL_DIR, direction);
         if (_isGameStart)
         {
             ColorChange(_currentColorType);
@@ -294,7 +303,7 @@ public class MakuraController : ColorChanger
         float minX = -9.0f;
         float maxX = 9.0f;
         float minY = -0.5f;
-        float maxY = 6.0f;
+        float maxY = 15.0f;
         float minZ = -4.0f;
         float maxZ = 8.0f;
         bool _isOutStage = false;

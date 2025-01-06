@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     private bool _isGameEnd = false;
     private bool _isGuideKind = true;
     private bool _isCoroutineSet = false;
+    private float _gameTime = 180.0f;
     private string _startGuide = "コントローラーの接続を待っています... ";
     private ResultManager _resultManager;
     private PlayerInputManager _playerInputM;
@@ -120,8 +121,8 @@ public class GameManager : MonoBehaviour
 
                 foreach (var player in _players)
                 {
-                    //
-                    if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
+                    // if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
+                    if (SleepCheck(_players) && player.GetComponent<PlayerController>().IsGameStartCheck)
                     {
                         _isGameStartCheck = true;
                     }
@@ -248,7 +249,7 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     private IEnumerator GameEnd()
     {
-        yield return new WaitForSeconds(180.0f);//6分360.0f
+        yield return new WaitForSeconds(_gameTime);
         _isGameStart = false;
         _isGameStartCheck = false;
         _event.IsGameStart = false;
@@ -263,7 +264,8 @@ public class GameManager : MonoBehaviour
             var playerController = _playerControllers[i];
             playerController.IsGameStart = false;
             playerController.IsGameEnd = true;
-            playerController.CurrentMakuraDisplay.SetActive(false);
+            playerController.CurrentMakuraDisplays[0].SetActive(false);
+            playerController.CurrentMakuraDisplays[1].SetActive(false);
             playerController.SpGageInstance.SetActive(false);
             playerController.PlayerTagUIInstance.SetActive(false);
             playerController.ResultSleep(_resultManager.ResultHutonControllers[i]);
