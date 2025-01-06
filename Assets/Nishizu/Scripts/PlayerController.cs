@@ -37,7 +37,7 @@ namespace Player
         private bool _isGameEndCheck = false;
         private bool _isSpeedUp = false;
         private int _playerIndex;
-        private const float _gravity = -25.0f;
+        private const float C_gravity = -25.0f;
         private float _speed = 5.0f;//プレイヤーの移動速度
         private float _groundCheckRadius = 0.01f;//足元が地面か判定する球の半径
         private float _pickUpDistance = 1.0f;//まくらを拾うことができる距離
@@ -133,30 +133,35 @@ namespace Player
                 {
                     Vector3 offset = _huton.position - transform.position;
                     transform.position = new Vector3(transform.position.x, transform.position.y + offset.y, transform.position.z);
+                    _animator.SetBool("Sleep", true);
+                }
+                else
+                {
+                    _animator.SetBool("Sleep", false);
                 }
 
                 if (_currentMakuras.Count > 0 && !_isSleep)
                 {
                     RotateShowMakura();
-                    // for (int i = 0; i < ((_currentMakuras.Count == 2) ? 2 : 1); i++)
-                    // {
-                    //     _currentMakuraDisplays[i].SetActive(true);
-                    // }
                 }
                 if (_currentMakuras.Count == 0 || _isSleep)
                 {
                     _currentMakuraDisplays[0].SetActive(false);
+                    _currentMakuraDisplays[0].transform.GetChild(0).gameObject.SetActive(true);
                     _currentMakuraDisplays[1].SetActive(false);
                 }
                 else if (_currentMakuras.Count == 1)
                 {
                     _currentMakuraDisplays[0].SetActive(true);
+                    _currentMakuraDisplays[0].transform.GetChild(0).gameObject.SetActive(true);
                     _currentMakuraDisplays[1].SetActive(false);
                 }
                 else if (_currentMakuras.Count == 2)
                 {
                     _currentMakuraDisplays[0].SetActive(true);
+                    _currentMakuraDisplays[0].transform.GetChild(0).gameObject.SetActive(true);
                     _currentMakuraDisplays[1].SetActive(true);
+                    _currentMakuraDisplays[1].transform.GetChild(0).gameObject.SetActive(false);
                 }
                 if (IsHuton() || _currentMakuras.Count > 0 && _isPushed && _currentMakuras[0].GetComponent<MakuraController>().CurrentColorType == ColorChanger.ColorType.Nomal)
                 {
@@ -167,7 +172,6 @@ namespace Player
                     else
                     {
                         _speed = 2.0f;
-
                     }
                 }
                 else
@@ -325,10 +329,12 @@ namespace Player
                     if (holdTime < _keyLongPressTime)
                     {
                         ThrowMakura(ThrowType.Nomal);
+                        _animator.SetTrigger("Throw");
                     }
                     else
                     {
                         ThrowMakura(ThrowType.Charge);
+                        _animator.SetTrigger("Throw");
                     }
 
                     _isChargeTime = false;
@@ -338,7 +344,7 @@ namespace Player
 
         private void FixedUpdate()
         {
-            Vector3 gravityForce = new Vector3(0, _gravity, 0);
+            Vector3 gravityForce = new Vector3(0, C_gravity, 0);
             _rb.AddForce(gravityForce, ForceMode.Acceleration);
         }
 
@@ -356,13 +362,29 @@ namespace Player
 
                 if (_movement.magnitude > 0.1f)
                 {
-                    _animator.SetBool("Walk", true);
+                    if (_isSpeedUp)
+                    {
+                        _animator.SetBool("Run", true);
+                        _animator.SetBool("Walk", false);
+                    }
+                    else
+                    {
+                        _animator.SetBool("Walk", true);
+                        _animator.SetBool("Run", false);
+                    }
                     transform.rotation = Quaternion.LookRotation(_movement);
                     _lastDirection = transform.rotation;
                 }
                 else
                 {
-                    _animator.SetBool("Walk", false);
+                    if (_isSpeedUp)
+                    {
+                        _animator.SetBool("Run", false);
+                    }
+                    else
+                    {
+                        _animator.SetBool("Walk", false);
+                    }
                     transform.rotation = _lastDirection;
                 }
             }
@@ -396,6 +418,7 @@ namespace Player
                     {
                         _jumpHoldTime = 0f;
                         _isJumping = true;
+                        _animator.SetTrigger("Jump");
                     }
                 }
                 else

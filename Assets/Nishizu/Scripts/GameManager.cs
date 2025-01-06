@@ -121,7 +121,8 @@ public class GameManager : MonoBehaviour
 
                 foreach (var player in _players)
                 {
-                    if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
+                    // if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
+                    if (SleepCheck(_players) && player.GetComponent<PlayerController>().IsGameStartCheck)
                     {
                         _isGameStartCheck = true;
                     }
