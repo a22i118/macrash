@@ -437,20 +437,19 @@ namespace Player
                 {
                     if (IsGround())
                     {
-                        _jumpHoldTime = 0f;
+                        _jumpHoldTime = 0.0f;
                         _isJumping = true;
                         _animator.SetTrigger("Jump");
                     }
                 }
-                else
+            }
+            else
+            {
+                if (_isJumping)
                 {
-                    if (_isJumping)
-                    {
-                        _isJumping = false;
-                    }
+                    _isJumping = false;
                 }
             }
-
         }
 
         private void Jump()
@@ -480,29 +479,17 @@ namespace Player
         }
         private void RotateShowMakura()
         {
-            // if (_currentMakuraDisplay != null)
-            // {
-            //     _rotationAngle += _rotationSpeed * Time.deltaTime;
+            _rotationAngle += _rotationSpeed * Time.deltaTime;
 
-            //     Vector3 offset = new Vector3(Mathf.Cos(_rotationAngle * Mathf.Deg2Rad) * _showRadius, 1.0f, Mathf.Sin(_rotationAngle * Mathf.Deg2Rad) * _showRadius);
-            //     _currentMakuraDisplay.transform.position = transform.position + offset;
+            Vector3 offset1 = new Vector3(Mathf.Cos(_rotationAngle * Mathf.Deg2Rad) * _showRadius, 1.0f, Mathf.Sin(_rotationAngle * Mathf.Deg2Rad) * _showRadius);
+            _currentMakuraDisplays[0].transform.position = transform.position + offset1;
 
-            //     _currentMakuraDisplay.transform.LookAt(transform.position);
-            // }
-            // if (_currentMakuraDisplays != null)
-            {
-                _rotationAngle += _rotationSpeed * Time.deltaTime;
+            Vector3 offset2 = new Vector3(Mathf.Cos((_rotationAngle + 180f) * Mathf.Deg2Rad) * _showRadius, 1.0f, Mathf.Sin((_rotationAngle + 180f) * Mathf.Deg2Rad) * _showRadius);
+            _currentMakuraDisplays[1].transform.position = transform.position + offset2;
 
-                Vector3 offset1 = new Vector3(Mathf.Cos(_rotationAngle * Mathf.Deg2Rad) * _showRadius, 1.0f, Mathf.Sin(_rotationAngle * Mathf.Deg2Rad) * _showRadius);
-                _currentMakuraDisplays[0].transform.position = transform.position + offset1;
+            _currentMakuraDisplays[0].transform.LookAt(transform.position);
 
-                Vector3 offset2 = new Vector3(Mathf.Cos((_rotationAngle + 180f) * Mathf.Deg2Rad) * _showRadius, 1.0f, Mathf.Sin((_rotationAngle + 180f) * Mathf.Deg2Rad) * _showRadius);
-                _currentMakuraDisplays[1].transform.position = transform.position + offset2;
-
-                _currentMakuraDisplays[0].transform.LookAt(transform.position);
-
-                _currentMakuraDisplays[1].transform.LookAt(transform.position);
-            }
+            _currentMakuraDisplays[1].transform.LookAt(transform.position);
         }
         private void MakuraDisplayColorChange()
         {

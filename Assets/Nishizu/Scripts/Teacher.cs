@@ -23,15 +23,6 @@ public class Teacher : MonoBehaviour
     }
 
     // Update is called once per frame
-    // void Update()
-    // {
-    //     if (_isGameStart)
-    //     {
-    //         _animator.SetBool("Walk", true);
-
-    //         transform.position = Vector3.Lerp(transform.position, new Vector3(0.0f, 0.0f, 10.0f), Time.deltaTime);
-    //     }
-    // }
     void Update()
     {
         if (_isGameStart)
@@ -64,6 +55,7 @@ public class Teacher : MonoBehaviour
     }
     public void Angry(Transform targetTransform)
     {
+        _animator.SetTrigger("Attack");
         StartCoroutine(AngryText());
         GameObject makura = Instantiate(_objMakura, transform.position + new Vector3(0.0f, 0.0f, -3.0f), Quaternion.identity);
         makura.GetComponent<TeaherMakuraController>().Target = targetTransform;
