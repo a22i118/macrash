@@ -25,6 +25,7 @@ namespace Player
         private bool _isHitStop = false;//止まっているか
         private bool _isJumping = false;//ジャンプ中か
         private bool _isChargeTime = false;//ため攻撃中か
+        private bool _isThrowCoolTime = false;
         private bool _isCanCatch = false;//ジャストキャッチ可能か
         private bool _isVibrating = false;
         private bool _isHitCoolTime = false;
@@ -36,6 +37,7 @@ namespace Player
         private bool _isResultEnd = false;
         private bool _isGameEndCheck = false;
         private bool _isSpeedUp = false;
+        private bool _isTeacherMakuraHit = false;
         private int _playerIndex;
         private const float C_gravity = -25.0f;
         private float _speed = 5.0f;//プレイヤーの移動速度
@@ -126,9 +128,16 @@ namespace Player
             }
             if (!_isGameEnd)
             {
-                Jump();
                 IsCheckPlayer();
                 MakuraDisplayColorChange();
+                if (IsGround())
+                {
+                    _animator.SetBool("OnGround", true);
+                }
+                else
+                {
+                    _animator.SetBool("OnGround", false);
+                }
                 if (_isSleep)
                 {
                     Vector3 offset = _huton.position - transform.position;
@@ -185,9 +194,10 @@ namespace Player
                         _speed = 4.0f;
                     }
                 }
-                if (!_isHitStop && !_isSleep && !_isVibrating)
+                if (!_isHitStop && !_isSleep && !_isVibrating && !_isTeacherMakuraHit)
                 {
                     Move();
+                    Jump();
                     if (_isGameStart)
                     {
                         MakuraThrow();
@@ -298,7 +308,7 @@ namespace Player
         }
         private void OnThrow(InputValue value)
         {
-            if (!_isSleep && !_isHitStop && _currentMakuras.Count > 0)
+            if (!_isSleep && !_isHitStop)
             {
                 if (value.isPressed)
                 {
@@ -312,32 +322,43 @@ namespace Player
         }
         private void MakuraThrow()
         {
-            if (_currentMakuras.Count > 0)
+            if (!_isThrowCoolTime)
             {
-                if (_isPushed)
+                if (_currentMakuras.Count > 0)
                 {
-                    if (!_isChargeTime)
+                    if (_isPushed)
                     {
-                        _keyHoldTime = Time.time;
-                        _isChargeTime = true;
+                        if (!_isChargeTime)
+                        {
+                            _keyHoldTime = Time.time;
+                            _isChargeTime = true;
+                        }
+                    }
+                    else if (_isChargeTime && !_isPushed)
+                    {
+                        float holdTime = Time.time - _keyHoldTime;
+
+                        if (holdTime < _keyLongPressTime)
+                        {
+                            ThrowMakura(ThrowType.Nomal);
+                            _animator.SetTrigger("Throw");
+                        }
+                        else
+                        {
+                            ThrowMakura(ThrowType.Charge);
+                            _animator.SetTrigger("Throw");
+                        }
+
+                        _isChargeTime = false;
                     }
                 }
-                else if (_isChargeTime && !_isPushed)
+                else
                 {
-                    float holdTime = Time.time - _keyHoldTime;
-
-                    if (holdTime < _keyLongPressTime)
+                    if (_isPushed)
                     {
-                        ThrowMakura(ThrowType.Nomal);
                         _animator.SetTrigger("Throw");
+                        StartCoroutine(ThrowCoolTimeCorountine());
                     }
-                    else
-                    {
-                        ThrowMakura(ThrowType.Charge);
-                        _animator.SetTrigger("Throw");
-                    }
-
-                    _isChargeTime = false;
                 }
             }
         }
@@ -456,14 +477,6 @@ namespace Player
                 float jumpForce = Mathf.Lerp(_minJumpForce, _maxJumpForce, _jumpHoldTime / _maxJumpHoldTime);
                 _rb.velocity = new Vector3(_rb.velocity.x, jumpForce, _rb.velocity.z);
             }
-            // if (!IsGround())
-            // {
-            //     _animator.SetBool("Jump", true);
-            // }
-            // else
-            // {
-            //     _animator.SetBool("Jump", false);
-            // }
         }
         private void RotateShowMakura()
         {
@@ -663,6 +676,8 @@ namespace Player
         private void Sleep()
         {
             _animator.SetBool("Walk", false);
+            _animator.SetBool("Run", false);
+            _animator.SetBool("Sleep", true);
             _rb.isKinematic = true;
             _isSleep = true;
 
@@ -682,6 +697,8 @@ namespace Player
         public void ResultSleep(ResultHutonController resultHutonController)
         {
             _animator.SetBool("Walk", false);
+            _animator.SetBool("Run", false);
+            _animator.SetBool("Sleep", true);
             _rb.isKinematic = true;
 
             transform.rotation = resultHutonController.GetRotation();
@@ -882,10 +899,16 @@ namespace Player
             yield return new WaitForSeconds(1.0f);
             _isCounterAttackTime = false;
         }
-
+        private IEnumerator ThrowCoolTimeCorountine()
+        {
+            _isThrowCoolTime = true;
+            yield return new WaitForSeconds(0.5f);
+            _isThrowCoolTime = false;
+        }
         private IEnumerator TeacherMakuraHit()
         {
             bool makuraHit = false;
+            _isTeacherMakuraHit = true;
             Vector3 hitPosition = new Vector3(transform.position.x, 0, transform.position.z);
 
             float elapsedTime = 0.0f;
@@ -903,11 +926,13 @@ namespace Player
                 elapsedTime += Time.deltaTime;
                 if (_isHitStop)
                 {
+                    _isTeacherMakuraHit = false;
                     makuraHit = true;
                     break;
                 }
                 yield return null;
             }
+            _isTeacherMakuraHit = false;
             if (!makuraHit)
             {
                 transform.position = hitPosition;

@@ -7,22 +7,59 @@ public class Teacher : MonoBehaviour
     [SerializeField] private GameObject _objMakura;
     [SerializeField] private GameObject _teacherGuide;
     private bool _isGameStart = false;
+    private Animator _animator;
     private TextMeshProUGUI _teacherComent;
     public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
+
+    private bool _isRotateOnce = false;
+    private bool _isCanMove = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = new Vector3(0.0f, 1.0f, 6.0f);
+        _animator = GetComponent<Animator>();
+        transform.position = new Vector3(0.0f, 0.0f, 6.5f);
         _teacherComent = _teacherGuide.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
+    // void Update()
+    // {
+    //     if (_isGameStart)
+    //     {
+    //         _animator.SetBool("Walk", true);
+
+    //         transform.position = Vector3.Lerp(transform.position, new Vector3(0.0f, 0.0f, 10.0f), Time.deltaTime);
+    //     }
+    // }
     void Update()
     {
         if (_isGameStart)
         {
-            transform.position = Vector3.Lerp(transform.position, new Vector3(0.0f, 1.0f, 10.0f), Time.deltaTime);
+            _animator.SetBool("Walk", true);
+            if (!_isRotateOnce)
+            {
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+                _isRotateOnce = true;
+            }
+
+            if (_isRotateOnce && !_isCanMove)
+            {
+                Vector3 targetPosition = new Vector3(0.0f, 0.0f, 10.0f);
+                transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime);
+
+                if (Vector3.Distance(transform.position, targetPosition) < 1.0f)
+                {
+                    _isCanMove = true;
+                }
+            }
+
+            if (_isCanMove)
+            {
+                transform.rotation = Quaternion.Euler(0, 180, 0);
+                _isGameStart = false;
+                _animator.SetBool("Walk", false);
+            }
         }
     }
     public void Angry(Transform targetTransform)
