@@ -11,10 +11,14 @@ public class ScoreManager : MonoBehaviour
     private bool _isPlayerSet = true;
     private Dictionary<int, int> _scoreNum = new Dictionary<int, int>();
     private List<TextMeshProUGUI> _scores = new List<TextMeshProUGUI>();
+    private List<GameObject> _scoreCrown = new List<GameObject>();
+    private List<GameObject> _playerTagCrown = new List<GameObject>();
     public List<TextMeshProUGUI> Scores { get => _scores; set => _scores = value; }
     public bool IsGameStart { get => _isGameStart; set => _isGameStart = value; }
     public bool IsGameEnd { get => _isGameEnd; set => _isGameEnd = value; }
     public Dictionary<int, int> ScoreNum { get => _scoreNum; set => _scoreNum = value; }
+    public List<GameObject> ScoreCrown { get => _scoreCrown; set => _scoreCrown = value; }
+    public List<GameObject> PlayerTagCrown { get => _playerTagCrown; set => _playerTagCrown = value; }
 
     void Start()
     {
@@ -28,6 +32,19 @@ public class ScoreManager : MonoBehaviour
             {
                 InitializeScore();
                 _isPlayerSet = false;
+            }
+            for (int i = 0; i < _scores.Count; i++)
+            {
+                if (IsValueMax(i))
+                {
+                    _scoreCrown[i].SetActive(true);
+                    _playerTagCrown[i].SetActive(true);
+                }
+                else
+                {
+                    _scoreCrown[i].SetActive(false);
+                    _playerTagCrown[i].SetActive(false);
+                }
             }
         }
     }

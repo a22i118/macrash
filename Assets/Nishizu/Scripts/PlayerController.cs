@@ -260,10 +260,11 @@ namespace Player
                     _playerTagUIInstance.transform.rotation = Quaternion.LookRotation(directionToCamera);
                     _playerTagUIInstance.transform.Rotate(0, 180, 0);
                     _playerTagUIInstance.transform.SetParent(canvas.transform, false);
+
                 }
                 else
                 {
-                    _spGageInstance = Instantiate(_spGageUI, new Vector2(500.0f + 340.0f * _playerIndex, 150.0f), Quaternion.identity);
+                    _spGageInstance = Instantiate(_spGageUI, new Vector2(640.0f + 260.0f * _playerIndex, 140.0f), Quaternion.identity);
                     TextMeshProUGUI text = _spGageInstance.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
                     text.text = _playerIndex + 1 + " P";
 
@@ -275,6 +276,8 @@ namespace Player
 
                     ScoreManager scoreManager = canvas.transform.GetChild(1).GetComponent<ScoreManager>();
                     scoreManager.Scores.Add(_spGageInstance.transform.GetChild(1).GetComponent<TextMeshProUGUI>());
+                    scoreManager.ScoreCrown.Add(_spGageInstance.transform.GetChild(3).gameObject);
+                    scoreManager.PlayerTagCrown.Add(_playerTagUIInstance.transform.GetChild(2).gameObject);
                 }
             }
         }
