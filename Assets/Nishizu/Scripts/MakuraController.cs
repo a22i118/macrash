@@ -20,7 +20,7 @@ public class MakuraController : ColorChanger
     private float _vibrationStrength = 0.05f;
     private float _vibrationTime = 0.2f;
     private float _throwedTime = 3.0f;
-    private float _trailRate = 2.0f;
+    // private float _trailRate = 2.0f;
     private Rigidbody _rb;
     private Collider _col;
     private Vector3 _trailPos;
@@ -143,7 +143,7 @@ public class MakuraController : ColorChanger
                         _rb.velocity = Vector3.zero;
                         StartCoroutine(HitStopVibration());
                         StartCoroutine(HitCoolTime());
-                        _scoreManager.UpdateScore(_thrower.name, collision.gameObject.name);
+                        _scoreManager.UpdateScore(_thrower.name, collision.gameObject.name, false);
                     }
                 }
                 else if (!playerController.IsHitCoolTime && !_isHitCoolTimeOne)
@@ -157,7 +157,7 @@ public class MakuraController : ColorChanger
                     _rb.velocity = Vector3.zero;
                     StartCoroutine(HitStopVibration());
                     StartCoroutine(HitCoolTime());
-                    _scoreManager.UpdateScore(_thrower.name, collision.gameObject.name);
+                    _scoreManager.UpdateScore(_thrower.name, collision.gameObject.name, playerController.IsSleep);
                 }
             }
             if (collision.gameObject.CompareTag("Makura"))

@@ -56,7 +56,7 @@ public class ScoreManager : MonoBehaviour
             _scores[i].text = _scoreNum[i].ToString();
         }
     }
-    public void UpdateScore(string player, string hitPlayer)
+    public void UpdateScore(string player, string hitPlayer, bool isSleep)
     {
         int playerIndex = -1;
         int hitPlayerIndex = -1;
@@ -99,6 +99,10 @@ public class ScoreManager : MonoBehaviour
                     _scoreNum[playerIndex] += 2;
                 }
                 else
+                {
+                    _scoreNum[playerIndex]++;
+                }
+                if (isSleep)
                 {
                     _scoreNum[playerIndex]++;
                 }

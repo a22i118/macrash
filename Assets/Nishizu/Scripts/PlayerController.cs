@@ -74,6 +74,8 @@ namespace Player
         private List<ShowMakuraController> _showMakuraControllers = new List<ShowMakuraController>();
         private Transform _huton;
         private Vector3 _movement;
+        private Vector3 _nomalColliderCenter;
+        private Vector3 _sleepColliderCenter;
         private GameObject _spGageInstance;
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
         public bool IsCanSleep { get => _isCanSleep; set => _isCanSleep = value; }
@@ -211,6 +213,8 @@ namespace Player
             _animator = GetComponent<Animator>();
             _col = GetComponent<CapsuleCollider>();
             _playerStatus = GetComponent<PlayerStatus>();
+            _nomalColliderCenter = _col.center;
+            _sleepColliderCenter = _nomalColliderCenter + new Vector3(0, 0, 1);
             if (_showMakura != null)
             {
                 _currentMakuraDisplays[0] = Instantiate(_showMakura);
@@ -643,11 +647,14 @@ namespace Player
             }
             if (collider.CompareTag("TeaherMakura"))
             {
-                _animator.SetBool("Walk", false);
-                HitMotion(true);
-                if (!_isVibrating)
+                if (collider.gameObject.GetComponent<TeaherMakuraController>().TargetPlayer == gameObject)
                 {
-                    StartCoroutine(TeacherMakuraHit());
+                    _animator.SetBool("Walk", false);
+                    HitMotion(true);
+                    if (!_isVibrating)
+                    {
+                        StartCoroutine(TeacherMakuraHit());
+                    }
                 }
             }
         }
@@ -670,6 +677,8 @@ namespace Player
             _animator.SetBool("Sleep", true);
             _rb.isKinematic = true;
             _isSleep = true;
+
+            _col.center = _sleepColliderCenter;
 
             Vector3 hutonPosition = _currentHutonController.GetCenterPosition();
             transform.position = new Vector3(hutonPosition.x, hutonPosition.y, hutonPosition.z - 0.8f);
@@ -712,7 +721,7 @@ namespace Player
             {
                 _rb.isKinematic = true;
                 _col.enabled = false;
-
+                _col.center = _nomalColliderCenter;
                 _currentHutonController.Makura.SetActive(false);
                 Vector3 hutonPosition = _currentHutonController.GetCenterPosition();
                 transform.position = new Vector3(hutonPosition.x, hutonPosition.y + 0.04f, hutonPosition.z);
@@ -858,8 +867,10 @@ namespace Player
         /// </summary>
         private void HitMotion(bool teacher)
         {
-            _rb.velocity = Vector3.zero;
-
+            if (!_rb.isKinematic)
+            {
+                _rb.velocity = Vector3.zero;
+            }
             if (!teacher)
             {
                 _isHitStop = true;
