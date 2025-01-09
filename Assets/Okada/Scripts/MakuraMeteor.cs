@@ -45,7 +45,7 @@ public class MakuraMeteor : MonoBehaviour
         //‚à‚Ì‚É“–‚½‚Á‚½‚çƒv[ƒ‹‚É•Ô‚·
         if (gameObject.activeSelf)
         {
-
+            _onDisable?.Invoke();
             gameObject.SetActive(false);
             // StartCoroutine(DestroyMeteorCoroutine());
         }
