@@ -214,7 +214,7 @@ namespace Player
             _col = GetComponent<CapsuleCollider>();
             _playerStatus = GetComponent<PlayerStatus>();
             _nomalColliderCenter = _col.center;
-            _sleepColliderCenter = _nomalColliderCenter + new Vector3(0, 0, 1);
+            _sleepColliderCenter = _nomalColliderCenter + new Vector3(0, -0.2f, 1);
             if (_showMakura != null)
             {
                 _currentMakuraDisplays[0] = Instantiate(_showMakura);
