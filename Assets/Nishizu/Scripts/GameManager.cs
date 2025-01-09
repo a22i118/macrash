@@ -121,8 +121,8 @@ public class GameManager : MonoBehaviour
 
                 foreach (var player in _players)
                 {
-                    // if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
-                    if (SleepCheck(_players) && player.GetComponent<PlayerController>().IsGameStartCheck)//デバッグ用
+                    if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
+                    // if (SleepCheck(_players) && player.GetComponent<PlayerController>().IsGameStartCheck)//デバッグ用
                     {
                         _isGameStartCheck = true;
                     }
@@ -235,7 +235,7 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     private IEnumerator TeacherEvent()
     {
-        yield return new WaitForSeconds(30.0f);
+        yield return new WaitForSeconds(60.0f);
         if (_isGameStart)
         {
             _event.TeacherEvent.Init(_playerControllers);
