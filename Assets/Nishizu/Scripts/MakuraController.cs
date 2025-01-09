@@ -136,7 +136,7 @@ public class MakuraController : ColorChanger
                     ThrowMakuraDemo throwMakuraDemo = collision.gameObject.GetComponent<ThrowMakuraDemo>();
                     if (!throwMakuraDemo.IsHitCoolTime)
                     {
-                        _currentScaleType = ScaleType.Nomal;
+                        StartCoroutine(ScaleResetDeray());
                         _rb.useGravity = true;
                         _rb.isKinematic = true;
                         _rb.isKinematic = false;
@@ -150,7 +150,7 @@ public class MakuraController : ColorChanger
                 {
                     _isHitCoolTimeOne = true;
                     StartCoroutine(HitCoolTimeDelay());
-                    _currentScaleType = ScaleType.Nomal;
+                    StartCoroutine(ScaleResetDeray());
                     _rb.useGravity = true;
                     _rb.isKinematic = true;
                     _rb.isKinematic = false;
@@ -163,7 +163,7 @@ public class MakuraController : ColorChanger
             if (collision.gameObject.CompareTag("Makura"))
             {
                 _isThrow = false;
-                _currentScaleType = ScaleType.Nomal;
+                StartCoroutine(ScaleResetDeray());
                 _rb.useGravity = true;
                 _rb.velocity = Vector3.zero;
                 transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
@@ -178,7 +178,7 @@ public class MakuraController : ColorChanger
         {
             _isThrow = false;
             _isCounterAttack = false;
-            _currentScaleType = ScaleType.Nomal;
+            StartCoroutine(ScaleResetDeray());
             transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles.x, transform.rotation.eulerAngles.y, _initialRotation.eulerAngles.z);
             if (!_rb.isKinematic)
             {
@@ -460,5 +460,10 @@ public class MakuraController : ColorChanger
     {
         yield return new WaitForSeconds(0.01f);
         _isHitCoolTimeOne = false;
+    }
+    private IEnumerator ScaleResetDeray()
+    {
+        yield return new WaitForSeconds(0.01f);
+        _currentScaleType = ScaleType.Nomal;
     }
 }
