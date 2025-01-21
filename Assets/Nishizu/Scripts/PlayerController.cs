@@ -24,13 +24,15 @@ namespace Player
         private bool _isCanSleep = false;
         private bool _isHitStop = false;//止まっているか
         private bool _isJumping = false;//ジャンプ中か
-        private bool _isChargeTime = false;//ため攻撃中か
+        private bool _isThrowChargeTime = false;//ため攻撃中か
+        private bool _isSleepChargeTime = false;
         private bool _isThrowCoolTime = false;
         private bool _isCanCatch = false;//ジャストキャッチ可能か
         private bool _isVibrating = false;
         private bool _isHitCoolTime = false;
         private bool _isCounterAttackTime = false;
-        private bool _isPushed = false;
+        private bool _isThrowKeyPushed = false;
+        private bool _isPickUpKeyPushed = false;
         private bool _isGameStart = false;
         private bool _isGameStartCheck = false;
         private bool _isGameEnd = false;
@@ -44,13 +46,14 @@ namespace Player
         private float _groundCheckRadius = 0.01f;//足元が地面か判定する球の半径
         private float _pickUpDistance = 1.0f;//まくらを拾うことができる距離
         private float _playerSerchDistance = 5.0f;//敵プレイヤーの捜索範囲
-        private float _keyHoldTime;//長押ししている時間
-        private float _keyLongPressTime = 0.5f;//ため攻撃にかかる時間
+        private float _throwKeyHoldTime;//長押ししている時間
+        private float _pickUpKeyHoldTime;
+        private float _throwKeyLongPressTime = 0.5f;//ため攻撃にかかる時間
         private float _rotationSpeed = 200.0f;//持っているまくらの回転速度
         private float _showRadius = 0.6f;//プレイヤーからのまくらの距離
         private float _rotationAngle;
         private float _vibrationStrength = 0.3f;//振動の強さ
-        private float _vibrationTime = 0.3f;//振動する時間
+        private float _vibrationTime = 0.1f;//振動する時間
         private float _jumpHoldTime = 0f;//ジャンプキーが押されている時間
         private float _maxJumpHoldTime = 0.2f;//最大ジャンプの押す時間
         private float _minJumpForce = 6.5f;//最小ジャンプ力
@@ -174,7 +177,7 @@ namespace Player
                     _currentMakuraDisplays[1].SetActive(true);
                     _currentMakuraDisplays[1].transform.GetChild(0).gameObject.SetActive(false);
                 }
-                if (IsHuton() || _currentMakuras.Count > 0 && _isPushed && _currentMakuras[0].GetComponent<MakuraController>().CurrentColorType == ColorChanger.ColorType.Nomal)
+                if (IsHuton() || _currentMakuras.Count > 0 && _isThrowKeyPushed && _currentMakuras[0].GetComponent<MakuraController>().CurrentColorType == ColorChanger.ColorType.Nomal)
                 {
                     if (_isSpeedUp)
                     {
@@ -196,14 +199,18 @@ namespace Player
                         _speed = 4.0f;
                     }
                 }
-                if (!_isHitStop && !_isSleep && !_isVibrating && !_isTeacherMakuraHit)
+                if (!_isHitStop && !_isVibrating && !_isTeacherMakuraHit)
                 {
-                    Move();
-                    Jump();
-                    if (_isGameStart)
+                    if (!_isSleep)
                     {
-                        MakuraThrow();
+                        Move();
+                        Jump();
+                        if (_isGameStart)
+                        {
+                            MakuraThrow();
+                        }
                     }
+                    Sleep_WakeUp();
                 }
             }
         }
@@ -297,33 +304,45 @@ namespace Player
                 }
             }
         }
-        private void OnSleep_WakeUp(InputValue value)
+        private void Sleep_WakeUp()
         {
-            if (value.isPressed)
+            if (_isPickUpKeyPushed && IsHuton())
             {
-                if (_isSleep && _isCanSleep || !_isGameStart && _isSleep)
+                if (!_isSleepChargeTime)
                 {
-                    WakeUp();
-                    transform.SetParent(null);
+                    _pickUpKeyHoldTime = Time.time;
+                    _isSleepChargeTime = true;
                 }
-                if (!_isSleep && !_isHitStop && _currentMakuras.Count > 0 && IsHuton() && _isCanSleep || !_isGameStart && !_isSleep && _currentMakuras.Count > 0 && IsHuton())
+
+                float holdTime = Time.time - _pickUpKeyHoldTime;
+
+                if (holdTime > 1.0f)
                 {
-                    transform.SetParent(_currentHuton);
-                    Sleep();
+                    if (!_isSleep && !_isHitStop && _currentMakuras.Count > 0 && _isCanSleep || !_isGameStart && !_isSleep && _currentMakuras.Count > 0)
+                    {
+                        transform.SetParent(_currentHuton);
+                        Sleep();
+                    }
+                    _isSleepChargeTime = false;
                 }
             }
+            else
+            {
+                _isSleepChargeTime = false;
+            }
         }
+
         private void OnThrow(InputValue value)
         {
             if (!_isSleep && !_isHitStop)
             {
                 if (value.isPressed)
                 {
-                    _isPushed = true;
+                    _isThrowKeyPushed = true;
                 }
                 else
                 {
-                    _isPushed = false;
+                    _isThrowKeyPushed = false;
                 }
             }
         }
@@ -333,19 +352,19 @@ namespace Player
             {
                 if (_currentMakuras.Count > 0)
                 {
-                    if (_isPushed)
+                    if (_isThrowKeyPushed)
                     {
-                        if (!_isChargeTime)
+                        if (!_isThrowChargeTime)
                         {
-                            _keyHoldTime = Time.time;
-                            _isChargeTime = true;
+                            _throwKeyHoldTime = Time.time;
+                            _isThrowChargeTime = true;
                         }
                     }
-                    else if (_isChargeTime && !_isPushed)
+                    else if (_isThrowChargeTime && !_isThrowKeyPushed)
                     {
-                        float holdTime = Time.time - _keyHoldTime;
+                        float holdTime = Time.time - _throwKeyHoldTime;
 
-                        if (holdTime < _keyLongPressTime)
+                        if (holdTime < _throwKeyLongPressTime)
                         {
                             ThrowMakura(ThrowType.Nomal);
                             _animator.SetTrigger("Throw");
@@ -356,12 +375,12 @@ namespace Player
                             _animator.SetTrigger("Throw");
                         }
 
-                        _isChargeTime = false;
+                        _isThrowChargeTime = false;
                     }
                 }
                 else
                 {
-                    if (_isPushed)
+                    if (_isThrowKeyPushed)
                     {
                         _animator.SetTrigger("Throw");
                         StartCoroutine(ThrowCoolTimeCorountine());
@@ -514,10 +533,6 @@ namespace Player
                 }
             }
         }
-        private void SpecialAttack()
-        {
-            //Q
-        }
         /// <summary>
         /// 近くに枕があることを返す
         /// </summary>
@@ -537,10 +552,11 @@ namespace Player
             return false;
         }
 
-        private void OnPickUp_Catch(InputValue value)
+        private void OnPickUp_Catch_WakeUp(InputValue value)
         {
             if (value.isPressed)
             {
+                _isPickUpKeyPushed = true;
                 if (!_isSleep && !_isHitStop && _currentMakuras.Count < 2)
                 {
                     if (_thrownMakura != null && _isCanCatch)
@@ -552,6 +568,15 @@ namespace Player
                         PickUpMakura();
                     }
                 }
+                if (_isSleep && _isCanSleep || !_isGameStart && _isSleep)
+                {
+                    WakeUp();
+                    transform.SetParent(null);
+                }
+            }
+            else
+            {
+                _isPickUpKeyPushed = false;
             }
         }
         /// <summary>

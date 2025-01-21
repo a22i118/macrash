@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     private bool _isGuideKind = true;
     private bool _isCoroutineSet = false;
     private float _gameTime = 180.0f;
+    private float _teacherEventTime = 60.0f;
     private string _startGuide = "コントローラーの接続を待っています... ";
     private ResultManager _resultManager;
     private PlayerInputManager _playerInputM;
@@ -235,13 +236,12 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     private IEnumerator TeacherEvent()
     {
-        yield return new WaitForSeconds(60.0f);
+        yield return new WaitForSeconds(_teacherEventTime);
         if (_isGameStart)
         {
             _event.TeacherEvent.Init(_playerControllers);
             StartCoroutine(TeacherEvent());
         }
-
     }
     /// <summary>
     /// ゲーム終了時の処理
