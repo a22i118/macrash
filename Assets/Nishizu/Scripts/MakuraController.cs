@@ -140,8 +140,8 @@ public class MakuraController : ColorChanger
                         _rb.useGravity = true;
                         _rb.isKinematic = true;
                         _rb.isKinematic = false;
-                        // _rb.velocity = Vector3.zero;
-                        // StartCoroutine(HitStopVibration());
+                        _rb.velocity = Vector3.zero;
+                        StartCoroutine(HitStopVibration());
                         StartCoroutine(HitCoolTime());
                         _scoreManager.UpdateScore(_thrower.name, collision.gameObject.name, false);
                     }
@@ -152,10 +152,11 @@ public class MakuraController : ColorChanger
                     StartCoroutine(HitCoolTimeDelay());
                     StartCoroutine(ScaleResetDeray());
                     _rb.useGravity = true;
-                    // _rb.isKinematic = true;
-                    // _rb.isKinematic = false;
-                    // _rb.velocity = Vector3.zero;
-                    // StartCoroutine(HitStopVibration());
+                    _rb.isKinematic = true;
+                    _rb.isKinematic = false;
+                    _rb.velocity = Vector3.zero;
+                    StartCoroutine(HitStopVibration());
+                    // StartCoroutine(IgnoreCollisionTime(collision.gameObject.GetComponent<CapsuleCollider>()));
                     StartCoroutine(HitCoolTime());
                     _scoreManager.UpdateScore(_thrower.name, collision.gameObject.name, playerController.IsSleep);
                 }
@@ -465,5 +466,11 @@ public class MakuraController : ColorChanger
     {
         yield return new WaitForSeconds(0.01f);
         _currentScaleType = ScaleType.Nomal;
+    }
+    private IEnumerator IgnoreCollisionTime(Collider collider)
+    {
+        Physics.IgnoreCollision(collider, _col, true);
+        yield return new WaitForSeconds(2.1f);
+        Physics.IgnoreCollision(collider, _col, false);
     }
 }

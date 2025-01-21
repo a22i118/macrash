@@ -568,7 +568,7 @@ namespace Player
                         PickUpMakura();
                     }
                 }
-                if (_isSleep && _isCanSleep || !_isGameStart && _isSleep)
+                if (_isSleep && _isCanSleep)
                 {
                     WakeUp();
                     transform.SetParent(null);
