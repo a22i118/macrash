@@ -849,6 +849,11 @@ namespace Player
         }
         private IEnumerator HitStopVibration(bool isCounterAttack, float throwedTime, Transform makuratransform)
         {
+            if (Gamepad.all[_playerIndex] != null)
+            {
+                Gamepad.all[_playerIndex].SetMotorSpeeds(0.5f, 0.5f);
+                StartCoroutine(StopVibrationAfterDelay(0.5f));
+            }
             _isVibrating = true;
             Vector3 hitPosition = transform.position;
 
@@ -886,6 +891,14 @@ namespace Player
             yield return new WaitForSeconds(0.5f);
             _isVibrating = false;
             _isHitCoolTime = false;
+        }
+        private IEnumerator StopVibrationAfterDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            if (Gamepad.all[_playerIndex] != null)
+            {
+                Gamepad.all[_playerIndex].SetMotorSpeeds(0f, 0f);
+            }
         }
         /// <summary>
         /// 枕が当たったときのモーション
