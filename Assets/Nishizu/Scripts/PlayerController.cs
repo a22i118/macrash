@@ -851,8 +851,8 @@ namespace Player
         {
             if (Gamepad.all[_playerIndex] != null)
             {
-                Gamepad.all[_playerIndex].SetMotorSpeeds(0.5f, 0.5f);
-                StartCoroutine(StopVibrationAfterDelay(0.5f));
+                Gamepad.all[_playerIndex].SetMotorSpeeds(throwedTime / 3, throwedTime / 3);
+                StartCoroutine(StopVibrationAfterDelay());
             }
             _isVibrating = true;
             Vector3 hitPosition = transform.position;
@@ -892,9 +892,9 @@ namespace Player
             _isVibrating = false;
             _isHitCoolTime = false;
         }
-        private IEnumerator StopVibrationAfterDelay(float delay)
+        private IEnumerator StopVibrationAfterDelay()
         {
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSeconds(0.5f);
             if (Gamepad.all[_playerIndex] != null)
             {
                 Gamepad.all[_playerIndex].SetMotorSpeeds(0f, 0f);

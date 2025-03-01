@@ -70,7 +70,14 @@ public class MakuraController : ColorChanger
         if (_isThrow)
         {
             StartCoroutine(AutoUseGrabity());
-            _throwedTime -= Time.deltaTime;
+            if (_throwedTime <= 0.1f)
+            {
+                _throwedTime = 0.1f;
+            }
+            else
+            {
+                _throwedTime -= Time.deltaTime;
+            }
         }
         else
         {
