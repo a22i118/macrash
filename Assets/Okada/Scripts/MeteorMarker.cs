@@ -9,13 +9,13 @@ public class MeteorMarker : MonoBehaviour
     private float _accumulate; //経過時間
     //セットとなるメテオの取得
     private MakuraMeteor _meteor;
-    public MakuraMeteor MarkerMeteor { set =>_meteor = value; }
+    public MakuraMeteor MarkerMeteor { set => _meteor = value; }
     void Update()
     {
         //時間経過で消去
         _accumulate += Time.deltaTime;
 
-        if (! _meteor.gameObject.activeSelf)
+        if (!_meteor.gameObject.activeSelf)
         {
             _onDisable?.Invoke();
             gameObject.SetActive(false);

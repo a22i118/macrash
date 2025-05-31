@@ -11,7 +11,7 @@ public class MeteorEvent : MonoBehaviour
     private bool _isFall = false;
     private MeteorPool _meteorPool;
     private MeteorMarkerPool _markerPool;
-   [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] private LayerMask _groundLayer;
 
     void Start()
     {
@@ -53,15 +53,11 @@ public class MeteorEvent : MonoBehaviour
                 MeteorMarker _marker = _markerPool.GetGameObject();
                 _marker.MarkerMeteor = _meteor;
                 Physics.Raycast(_meteor.transform.position + Vector3.up * 10, Vector3.down, out RaycastHit hit, 30, _groundLayer);
-                _marker.transform.position = new Vector3(_finalposition_x, hit.point.y + 0.01f, _finalposition_z);
+                _marker.transform.position = new Vector3(_finalposition_x, hit.point.y + 3.0f, _finalposition_z);
+                _marker.transform.parent = hit.transform;
             }
 
             yield return null;
         }
     }
-
-
-
-
-
 }

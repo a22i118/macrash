@@ -12,13 +12,12 @@ public class MeteorMarkerPool : MonoBehaviour
 
     protected virtual void Awake()
     {
-        _pool = new ObjectPool<MeteorMarker>(OnCreatePooledObject, OnGetFromPool, OnReleaseToPool, OnDestroyPooledObject, true, _poolsize, _poolsize*2);
+        _pool = new ObjectPool<MeteorMarker>(OnCreatePooledObject, OnGetFromPool, OnReleaseToPool, OnDestroyPooledObject, true, _poolsize, _poolsize * 2);
     }
 
     protected virtual MeteorMarker OnCreatePooledObject()
     {
-
-        return Instantiate(_markerPrefab, _markerInitposition.position, Quaternion.identity);
+        return Instantiate(_markerPrefab, _markerInitposition.position, Quaternion.Euler(90, 0, 0));
     }
 
     private void OnGetFromPool(MeteorMarker obj)
