@@ -8,7 +8,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine.UI;
 using static UnityEngine.InputSystem.HID.HID;
-
+using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _hutons;
@@ -104,6 +104,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKey(KeyCode.Backspace))
+        {
+            SceneManager.LoadScene("MenuScene");
+        }
         if (!_isGameEnd)
         {
             if (_isGameStart)
@@ -130,8 +134,8 @@ public class GameManager : MonoBehaviour
 
                 foreach (var player in _players)
                 {
-                    //if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
-                    if (SleepCheck(_players) && player.GetComponent<PlayerController>().IsGameStartCheck)//デバッグ用
+                    if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
+                    // if (SleepCheck(_players) && player.GetComponent<PlayerController>().IsGameStartCheck)//デバッグ用
                     {
                         _isGameStartCheck = true;
                     }

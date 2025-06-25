@@ -29,13 +29,13 @@ namespace Player
         private void Update()
         {
             //デバッグ用
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                if (_currentSP < _maxSP && !_IsChargeMax)
-                {
-                    _currentSP += 10000;
-                }
-            }
+            // if (Input.GetKeyDown(KeyCode.C))
+            // {
+            //     if (_currentSP < _maxSP && !_IsChargeMax)
+            //     {
+            //         _currentSP += 10000;
+            //     }
+            // }
             if (_isGameStart)
             {
                 if (_isPlayerSet)
