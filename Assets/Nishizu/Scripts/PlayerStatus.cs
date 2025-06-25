@@ -28,6 +28,14 @@ namespace Player
 
         private void Update()
         {
+            //デバッグ用
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                if (_currentSP < _maxSP && !_IsChargeMax)
+                {
+                    _currentSP += 10000;
+                }
+            }
             if (_isGameStart)
             {
                 if (_isPlayerSet)
@@ -51,7 +59,10 @@ namespace Player
                 }
                 else
                 {
+                    _currentSP = _maxSP;
+                    _spBar.value = _currentSP;
                     _IsChargeMax = true;
+                    ChangeSPBarColor();
                 }
             }
 

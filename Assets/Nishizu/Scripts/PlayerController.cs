@@ -214,6 +214,12 @@ namespace Player
                     }
                     Sleep_WakeUp();
                 }
+                if (_currentMakuras.Count > 0 && !_isSleep && _playerStatus.IsChargeMax)
+                // if (_currentMakuras.Count > 0 && !_isSleep)//デバッグ用
+                {
+                    // _playerStatus.CurrentSP = 0;
+                    _currentMakuras[0].GetComponent<MakuraController>().CurrentScaleType = MakuraController.ScaleType.Second;
+                }
             }
         }
         private void Init()
@@ -377,11 +383,19 @@ namespace Player
                         if (holdTime < _throwKeyLongPressTime)
                         {
                             ThrowMakura(ThrowType.Nomal);
+                            if (_playerStatus.IsChargeMax)
+                            {
+                                _playerStatus.CurrentSP = 0;
+                            }
                             _animator.SetTrigger("Throw");
                         }
                         else
                         {
                             ThrowMakura(ThrowType.Charge);
+                            if (_playerStatus.IsChargeMax)
+                            {
+                                _playerStatus.CurrentSP = 0;
+                            }
                             _animator.SetTrigger("Throw");
                         }
 
