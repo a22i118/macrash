@@ -575,7 +575,17 @@ namespace Player
                     }
                     else if (CheckMakura())
                     {
-                        PickUpMakura();
+                        if (_currentMakuras.Count == 1)
+                        {
+                            if (_isGameStart)
+                            {
+                                PickUpMakura();
+                            }
+                        }
+                        else
+                        {
+                            PickUpMakura();
+                        }
                     }
                 }
                 if (_isSleep && _isCanSleep)
@@ -604,7 +614,6 @@ namespace Player
                     currentMakura = collider.gameObject;
                     currentMakura.transform.SetParent(null);
                     currentMakura.SetActive(false);
-
                     _currentMakuras.Add(currentMakura);
                     break;
                 }
@@ -725,8 +734,16 @@ namespace Player
             }
 
             transform.rotation = _currentHutonController.GetRotation();
-
-            Quaternion additionalRotation = Quaternion.AngleAxis(-81.0f, transform.right);
+            float angle;
+            if (_playerKinds == 0)
+            {
+                angle = -81.0f;
+            }
+            else
+            {
+                angle = -75.0f;
+            }
+            Quaternion additionalRotation = Quaternion.AngleAxis(angle, transform.right);
             transform.rotation = additionalRotation * transform.rotation;
         }
         public void ResultSleep(ResultHutonController resultHutonController)
