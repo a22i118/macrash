@@ -4569,6 +4569,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _warningPrefab: {fileID: 8672682206572891769, guid: 1e269fbea0b8c2f49b0295ee675439e2, type: 3}
   _generationTimeInterval: 1.285
+  _num: 1500
 --- !u!1001 &807797818
 PrefabInstance:
   m_ObjectHideFlags: 0

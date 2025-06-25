@@ -8,10 +8,10 @@ public class WarningUI : MonoBehaviour
     [SerializeField] private float _generationTimeInterval = 1.285f;
     private bool _isWarning = false;
     private bool _isNearingEnd = false;
-    private bool _isExecuteOnce = false;//一回だけ実行する
+    private bool _isExecuteOnce = false; //一回だけ実行する
     private float _timer = 0.0f;
     private float _generationInterval;
-    private Vector2 _spawnPosition = new Vector2(1320f, 500f);
+    public float _num = 1000f;
 
     // Start is called before the first frame update
     void Start()
@@ -42,30 +42,55 @@ public class WarningUI : MonoBehaviour
             }
         }
     }
+
     private void GeneratesWarning(bool isNearingEnd)
     {
         if (!isNearingEnd)
         {
-            GameObject warningTop = Instantiate(_warningPrefab, _spawnPosition, Quaternion.identity);
-            GameObject warningUnder = Instantiate(_warningPrefab, -_spawnPosition, Quaternion.identity);
-            warningTop.transform.SetParent(transform, false);
-            warningUnder.transform.SetParent(transform, false);
+            // 上部のWarning UIを生成
+            GameObject warningTop = Instantiate(_warningPrefab, transform);
+            RectTransform rectTransformTop = warningTop.GetComponent<RectTransform>();
+            rectTransformTop.anchorMin = new Vector2(0.5f, 1f); // 上部中央にアンカーを設定
+            rectTransformTop.anchorMax = new Vector2(0.5f, 1f);
+            rectTransformTop.pivot = new Vector2(0.5f, 0.5f); // ピボットを中央に
+            rectTransformTop.anchoredPosition = new Vector2(0f, -547f);
+
+            // 下部のWarning UIを生成
+            GameObject warningUnder = Instantiate(_warningPrefab, transform);
+            RectTransform rectTransformUnder = warningUnder.GetComponent<RectTransform>();
+            rectTransformUnder.anchorMin = new Vector2(0.5f, 0f); // 下部中央にアンカーを設定
+            rectTransformUnder.anchorMax = new Vector2(0.5f, 0f);
+            rectTransformUnder.pivot = new Vector2(0.5f, 0.5f); // ピボットを中央に
+            rectTransformUnder.anchoredPosition = new Vector2(0f, 547f);
             warningUnder.GetComponent<WarningMove>().Direction = false;
         }
         else
         {
             for (int i = 0; i < 4; i++)
             {
-                GameObject warningTop = Instantiate(_warningPrefab, _spawnPosition + new Vector2(_generationInterval * i, 0), Quaternion.identity);
-                GameObject warningUnder = Instantiate(_warningPrefab, -_spawnPosition - new Vector2(_generationInterval * i, 0), Quaternion.identity);
-                warningTop.transform.SetParent(transform, false);
-                warningUnder.transform.SetParent(transform, false);
+                // 上部のWarning UIを生成
+                GameObject warningTop = Instantiate(_warningPrefab, transform);
+                RectTransform rectTransformTop = warningTop.GetComponent<RectTransform>();
+                rectTransformTop.anchorMin = new Vector2(0.5f, 1f);
+                rectTransformTop.anchorMax = new Vector2(0.5f, 1f);
+                rectTransformTop.pivot = new Vector2(0.5f, 0.5f);
+                rectTransformTop.anchoredPosition = new Vector2(_generationInterval * i + _num, -547f); // スライドさせるためX軸を調整
+
+                // 下部のWarning UIを生成
+                GameObject warningUnder = Instantiate(_warningPrefab, transform);
+                RectTransform rectTransformUnder = warningUnder.GetComponent<RectTransform>();
+                rectTransformUnder.anchorMin = new Vector2(0.5f, 0f);
+                rectTransformUnder.anchorMax = new Vector2(0.5f, 0f);
+                rectTransformUnder.pivot = new Vector2(0.5f, 0.5f);
+                rectTransformUnder.anchoredPosition = new Vector2(-_generationInterval * i - _num, 547f); // スライドさせるためX軸を調整
+
                 warningTop.GetComponent<WarningMove>().StartCoroutine(warningTop.GetComponent<WarningMove>().FadeOutCoroutine());
                 warningUnder.GetComponent<WarningMove>().StartCoroutine(warningUnder.GetComponent<WarningMove>().FadeOutCoroutine());
                 warningUnder.GetComponent<WarningMove>().Direction = false;
             }
         }
     }
+
     public void Init()
     {
         _isWarning = true;
@@ -74,18 +99,31 @@ public class WarningUI : MonoBehaviour
         StartCoroutine(WarningCoroutine());
         for (int i = 0; i < 4; i++)
         {
-            GameObject warningTop = Instantiate(_warningPrefab, _spawnPosition - new Vector2(_generationInterval * i, 0), Quaternion.identity);
-            GameObject warningUnder = Instantiate(_warningPrefab, -_spawnPosition + new Vector2(_generationInterval * i, 0), Quaternion.identity);
+            // 上部のWarning UIを生成
+            GameObject warningTop = Instantiate(_warningPrefab, transform);
+            RectTransform rectTransformTop = warningTop.GetComponent<RectTransform>();
+            rectTransformTop.anchorMin = new Vector2(0.5f, 1f);
+            rectTransformTop.anchorMax = new Vector2(0.5f, 1f);
+            rectTransformTop.pivot = new Vector2(0.5f, 0.5f);
+            rectTransformTop.anchoredPosition = new Vector2(-_generationInterval * i + _num, -547f); // 初期位置を調整
+
+            // 下部のWarning UIを生成
+            GameObject warningUnder = Instantiate(_warningPrefab, transform);
+            RectTransform rectTransformUnder = warningUnder.GetComponent<RectTransform>();
+            rectTransformUnder.anchorMin = new Vector2(0.5f, 0f);
+            rectTransformUnder.anchorMax = new Vector2(0.5f, 0f);
+            rectTransformUnder.pivot = new Vector2(0.5f, 0.5f);
+            rectTransformUnder.anchoredPosition = new Vector2(_generationInterval * i - _num, 547f); // 初期位置を調整
+
             warningTop.GetComponent<WarningMove>().IsTransparent = true;
             warningUnder.GetComponent<WarningMove>().IsTransparent = true;
-            warningTop.transform.SetParent(transform, false);
-            warningUnder.transform.SetParent(transform, false);
             warningTop.GetComponent<WarningMove>().StartCoroutine(warningTop.GetComponent<WarningMove>().FadeInCoroutine());
             warningUnder.GetComponent<WarningMove>().StartCoroutine(warningUnder.GetComponent<WarningMove>().FadeInCoroutine());
 
             warningUnder.GetComponent<WarningMove>().Direction = false;
         }
     }
+
     private IEnumerator WarningCoroutine()
     {
         yield return new WaitForSeconds(1.0f);
