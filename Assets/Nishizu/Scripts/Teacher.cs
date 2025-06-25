@@ -64,6 +64,8 @@ public class Teacher : MonoBehaviour
     private IEnumerator AngryText()
     {
         _teacherGuide.SetActive(true);
+        _teacherGuide.transform.GetChild(0).gameObject.SetActive(false);
+        _teacherGuide.transform.GetChild(1).gameObject.SetActive(true);
         _teacherComent.text = "何で起きているんだ!!";
         yield return new WaitForSeconds(3.0f);
         _teacherGuide.SetActive(false);

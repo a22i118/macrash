@@ -711,6 +711,7 @@ namespace Player
             if (_currentHutonController != null)
             {
                 _currentHutonController.Makura.SetActive(true);
+                _currentHutonController.CanSleep = false;
             }
 
             transform.rotation = _currentHutonController.GetRotation();
@@ -748,6 +749,11 @@ namespace Player
                 _col.enabled = false;
                 _col.center = _nomalColliderCenter;
                 _currentHutonController.Makura.SetActive(false);
+                if (_isCanSleep)
+                {
+                    _currentHutonController.CanSleep = true;
+
+                }
                 Vector3 hutonPosition = _currentHutonController.GetCenterPosition();
                 transform.position = new Vector3(hutonPosition.x, hutonPosition.y + 0.04f, hutonPosition.z);
 

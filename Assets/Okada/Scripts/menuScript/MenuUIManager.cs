@@ -21,6 +21,7 @@ public class MenuUIManager : MonoBehaviour
     UItype _currenttype;
     [SerializeField] private GameObject _makura;
     [SerializeField] private GameObject _VSmenu;
+    [SerializeField] private GameObject _Tutorialmenu;
     [SerializeField] private GameObject _Firstmenu;
     [SerializeField] private GameObject _LocalVSmenu;
     [SerializeField] private GameObject _Configmenu;
@@ -135,6 +136,8 @@ public class MenuUIManager : MonoBehaviour
                 break;
 
             case UItype.Practice:
+                _Tutorialmenu.SetActive(true);
+                _Firstmenu.SetActive(false);
                 break;
 
             case UItype.Config:
@@ -164,7 +167,7 @@ public class MenuUIManager : MonoBehaviour
 
             case UItype.Practice:
                 _uiPanel.SetActive(true);
-                _uitext.text = "チュートリアルモード";
+                _uitext.text = "操作説明";
                 break;
 
             case UItype.Config:

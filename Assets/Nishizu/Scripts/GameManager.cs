@@ -7,6 +7,8 @@ using UnityEngine.UIElements;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
+using static UnityEngine.InputSystem.HID.HID;
+
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _hutons;
@@ -25,6 +27,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _ready;
     [SerializeField] private GameObject _go;
     [SerializeField] private GameObject _finish;
+    [SerializeField] private Canvas _canvas;
     private bool _isGameStart = false;
     private bool _isPlayerSet = true;
     private bool _isGameStartCheck = false;
@@ -34,6 +37,8 @@ public class GameManager : MonoBehaviour
     private float _gameTime = 180.0f;
     private float _teacherEventTime = 60.0f;
     private string _startGuide = "コントローラーの接続を待っています... ";
+    private GameObject _speechBubble;
+    private GameObject _speechBubbleThorn;
     private ResultManager _resultManager;
     private PlayerInputManager _playerInputM;
     private DoorController _doorController;
@@ -88,9 +93,12 @@ public class GameManager : MonoBehaviour
         _doorController.OpenDoors();
         _teacherComent = _teacherGuide.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
         _teacherComent.text = "就寝時間だぞ";
+        _speechBubble = _teacherGuide.transform.GetChild(0).gameObject;
+        _speechBubbleThorn = _teacherGuide.transform.GetChild(1).gameObject;
         _ready.SetActive(false);
         _go.SetActive(false);
         _finish.SetActive(false);
+        _speechBubbleThorn.SetActive(false);
     }
 
     // Update is called once per frame
@@ -122,8 +130,8 @@ public class GameManager : MonoBehaviour
 
                 foreach (var player in _players)
                 {
-                    if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
-                    // if (SleepCheck(_players) && player.GetComponent<PlayerController>().IsGameStartCheck)//デバッグ用
+                    //if (SleepCheck(_players) && _players.Count > 1 && player.GetComponent<PlayerController>().IsGameStartCheck)
+                    if (SleepCheck(_players) && player.GetComponent<PlayerController>().IsGameStartCheck)//デバッグ用
                     {
                         _isGameStartCheck = true;
                     }
@@ -141,6 +149,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void Init()
     {
+        foreach (var huton in _hutons)
+        {
+            huton.GetComponent<HutonController>().CanSleep = false;
+        }
         _isGameStart = true;
         _event.IsGameStart = true;
         _scoreManager.GetComponent<ScoreManager>().IsGameStart = true;
@@ -154,6 +166,7 @@ public class GameManager : MonoBehaviour
         {
             makura.IsGameStart = true;
         }
+
         _playerInputManager.SetActive(false);
         StartCoroutine(GameEnd());
     }

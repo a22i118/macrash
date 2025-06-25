@@ -9,6 +9,8 @@ public class TeacherShadowController : MonoBehaviour
     [SerializeField] private GameObject _warningController;
     [SerializeField] private GameObject _tensionSprite;
     [SerializeField] private GameObject _teacherObj;
+    [SerializeField] private List<GameObject> _hutons;
+
     private bool _isCanRotated = false;
     private bool _isMove = false;
     private bool _isExecuteOnce = false;//一回だけ実行する
@@ -28,6 +30,7 @@ public class TeacherShadowController : MonoBehaviour
     private Renderer _teacherRenderer;
     private Teacher _teacher;
     private List<PlayerController> _playerControllers = new List<PlayerController>();
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -79,6 +82,10 @@ public class TeacherShadowController : MonoBehaviour
         foreach (var player in _playerControllers)
         {
             player.IsCanSleep = true;
+        }
+        foreach (var huton in _hutons)
+        {
+            huton.GetComponent<HutonController>().CanSleep = true;
         }
         if (!_isDuringEvent)
         {
@@ -132,6 +139,10 @@ public class TeacherShadowController : MonoBehaviour
     }
     private void TeacherEvent()
     {
+        foreach (var huton in _hutons)
+        {
+            huton.GetComponent<HutonController>().CanSleep = false;
+        }
         foreach (var player in _playerControllers)
         {
             player.IsCanSleep = false;
