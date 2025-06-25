@@ -17,6 +17,7 @@ public class PlayerInputManager : MonoBehaviour
 
         playerObject.name = $"Player ({playerCount})";
         playerObject.GetComponent<PlayerController>().PlayerIndex = playerCount - 1;
+        playerObject.GetComponent<PlayerController>().PlayerKinds = Random.Range(0, 2); ;
         _players.Add(playerObject);
 
         print($"{playerObject.name}が入室！");

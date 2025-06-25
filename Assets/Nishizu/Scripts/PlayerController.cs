@@ -41,6 +41,7 @@ namespace Player
         private bool _isSpeedUp = false;
         private bool _isTeacherMakuraHit = false;
         private int _playerIndex;
+        private int _playerKinds;
         private const float C_gravity = -25.0f;
         private float _speed = 5.0f;//プレイヤーの移動速度
         private float _groundCheckRadius = 0.01f;//足元が地面か判定する球の半径
@@ -89,6 +90,7 @@ namespace Player
         public bool IsResultEnd { get => _isResultEnd; set => _isResultEnd = value; }
         public bool IsGameEndCheck { get => _isGameEndCheck; set => _isGameEndCheck = value; }
         public int PlayerIndex { get => _playerIndex; set => _playerIndex = value; }
+        public int PlayerKinds { get => _playerKinds; set => _playerKinds = value; }
         public GameObject CurrentMakuraDisplay { get => _currentMakuraDisplay; set => _currentMakuraDisplay = value; }
         public GameObject SpGageInstance { get => _spGageInstance; set => _spGageInstance = value; }
         public GameObject PlayerTagUIInstance { get => _playerTagUIInstance; set => _playerTagUIInstance = value; }
@@ -217,7 +219,15 @@ namespace Player
         private void Init()
         {
             _rb = GetComponent<Rigidbody>();
-            _animator = GetComponent<Animator>();
+            _animator = transform.GetChild(_playerKinds).gameObject.GetComponent<Animator>();
+            if (_playerKinds == 0)
+            {
+                transform.GetChild(1).gameObject.SetActive(false);
+            }
+            else
+            {
+                transform.GetChild(0).gameObject.SetActive(false);
+            }
             _col = GetComponent<CapsuleCollider>();
             _playerStatus = GetComponent<PlayerStatus>();
             _nomalColliderCenter = _col.center;
