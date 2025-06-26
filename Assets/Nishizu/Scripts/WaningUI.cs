@@ -53,7 +53,7 @@ public class WarningUI : MonoBehaviour
             rectTransformTop.anchorMin = new Vector2(0.5f, 1f); // 上部中央にアンカーを設定
             rectTransformTop.anchorMax = new Vector2(0.5f, 1f);
             rectTransformTop.pivot = new Vector2(0.5f, 0.5f); // ピボットを中央に
-            rectTransformTop.anchoredPosition = new Vector2(0f, -547f);
+            rectTransformTop.anchoredPosition = new Vector2(0f, -510f);
 
             // 下部のWarning UIを生成
             GameObject warningUnder = Instantiate(_warningPrefab, transform);
@@ -61,7 +61,7 @@ public class WarningUI : MonoBehaviour
             rectTransformUnder.anchorMin = new Vector2(0.5f, 0f); // 下部中央にアンカーを設定
             rectTransformUnder.anchorMax = new Vector2(0.5f, 0f);
             rectTransformUnder.pivot = new Vector2(0.5f, 0.5f); // ピボットを中央に
-            rectTransformUnder.anchoredPosition = new Vector2(0f, 547f);
+            rectTransformUnder.anchoredPosition = new Vector2(0f, 510f);
             warningUnder.GetComponent<WarningMove>().Direction = false;
         }
         else
@@ -74,7 +74,7 @@ public class WarningUI : MonoBehaviour
                 rectTransformTop.anchorMin = new Vector2(0.5f, 1f);
                 rectTransformTop.anchorMax = new Vector2(0.5f, 1f);
                 rectTransformTop.pivot = new Vector2(0.5f, 0.5f);
-                rectTransformTop.anchoredPosition = new Vector2(_generationInterval * i + _num, -547f); // スライドさせるためX軸を調整
+                rectTransformTop.anchoredPosition = new Vector2(_generationInterval * i + _num, -510f); // スライドさせるためX軸を調整
 
                 // 下部のWarning UIを生成
                 GameObject warningUnder = Instantiate(_warningPrefab, transform);
@@ -82,7 +82,7 @@ public class WarningUI : MonoBehaviour
                 rectTransformUnder.anchorMin = new Vector2(0.5f, 0f);
                 rectTransformUnder.anchorMax = new Vector2(0.5f, 0f);
                 rectTransformUnder.pivot = new Vector2(0.5f, 0.5f);
-                rectTransformUnder.anchoredPosition = new Vector2(-_generationInterval * i - _num, 547f); // スライドさせるためX軸を調整
+                rectTransformUnder.anchoredPosition = new Vector2(-_generationInterval * i - _num, 510f); // スライドさせるためX軸を調整
 
                 warningTop.GetComponent<WarningMove>().StartCoroutine(warningTop.GetComponent<WarningMove>().FadeOutCoroutine());
                 warningUnder.GetComponent<WarningMove>().StartCoroutine(warningUnder.GetComponent<WarningMove>().FadeOutCoroutine());
@@ -105,7 +105,7 @@ public class WarningUI : MonoBehaviour
             rectTransformTop.anchorMin = new Vector2(0.5f, 1f);
             rectTransformTop.anchorMax = new Vector2(0.5f, 1f);
             rectTransformTop.pivot = new Vector2(0.5f, 0.5f);
-            rectTransformTop.anchoredPosition = new Vector2(-_generationInterval * i + _num, -547f); // 初期位置を調整
+            rectTransformTop.anchoredPosition = new Vector2(-_generationInterval * i + _num, -510f); // 初期位置を調整
 
             // 下部のWarning UIを生成
             GameObject warningUnder = Instantiate(_warningPrefab, transform);
@@ -113,7 +113,7 @@ public class WarningUI : MonoBehaviour
             rectTransformUnder.anchorMin = new Vector2(0.5f, 0f);
             rectTransformUnder.anchorMax = new Vector2(0.5f, 0f);
             rectTransformUnder.pivot = new Vector2(0.5f, 0.5f);
-            rectTransformUnder.anchoredPosition = new Vector2(_generationInterval * i - _num, 547f); // 初期位置を調整
+            rectTransformUnder.anchoredPosition = new Vector2(_generationInterval * i - _num, 510f); // 初期位置を調整
 
             warningTop.GetComponent<WarningMove>().IsTransparent = true;
             warningUnder.GetComponent<WarningMove>().IsTransparent = true;

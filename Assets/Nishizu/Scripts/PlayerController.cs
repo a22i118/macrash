@@ -291,7 +291,7 @@ namespace Player
                 }
                 else
                 {
-                    _spGageInstance = Instantiate(_spGageUI, new Vector2(640.0f + 260.0f * _playerIndex, 140.0f), Quaternion.identity);
+                    _spGageInstance = Instantiate(_spGageUI, new Vector2(640.0f + 260.0f * _playerIndex, 150.0f), Quaternion.identity);
                     TextMeshProUGUI text = _spGageInstance.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
                     text.text = _playerIndex + 1 + " P";
 
