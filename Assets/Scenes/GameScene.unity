@@ -8336,9 +8336,9 @@ GameObject:
   - component: {fileID: 1343484428}
   - component: {fileID: 1343484427}
   - component: {fileID: 1343484426}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: TensionSprite
-  m_TagString: Untagged
+  m_TagString: Obstacles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

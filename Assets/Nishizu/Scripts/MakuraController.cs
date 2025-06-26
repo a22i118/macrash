@@ -216,7 +216,7 @@ public class MakuraController : ColorChanger
             spawnedObject.transform.localScale = new Vector3(10, 10, 10);
         }
         _explosionRangeScript.Thrower = _thrower;
-        Destroy(spawnedObject, 2.0f);
+        Destroy(spawnedObject, 1.5f);
     }
     private void OnTriggerEnter(Collider collider)
     {
