@@ -81,6 +81,7 @@ namespace Player
         private Vector3 _nomalColliderCenter;
         private Vector3 _sleepColliderCenter;
         private GameObject _spGageInstance;
+        private PlayerInput _playerInput;
         public bool IsHitCoolTime { get => _isHitCoolTime; set => _isHitCoolTime = value; }
         public bool IsCanSleep { get => _isCanSleep; set => _isCanSleep = value; }
         public bool IsSleep { get => _isSleep; }
@@ -103,6 +104,7 @@ namespace Player
         }
         void Awake()
         {
+            _playerInput = GetComponent<PlayerInput>();
             Init();
         }
         public void OnGameStartCheck(InputValue value)
@@ -894,13 +896,29 @@ namespace Player
                 }
             }
         }
+        private Gamepad GetAssignedGamepad()
+        {
+            if (_playerInput == null) return null;
+
+            foreach (var device in _playerInput.devices)
+            {
+                if (device is Gamepad gamepad)
+                {
+                    return gamepad;
+                }
+            }
+            return null;
+        }
         private IEnumerator HitStopVibration(bool isCounterAttack, float throwedTime, Transform makuratransform)
         {
-            if (Gamepad.all[_playerIndex] != null)
+
+            Gamepad gamepad = GetAssignedGamepad();
+            if (gamepad != null)
             {
-                Gamepad.all[_playerIndex].SetMotorSpeeds(throwedTime / 3, throwedTime / 3);
-                StartCoroutine(StopVibrationAfterDelay());
+                gamepad.SetMotorSpeeds(throwedTime / 3, throwedTime / 3);
+                StartCoroutine(StopVibrationAfterDelay(gamepad));
             }
+
             _isVibrating = true;
             Vector3 hitPosition = transform.position;
 
@@ -939,12 +957,12 @@ namespace Player
             _isVibrating = false;
             _isHitCoolTime = false;
         }
-        private IEnumerator StopVibrationAfterDelay()
+        private IEnumerator StopVibrationAfterDelay(Gamepad gamepadToStop)
         {
             yield return new WaitForSeconds(0.5f);
-            if (Gamepad.all[_playerIndex] != null)
+            if (gamepadToStop != null)
             {
-                Gamepad.all[_playerIndex].SetMotorSpeeds(0f, 0f);
+                gamepadToStop.SetMotorSpeeds(0f, 0f); // 振動を停止
             }
         }
         /// <summary>
